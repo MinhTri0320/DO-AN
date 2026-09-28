@@ -1,0 +1,37 @@
+/* ============================================================
+   tokens.css
+   Biến CSS (design tokens) dùng chung cho TOÀN BỘ site.
+   Đổi tông màu cả site chỉ cần sửa ở đây, không cần đụng file khác.
+   ============================================================ */
+
+:root {
+  /* nền */
+  --cream: #faf3ea;       /* nền trang, ấm hơn bản cũ */
+  --card: #f2e6d6;         /* nền section xen kẽ / thẻ nhạt */
+  --surface: #ffffff;      /* nền thẻ nổi (card, input, modal) */
+
+  /* chữ */
+  --ink: #3a2a1d;           /* chữ chính, nâu đậm thay vì đen */
+  --ink-soft: #6b5645;     /* chữ phụ, mô tả */
+  --ink-faint: #9c8874;    /* chữ rất nhạt, placeholder/icon */
+
+  /* thương hiệu — nâu cà phê làm màu chủ đạo (giống Pawmily) */
+  --brown: #4a3527;
+  --brown-dark: #33231a;
+  --brown-soft: #efe0cd;   /* nền nhạt dùng cho hover pill, badge */
+
+  /* điểm nhấn — cam đất ấm, dùng cho CTA/liên kết/badge nổi bật */
+  --accent: #d97757;
+  --accent-dark: #b85f42;
+
+  --line: #e7d9c4;
+  --danger: #c85c5c;
+  --success: #4c8c6b;
+
+  --font-display: "Fraunces", "Baloo 2", serif;
+  --font-body: "Nunito Sans", sans-serif;
+
+  --radius-pill: 999px;
+  --radius-card: 24px;
+  --shadow-card: 0 24px 48px -28px rgba(58, 42, 29, 0.35);
+}

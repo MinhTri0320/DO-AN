@@ -1,0 +1,80 @@
+/* ============================================================
+   buttons.css
+   Mọi kiểu nút dùng chung: pill nâu đậm (CTA chính), pill viền
+   (CTA phụ), nút chữ (text button)...
+   ============================================================ */
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--brown);
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-cta:hover {
+  background: var(--brown-dark);
+  transform: translateY(-2px);
+}
+
+.btn-cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-cta-outline {
+  background: transparent;
+  border: 2px solid var(--brown);
+  color: var(--brown);
+}
+
+.btn-cta-outline:hover {
+  background: var(--brown);
+  color: #fff;
+}
+
+.btn-cta-light {
+  background: var(--accent);
+}
+
+.btn-cta-light:hover {
+  background: var(--accent-dark);
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--accent-dark);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-register {
+  margin-top: 8px;
+  background: var(--brown);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px 0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-register:hover {
+  background: var(--brown-dark);
+}
+
+.btn-register.registered {
+  background: var(--success);
+  cursor: default;
+}

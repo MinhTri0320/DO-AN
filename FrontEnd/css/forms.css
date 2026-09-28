@@ -1,0 +1,181 @@
+/* ============================================================
+   forms.css
+   Style dùng chung cho MỌI form trong site (login, register,
+   contact, đăng ký chiến dịch...).
+   ============================================================ */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form input,
+.form textarea,
+.form select {
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  resize: vertical;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  display: none;
+}
+
+.form .invalid .field-error {
+  display: block;
+}
+
+.form .invalid input,
+.form .invalid textarea {
+  border-color: var(--danger);
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.form-message {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  display: none;
+}
+
+.form-message.show {
+  display: block;
+}
+
+.form-message.success {
+  background: rgba(76, 140, 107, 0.12);
+  color: var(--success);
+}
+
+.form-message.error {
+  background: rgba(200, 92, 92, 0.12);
+  color: var(--danger);
+}
+
+/* icon bên trong ô input (email, password, phone...) */
+.input-icon-wrap {
+  position: relative;
+}
+
+.input-icon-wrap > svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 19px;
+  height: 19px;
+  color: var(--ink-faint);
+  pointer-events: none;
+}
+
+.input-icon-wrap input {
+  padding-left: 42px;
+}
+
+.input-icon-wrap textarea {
+  padding-left: 42px;
+}
+
+/* textarea nhiều dòng: icon neo lên trên thay vì canh giữa */
+.input-icon-wrap.icon-top > svg {
+  top: 16px;
+  transform: none;
+}
+
+/* nút con mắt hiện/ẩn mật khẩu, nằm bên phải ô input */
+.input-icon-wrap input[type="password"],
+.input-icon-wrap input.as-text {
+  padding-right: 42px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password:hover {
+  color: var(--ink-soft);
+}
+
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+}
+
+.toggle-password .icon-eye-off {
+  display: none;
+}
+
+.toggle-password.is-visible .icon-eye {
+  display: none;
+}
+
+.toggle-password.is-visible .icon-eye-off {
+  display: block;
+}
+
+/* dòng "Ghi nhớ đăng nhập" / "Quên mật khẩu?" */
+.form-row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: -6px;
+}
+
+.link-inline {
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.link-inline:hover {
+  color: var(--brown);
+  text-decoration: underline;
+}

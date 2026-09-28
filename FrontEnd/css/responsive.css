@@ -1,0 +1,96 @@
+/* ============================================================
+   responsive.css
+   Toàn bộ @media query của site — load SAU CÙNG (sau mọi file
+   CSS khác) để các rule ở đây có thể override khi cần.
+   ============================================================ */
+
+@media (max-width: 860px) {
+  .menu-toggle {
+    display: flex;
+    order: 2;
+  }
+
+  #menu {
+    order: 4;
+    flex-basis: 100%;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+
+  #menu.open {
+    max-height: 300px;
+    padding-top: 8px;
+  }
+
+  .auth,
+  .auth-user {
+    order: 3;
+    margin-left: auto;
+  }
+
+  #content {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 40px 24px;
+  }
+
+  .hero-text p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .service-grid,
+  .feature-grid,
+  .review-grid,
+  .campaign-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-inner,
+  .contact-inner {
+    flex-direction: column;
+  }
+
+  .stats {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 32px;
+  }
+
+  .service-grid,
+  .feature-grid,
+  .review-grid,
+  .campaign-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .section h2 {
+    font-size: 26px;
+  }
+
+  .auth-card {
+    padding: 28px 22px;
+  }
+
+  .pill-btn span {
+    display: none; /* mobile chỉ hiện icon, ẩn chữ để đỡ chật header */
+  }
+}

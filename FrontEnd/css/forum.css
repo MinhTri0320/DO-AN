@@ -1,0 +1,105 @@
+/* ============================================================
+   forum.css
+   Trang forum.html: khung đăng bài + danh sách bài viết.
+   ============================================================ */
+
+.forum-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.composer {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.composer textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+.composer-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.composer-locked {
+  text-align: center;
+  padding: 18px;
+  background: var(--card);
+  border-radius: 16px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.composer-locked a {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+.post-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px;
+}
+
+.post-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.post-author {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.post-time {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.post-body {
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.post-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink-faint);
+  font-size: 14px;
+}
+
+.post-action:hover {
+  color: var(--accent-dark);
+}
+
+.post-action.liked {
+  color: var(--accent-dark);
+}

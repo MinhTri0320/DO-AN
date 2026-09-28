@@ -1,0 +1,221 @@
+/* ============================================================
+   header.css
+   Header/navbar dùng chung cho mọi trang.
+   ============================================================ */
+
+#header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 14px 30px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+/* logo: mascot tròn + wordmark serif, phỏng theo bố cục Pawmily
+   nhưng KHÔNG dùng lại hình minh họa nhân vật của họ */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--brown-soft);
+  color: var(--brown);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-badge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--brown);
+}
+
+/* nav menu — ngang, dạng chữ đơn giản */
+#menu {
+  flex: 1;
+  display: flex;
+  gap: 28px;
+}
+
+#menu .link {
+  font-weight: 600;
+  color: var(--ink);
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+#menu .link:hover,
+#menu .link.active {
+  color: var(--accent-dark);
+  border-bottom-color: var(--accent);
+}
+
+/* nút hamburger — ẩn ở desktop */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* khối khi CHƯA đăng nhập: 2 nút pill kiểu Pawmily
+   (1 pill đặc nâu cho Đăng nhập, 1 pill viền cho Đăng ký) */
+.auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 14px;
+  border: 1.5px solid var(--brown);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.pill-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.btn-login {
+  background: var(--brown);
+  color: #fff;
+}
+
+.btn-login:hover {
+  background: var(--brown-dark);
+}
+
+.btn-signup {
+  background: transparent;
+  color: var(--brown);
+}
+
+.btn-signup:hover {
+  background: var(--brown-soft);
+}
+
+/* trạng thái đã đăng nhập: chuông thông báo + avatar */
+.auth-user {
+  gap: 18px;
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  color: var(--brown);
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.avatar-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--brown);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  padding: 12px;
+}
+
+.dropdown-name {
+  font-weight: 700;
+  padding: 6px 10px 10px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+
+.dropdown-link {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dropdown-link:hover {
+  background: var(--card);
+}
+
+#logoutBtn {
+  color: var(--danger);
+}
