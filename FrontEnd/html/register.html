@@ -34,7 +34,12 @@
           </span>
           <span class="logo-text">PawnCare</span>
         </a>
-        <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+        <button
+          class="menu-toggle"
+          id="menuToggle"
+          aria-label="Mở menu"
+          aria-expanded="false"
+        >
           <span></span><span></span><span></span>
         </button>
         <nav id="menu">
@@ -45,19 +50,61 @@
         </nav>
         <div class="auth" id="authGuest">
           <a href="./login.html" class="pill-btn btn-login">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
             <span>Đăng nhập</span>
           </a>
           <a href="./register.html" class="pill-btn btn-signup">
-            <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="9"
+                cy="8"
+                r="3.5"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
             <span>Đăng ký</span>
           </a>
         </div>
         <div class="auth auth-user" id="authUser" hidden>
-          <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
-              <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <a
+            href="./notifications.html"
+            class="icon-btn"
+            aria-label="Thông báo"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+            >
+              <path
+                d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M10 19a2 2 0 0 0 4 0"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
             </svg>
             <span class="badge" id="notifBadge" hidden>0</span>
           </a>
@@ -77,101 +124,382 @@
 
     <main class="auth-page">
       <div class="auth-card">
-        <span class="auth-mascot">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <ellipse cx="12" cy="16" rx="6" ry="5" />
-            <ellipse cx="5" cy="9" rx="2.2" ry="3" />
-            <ellipse cx="10" cy="6" rx="2.2" ry="3" />
-            <ellipse cx="14" cy="6" rx="2.2" ry="3" />
-            <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+        <!-- Nút đóng X về trang chủ -->
+        <a
+          href="./index.html"
+          class="auth-modal-close"
+          aria-label="Về trang chủ"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-        </span>
+        </a>
 
-        <h1>Tạo tài khoản mới</h1>
-        <p class="auth-sub">Chỉ mất 1 phút để bắt đầu chăm sóc Boss cùng PawnCare.</p>
+        <!-- Badge Mascot 4 ô thú cưng -->
+        <div class="auth-mascot-badge">
+          <svg
+            viewBox="0 0 64 64"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="64" height="64" rx="16" fill="#F4EEE7" />
+            <g transform="translate(6, 6)">
+              <rect width="24" height="24" rx="7" fill="#4D3427" />
+              <path
+                d="M4 8.5 L7 4 L10 8"
+                fill="#4D3427"
+                stroke="#4D3427"
+                stroke-width="1"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M20 8.5 L17 4 L14 8"
+                fill="#4D3427"
+                stroke="#4D3427"
+                stroke-width="1"
+                stroke-linejoin="round"
+              />
+              <circle cx="8" cy="11.5" r="1.3" fill="#F4EEE7" />
+              <circle cx="16" cy="11.5" r="1.3" fill="#F4EEE7" />
+              <polygon points="12,13.5 10.8,15.2 13.2,15.2" fill="#F4EEE7" />
+              <line
+                x1="4"
+                y1="13.5"
+                x2="8"
+                y2="14"
+                stroke="#F4EEE7"
+                stroke-width="0.8"
+                stroke-linecap="round"
+              />
+              <line
+                x1="4"
+                y1="15.5"
+                x2="8"
+                y2="15"
+                stroke="#F4EEE7"
+                stroke-width="0.8"
+                stroke-linecap="round"
+              />
+              <line
+                x1="20"
+                y1="13.5"
+                x2="16"
+                y2="14"
+                stroke="#F4EEE7"
+                stroke-width="0.8"
+                stroke-linecap="round"
+              />
+              <line
+                x1="20"
+                y1="15.5"
+                x2="16"
+                y2="15"
+                stroke="#F4EEE7"
+                stroke-width="0.8"
+                stroke-linecap="round"
+              />
+            </g>
+            <g transform="translate(34, 6)">
+              <rect width="24" height="24" rx="7" fill="#D7C3B1" />
+              <path
+                d="M7 16 C7 13.5 9 12 12 12 C15 12 17 13.5 17 16 C17 18 15 19 12 19 C9 19 7 18 7 16 Z"
+                fill="#FFFFFF"
+              />
+              <circle cx="7.2" cy="9.5" r="1.6" fill="#FFFFFF" />
+              <circle cx="10.4" cy="7.5" r="1.7" fill="#FFFFFF" />
+              <circle cx="13.8" cy="7.8" r="1.7" fill="#FFFFFF" />
+              <circle cx="16.8" cy="10" r="1.6" fill="#FFFFFF" />
+            </g>
+            <g transform="translate(6, 34)">
+              <rect width="24" height="24" rx="7" fill="#D7C3B1" />
+              <path
+                d="M7 16 C7 13.5 9 12 12 12 C15 12 17 13.5 17 16 C17 18 15 19 12 19 C9 19 7 18 7 16 Z"
+                fill="#FFFFFF"
+              />
+              <circle cx="7.2" cy="9.5" r="1.6" fill="#FFFFFF" />
+              <circle cx="10.4" cy="7.5" r="1.7" fill="#FFFFFF" />
+              <circle cx="13.8" cy="7.8" r="1.7" fill="#FFFFFF" />
+              <circle cx="16.8" cy="10" r="1.6" fill="#FFFFFF" />
+            </g>
+            <g transform="translate(34, 34)">
+              <rect width="24" height="24" rx="7" fill="#4D3427" />
+              <path
+                d="M4 6 C2.5 8.5 2.5 13.5 4.5 15 C5.8 15 6 12 5.5 8 Z"
+                fill="#3D291F"
+              />
+              <path
+                d="M20 6 C21.5 8.5 21.5 13.5 19.5 15 C18.2 15 18 12 18.5 8 Z"
+                fill="#3D291F"
+              />
+              <circle cx="8.5" cy="11" r="1.3" fill="#F4EEE7" />
+              <circle cx="15.5" cy="11" r="1.3" fill="#F4EEE7" />
+              <ellipse cx="12" cy="15" rx="3.5" ry="2.2" fill="#F4EEE7" />
+              <ellipse cx="12" cy="14.2" rx="1.5" ry="0.9" fill="#4D3427" />
+            </g>
+          </svg>
+        </div>
 
-        <div class="tab-switch">
-          <a href="./login.html">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Đăng nhập
+        <h1 class="auth-modal-title">Thành Viên PawnCare</h1>
+        <p class="auth-modal-sub">
+          Đăng ký miễn phí để nhận ngay ưu đãi 20% cho lần đầu đặt dịch vụ
+        </p>
+
+        <!-- Tab Switcher -->
+        <div class="auth-tab-switch">
+          <a href="./login.html" class="auth-tab-btn">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>Đăng nhập</span>
           </a>
-          <a href="./register.html" class="active">
-            <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            Đăng ký
+          <a href="./register.html" class="auth-tab-btn active">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            <span>Đăng ký</span>
           </a>
         </div>
 
-        <form class="form" id="registerForm" novalidate>
-          <label data-field="name">
-            <span class="sr-only">Họ và tên</span>
-            <div class="input-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <input type="text" name="name" placeholder="Nguyễn Văn A" required />
+        <div class="auth-alert" id="registerAlert"></div>
+
+        <form id="registerForm" novalidate>
+          <!-- Tên của bạn -->
+          <div class="auth-field" data-field="name">
+            <label class="auth-label">TÊN CỦA BẠN</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                name="name"
+                class="auth-input"
+                placeholder="Ví dụ: Nguyễn Văn A"
+                required
+              />
             </div>
-            <span class="field-error"></span>
-          </label>
-          <label data-field="email">
-            <span class="sr-only">Email</span>
-            <div class="input-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <input type="email" name="email" placeholder="ban@email.com" required />
+            <span class="auth-field-error"></span>
+          </div>
+
+          <!-- Số điện thoại -->
+          <div class="auth-field" data-field="phone">
+            <label class="auth-label">SỐ ĐIỆN THOẠI</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon phone-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                  />
+                </svg>
+              </span>
+              <input
+                type="tel"
+                name="phone"
+                class="auth-input"
+                placeholder="Ví dụ: 0987654321"
+                required
+              />
             </div>
-            <span class="field-error"></span>
-          </label>
-          <label data-field="phone">
-            <span class="sr-only">Số điện thoại</span>
-            <div class="input-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-              <input type="tel" name="phone" placeholder="0912345678" required />
-            </div>
-            <span class="field-error"></span>
-          </label>
-          <label data-field="password">
-            <span class="sr-only">Mật khẩu</span>
-            <div class="input-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <input type="password" name="password" placeholder="Tối thiểu 6 ký tự" required />
-              <button type="button" class="toggle-password" data-toggle-password aria-label="Hiện/ẩn mật khẩu">
-                <svg class="icon-eye" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
-                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M6.6 6.7C4.5 8 3 12 3 12s3.5 7 10 7c1.8 0 3.3-.5 4.6-1.2M17.5 15.4C19.9 13.8 21 12 21 12s-1.3-2.6-3.7-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="auth-field-error"></span>
+          </div>
+
+          <!-- Mật khẩu -->
+          <div class="auth-field" data-field="password">
+            <label class="auth-label">MẬT KHẨU</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <rect x="5" y="11" width="14" height="10" rx="2" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+              </span>
+              <input
+                type="password"
+                name="password"
+                class="auth-input"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                class="auth-eye-btn"
+                data-toggle-password
+                aria-label="Hiện/ẩn mật khẩu"
+              >
+                <svg
+                  class="icon-eye"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg
+                  class="icon-eye-off"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                  ></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
               </button>
             </div>
-            <span class="field-error"></span>
-          </label>
-          <label data-field="confirmPassword">
-            <span class="sr-only">Nhập lại mật khẩu</span>
-            <div class="input-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <input type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" required />
-              <button type="button" class="toggle-password" data-toggle-password aria-label="Hiện/ẩn mật khẩu">
-                <svg class="icon-eye" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
-                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M6.6 6.7C4.5 8 3 12 3 12s3.5 7 10 7c1.8 0 3.3-.5 4.6-1.2M17.5 15.4C19.9 13.8 21 12 21 12s-1.3-2.6-3.7-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
+            <!-- Yêu cầu tối thiểu 6 ký tự -->
+            <div class="auth-hint-box">
+              <span>🔒</span>
+              <span>Yêu cầu: Tối thiểu 6 ký tự</span>
             </div>
-            <span class="field-error"></span>
-          </label>
+            <span class="auth-field-error"></span>
+          </div>
 
-          <label class="checkbox-row">
-            <input type="checkbox" name="agree" />
-            Tôi đồng ý với Điều khoản sử dụng của PawnCare
-          </label>
+          <!-- Tên thú cưng (nếu có) -->
+          <div class="auth-field" data-field="petName">
+            <label class="auth-label">TÊN THÚ CƯNG (NẾU CÓ)</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <ellipse cx="12" cy="15" rx="4.2" ry="3.5" />
+                  <circle cx="7" cy="9.5" r="1.6" />
+                  <circle cx="10.3" cy="7.2" r="1.6" />
+                  <circle cx="13.7" cy="7.2" r="1.6" />
+                  <circle cx="17" cy="9.5" r="1.6" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                name="petName"
+                class="auth-input"
+                placeholder="Ví dụ: Bin Corgi"
+              />
+            </div>
+          </div>
 
-          <p class="form-message" id="registerMessage"></p>
-          <button type="submit" class="btn-cta">Đăng ký</button>
+          <!-- Địa chỉ nhà (Khu vực HCM) -->
+          <div class="auth-field">
+            <label class="auth-label">
+              <span class="auth-label-icon">🏠</span>
+              <span>ĐỊA CHỈ NHÀ (KHU VỰC ĐÀ NẴNG)</span>
+            </label>
+            <div class="auth-address-grid">
+              <div class="auth-address-field">
+                <span class="auth-sublabel">Số nhà</span>
+                <input
+                  type="text"
+                  name="houseNumber"
+                  class="auth-input-sm"
+                  placeholder="Ví dụ: 47/25B"
+                />
+              </div>
+              <div class="auth-address-field">
+                <span class="auth-sublabel">Đường</span>
+                <input
+                  type="text"
+                  name="street"
+                  class="auth-input-sm"
+                  placeholder="Ví dụ: Lý Thái Tổ"
+                />
+              </div>
+              <div class="auth-address-field">
+                <span class="auth-sublabel">Phường/Xã</span>
+                <input
+                  type="text"
+                  name="ward"
+                  class="auth-input-sm"
+                  placeholder="Ví dụ: Thanh Khê"
+                />
+              </div>
+              <div class="auth-address-field">
+                <span class="auth-sublabel">Thành phố</span>
+                <input
+                  type="text"
+                  name="city"
+                  class="auth-input-sm"
+                  value="TP. Đà Nẵng"
+                  placeholder="TP. Đà Nẵng"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Điều khoản dịch vụ -->
+          <div
+            class="auth-options-row"
+            style="margin-top: 8px; margin-bottom: 8px"
+          >
+            <label class="auth-checkbox-wrap">
+              <input type="checkbox" name="agree" id="registerAgree" checked />
+              <span
+                >Tôi đồng ý với
+                <a
+                  href="#"
+                  class="auth-forgot-link"
+                  style="color: #4d3427; text-decoration: underline"
+                  >Điều khoản dịch vụ</a
+                ></span
+              >
+            </label>
+          </div>
+
+          <button type="submit" class="auth-submit-btn">
+            ĐĂNG KÝ THÀNH VIÊN
+          </button>
         </form>
       </div>
     </main>

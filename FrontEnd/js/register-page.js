@@ -1,74 +1,103 @@
 /* ============================================================
    register-page.js
-   Task "Register": xử lý form ở register.html — validate rồi
-   gọi registerUser() thật từ auth.js.
+   Xử lý trang register.html độc lập (khớp với giao diện mẫu):
+   - Đăng ký thành viên với Tên, SĐT, Mật khẩu, Thú cưng, Địa chỉ
+   - Validate thông tin
+   - Gọi registerUser() từ auth.js
+   - Tự động chuyển về login hoặc trang chủ
    ============================================================ */
 
 import { registerUser } from "./auth.js";
-import { isValidEmail, isValidPhone, showFieldError, clearFieldError } from "./validators.js";
+import { isValidPhone } from "./validators.js";
 
 export function initRegisterPage() {
   const form = document.getElementById("registerForm");
-  if (!form) return; // không ở trang register thì bỏ qua
+  if (!form) return;
 
-  const msgEl = document.getElementById("registerMessage");
+  const alertEl = document.getElementById("registerAlert") || document.getElementById("registerMessage");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const nameField = form.querySelector('[data-field="name"]');
+    const phoneField = form.querySelector('[data-field="phone"]');
+    const passField = form.querySelector('[data-field="password"]');
+
+    if (nameField) nameField.classList.remove("has-error");
+    if (phoneField) phoneField.classList.remove("has-error");
+    if (passField) passField.classList.remove("has-error");
+
+    const name = form.elements.name ? form.elements.name.value.trim() : "";
+    const phone = form.elements.phone ? form.elements.phone.value.trim() : "";
+    const password = form.elements.password ? form.elements.password.value : "";
+    const petName = form.elements.petName ? form.elements.petName.value.trim() : "";
+    const houseNumber = form.elements.houseNumber ? form.elements.houseNumber.value.trim() : "";
+    const street = form.elements.street ? form.elements.street.value.trim() : "";
+    const ward = form.elements.ward ? form.elements.ward.value.trim() : "";
+    const city = form.elements.city ? form.elements.city.value.trim() : "TP. Đà Nẵng";
+
     let valid = true;
-
-    const fields = ["name", "email", "phone", "password", "confirmPassword"];
-    fields.forEach((f) => clearFieldError(form.querySelector(`[data-field="${f}"]`)));
-
-    const name = form.elements.name.value.trim();
-    const email = form.elements.email.value.trim();
-    const phone = form.elements.phone.value.trim();
-    const password = form.elements.password.value;
-    const confirmPassword = form.elements.confirmPassword.value;
-    const agree = form.elements.agree.checked;
-
     if (name.length < 2) {
-      showFieldError(form.querySelector('[data-field="name"]'), "Vui lòng nhập họ tên hợp lệ.");
+      if (nameField) {
+        nameField.classList.add("has-error");
+        const err = nameField.querySelector(".auth-field-error");
+        if (err) err.textContent = "Vui lòng nhập họ và tên của bạn.";
+      }
       valid = false;
     }
-    if (!isValidEmail(email)) {
-      showFieldError(form.querySelector('[data-field="email"]'), "Email không hợp lệ.");
-      valid = false;
-    }
+
     if (!isValidPhone(phone)) {
-      showFieldError(form.querySelector('[data-field="phone"]'), "Số điện thoại không hợp lệ.");
+      if (phoneField) {
+        phoneField.classList.add("has-error");
+        const err = phoneField.querySelector(".auth-field-error");
+        if (err) err.textContent = "Số điện thoại không hợp lệ (10 chữ số).";
+      }
       valid = false;
     }
+
     if (password.length < 6) {
-      showFieldError(form.querySelector('[data-field="password"]'), "Mật khẩu tối thiểu 6 ký tự.");
+      if (passField) {
+        passField.classList.add("has-error");
+        const err = passField.querySelector(".auth-field-error");
+        if (err) err.textContent = "Mật khẩu yêu cầu tối thiểu 6 ký tự.";
+      }
       valid = false;
     }
-    if (confirmPassword !== password) {
-      showFieldError(form.querySelector('[data-field="confirmPassword"]'), "Mật khẩu nhập lại không khớp.");
-      valid = false;
-    }
+
     if (!valid) return;
 
-    if (!agree) {
-      msgEl.textContent = "Vui lòng đồng ý với điều khoản sử dụng.";
-      msgEl.classList.remove("success");
-      msgEl.classList.add("show", "error");
-      return;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "ĐANG TẠO TÀI KHOẢN...";
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Đang đăng ký...";
-
     try {
-      await registerUser({ name, email, phone, password });
-      window.location.href = "./login.html?registered=1";
+      await registerUser({
+        name,
+        phone,
+        password,
+        petName,
+        address: { houseNumber, street, ward, city },
+      });
+
+      if (alertEl) {
+        alertEl.textContent = "Đăng ký thành viên PawnCare thành công! Đang chuyển hướng...";
+        alertEl.className = "auth-alert show success";
+      }
+
+      setTimeout(() => {
+        window.location.href = "./index.html";
+      }, 800);
     } catch (err) {
-      msgEl.textContent = err.message;
-      msgEl.classList.remove("success");
-      msgEl.classList.add("show", "error");
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Đăng ký";
+      if (alertEl) {
+        alertEl.textContent = err.message;
+        alertEl.className = "auth-alert show error";
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "ĐĂNG KÝ THÀNH VIÊN";
+      }
     }
   });
 }

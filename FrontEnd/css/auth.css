@@ -1,105 +1,529 @@
 /* ============================================================
-   auth.css
-   Trang login.html / register.html — thẻ nổi giữa màn hình,
-   có mascot tròn + tab chuyển "Đăng nhập / Đăng ký" (giống bố cục
-   modal của Pawmily, nhưng thiết kế mascot/màu là của PawnCare).
+   auth.css - PawnCare / Pawmily Authentication Styles
+   Được thiết kế chuẩn theo mẫu giao diện:
+   - Thẻ modal popup & trang độc lập với góc bo mềm mại (radius 26px)
+   - Badge Mascot 4 ô thú cưng (Mèo, Chân chó/mèo, Chó)
+   - Tab chuyển "Đăng nhập / Đăng ký" dạng pill sang trọng
+   - Input viền nâu ấm, icon màu chuẩn xác (icon điện thoại hồng tím)
+   - Ô cảnh báo mật khẩu tối thiểu 6 ký tự
+   - Grid 2x2 cho địa chỉ nhà (HCM)
    ============================================================ */
 
+/* ===== MODAL OVERLAY (DÙNG CHO POPUP TRÊN MỌI TRANG) ===== */
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(35, 22, 14, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.auth-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===== CONTAINER THẺ AUTH (CARD CHUNG CHO MODAL & LOGIN/REGISTER PAGE) ===== */
 .auth-page {
   min-height: calc(100vh - 70px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 40px 16px;
+  background: var(--cream, #faf3ea);
 }
 
-.auth-card {
+.auth-card,
+.auth-modal-dialog {
+  position: relative;
   width: 100%;
-  max-width: 420px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  padding: 36px 34px;
-  box-shadow: var(--shadow-card);
+  max-width: 440px;
+  background: #fffdf9;
+  border: 1.5px solid #ebd9c7;
+  border-radius: 26px;
+  padding: 30px 24px 26px;
+  box-shadow: 0 24px 50px -10px rgba(50, 30, 20, 0.25), 0 10px 20px -5px rgba(50, 30, 20, 0.1);
+  box-sizing: border-box;
+  animation: authCardEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cfbeaf transparent;
 }
 
-/* mascot tròn ở đầu thẻ */
-.auth-mascot {
-  width: 64px;
-  height: 64px;
+.auth-card::-webkit-scrollbar,
+.auth-modal-dialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.auth-card::-webkit-scrollbar-thumb,
+.auth-modal-dialog::-webkit-scrollbar-thumb {
+  background: #cfbeaf;
+  border-radius: 999px;
+}
+
+@keyframes authCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Nút đóng (X) góc phải trên modal */
+.auth-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #715c4f;
   border-radius: 50%;
-  background: var(--brown-soft);
-  color: var(--brown);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 18px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  z-index: 10;
 }
 
-.auth-mascot svg {
-  width: 34px;
-  height: 34px;
+.auth-modal-close:hover {
+  background: rgba(77, 52, 39, 0.08);
+  color: #3b261b;
 }
 
-.auth-card h1 {
-  font-family: var(--font-display);
-  font-size: 25px;
-  font-weight: 600;
-  color: var(--brown);
-  text-align: center;
-  margin-bottom: 6px;
+.auth-modal-close svg {
+  width: 18px;
+  height: 18px;
 }
 
-.auth-card .auth-sub {
-  color: var(--ink-soft);
-  font-size: 14px;
-  text-align: center;
-  margin-bottom: 22px;
-}
-
-/* tab pill "Đăng nhập / Đăng ký" — link sang trang kia */
-.tab-switch {
+/* ===== 1. LOGO MASCOT 4 Ô CUTE ===== */
+.auth-mascot-badge {
   display: flex;
-  background: var(--card);
-  border-radius: var(--radius-pill);
-  padding: 4px;
-  margin-bottom: 24px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 12px;
+  width: 64px;
+  height: 64px;
 }
 
-.tab-switch a {
+.auth-mascot-badge svg {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 4px 10px rgba(77, 52, 39, 0.12));
+}
+
+/* ===== 2. TIÊU ĐỀ & PHỤ ĐỀ ===== */
+.auth-modal-title {
+  font-family: var(--font-display, "Fraunces", serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: #38251b;
+  text-align: center;
+  margin: 0 0 6px;
+  letter-spacing: -0.2px;
+}
+
+.auth-modal-sub {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #7c685b;
+  text-align: center;
+  max-width: 330px;
+  margin: 0 auto 20px;
+}
+
+/* ===== 3. TAB CHUYỂN "ĐĂNG NHẬP / ĐĂNG KÝ" ===== */
+.auth-tab-switch {
+  display: flex;
+  background: #f3ede5;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 22px;
+  gap: 4px;
+}
+
+.auth-tab-btn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 11px;
+  border: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #5e493b;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  user-select: none;
+  text-decoration: none;
+}
+
+.auth-tab-btn svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.auth-tab-btn:hover:not(.active) {
+  background: rgba(77, 52, 39, 0.05);
+  color: #3b261b;
+}
+
+.auth-tab-btn.active {
+  background: #4d3427;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(77, 52, 39, 0.22);
+}
+
+/* ===== 4. NỘI DUNG TỪNG FORM (LOGIN / REGISTER) ===== */
+.auth-form-panel {
+  display: none;
+}
+
+.auth-form-panel.active {
+  display: block;
+}
+
+/* ===== 5. TRƯỜNG NHẬP LIỆU (FIELD & INPUT) ===== */
+.auth-field {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-label {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #735645;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
   gap: 6px;
-  padding: 10px 0;
-  border-radius: var(--radius-pill);
-  font-weight: 700;
+}
+
+.auth-label-icon {
   font-size: 14px;
-  color: var(--ink-soft);
+  line-height: 1;
 }
 
-.tab-switch a svg {
-  width: 15px;
-  height: 15px;
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
-.tab-switch a.active {
-  background: var(--brown);
-  color: #fff;
+.auth-input {
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid #5a4335;
+  border-radius: 13px;
+  padding: 11px 14px 11px 40px;
+  font-family: var(--font-body, "Nunito Sans", sans-serif);
+  font-size: 14.5px;
+  color: #332117;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.auth-card .form {
-  margin-bottom: 18px;
+.auth-input:focus {
+  border-color: #3b261b;
+  box-shadow: 0 0 0 3px rgba(77, 52, 39, 0.12);
 }
 
-.auth-switch {
-  text-align: center;
-  font-size: 14px;
-  color: var(--ink-soft);
+.auth-input::placeholder {
+  color: #7b8898;
+  font-weight: 500;
+  opacity: 0.85;
 }
 
-.auth-switch a {
-  color: var(--accent-dark);
+/* Icon bên trái trong input */
+.auth-input-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #7b8898;
+}
+
+.auth-input-icon.phone-icon {
+  color: #be3975; /* màu hồng tím chuẩn mẫu */
+}
+
+.auth-input-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Nút con mắt hiện/ẩn mật khẩu bên phải */
+.auth-eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7b8898;
+  transition: color 0.15s ease;
+}
+
+.auth-eye-btn:hover {
+  color: #4d3427;
+}
+
+.auth-eye-btn svg {
+  width: 19px;
+  height: 19px;
+}
+
+.auth-eye-btn .icon-eye-off {
+  display: none;
+}
+
+.auth-eye-btn.showing .icon-eye {
+  display: none;
+}
+
+.auth-eye-btn.showing .icon-eye-off {
+  display: block;
+}
+
+/* Thẻ thông báo gợi ý mật khẩu tối thiểu 6 ký tự */
+.auth-hint-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff4ed;
+  border: 1px solid #fedecd;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #c3512e;
+  font-weight: 600;
+}
+
+.auth-hint-box span:first-child {
+  font-size: 13px;
+}
+
+/* Lưới Địa chỉ nhà (HCM) */
+.auth-address-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.auth-address-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-sublabel {
+  font-size: 11px;
   font-weight: 700;
+  color: #735645;
+  margin-bottom: 4px;
+}
+
+.auth-input-sm {
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid #5a4335;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: var(--font-body, "Nunito Sans", sans-serif);
+  font-size: 13.5px;
+  color: #332117;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input-sm:focus {
+  border-color: #3b261b;
+  box-shadow: 0 0 0 3px rgba(77, 52, 39, 0.12);
+}
+
+.auth-input-sm::placeholder {
+  color: #7b8898;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+/* Lỗi trường */
+.auth-field-error {
+  color: #c85c5c;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+  display: none;
+}
+
+.auth-field.has-error .auth-field-error {
+  display: block;
+}
+
+.auth-field.has-error .auth-input,
+.auth-field.has-error .auth-input-sm {
+  border-color: #c85c5c;
+}
+
+/* Dòng Ghi nhớ & Quên mật khẩu */
+.auth-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: -4px;
+  margin-bottom: 14px;
+  color: #6b5645;
+}
+
+.auth-checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b5645;
+}
+
+.auth-checkbox-wrap input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4d3427;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.auth-forgot-link {
+  color: #be3975;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s ease;
+}
+
+.auth-forgot-link:hover {
+  text-decoration: underline;
+  color: #9c285d;
+}
+
+/* ===== 6. NÚT SUBMIT CHÍNH (ĐĂNG KÝ THÀNH VIÊN / ĐĂNG NHẬP NGAY) ===== */
+.auth-submit-btn {
+  width: 100%;
+  background: #4d3427;
+  color: #ffffff;
+  font-family: var(--font-body, "Nunito Sans", sans-serif);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 13.5px 18px;
+  border-radius: 13px;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(77, 52, 39, 0.25);
+}
+
+.auth-submit-btn:hover {
+  background: #3b261b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 38, 27, 0.3);
+}
+
+.auth-submit-btn:active {
+  transform: translateY(0);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== 7. HỘP THÔNG BÁO FORM TRẠNG THÁI ===== */
+.auth-alert {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.auth-alert.show {
+  display: block;
+}
+
+.auth-alert.success {
+  background: rgba(76, 140, 107, 0.12);
+  color: #3b7c5b;
+  border: 1px solid rgba(76, 140, 107, 0.25);
+}
+
+.auth-alert.error {
+  background: rgba(200, 92, 92, 0.12);
+  color: #c85c5c;
+  border: 1px solid rgba(200, 92, 92, 0.25);
+}
+
+/* Responsive trên màn hình nhỏ */
+@media (max-width: 480px) {
+  .auth-card,
+  .auth-modal-dialog {
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+
+  .auth-modal-title {
+    font-size: 21px;
+  }
+
+  .auth-tab-btn {
+    padding: 9px 10px;
+    font-size: 13.5px;
+  }
+
+  .auth-address-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }

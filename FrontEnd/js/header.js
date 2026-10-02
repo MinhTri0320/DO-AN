@@ -72,4 +72,9 @@ export function initHeader() {
   initMobileMenu();
   initAvatarDropdown();
   initLogoutButton();
+
+  // Tự động re-render header ngay khi đăng nhập / đăng ký / đăng xuất
+  window.addEventListener("pawncare:auth-changed", () => {
+    renderHeaderAuth();
+  });
 }
