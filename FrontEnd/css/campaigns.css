@@ -1,97 +1,149 @@
 /* ============================================================
-   campaigns.css
-   Trang campaigns.html: lưới chiến dịch + modal đăng ký.
+   campaigns.css - PawnCare Community Campaigns (Pawmily.vn Aesthetic)
+   - Warm card grid with event dates, status badges, registration modal
    ============================================================ */
 
 .campaign-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 28px;
 }
 
 .campaign-card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.campaign-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--tan);
+  box-shadow: var(--shadow-card);
 }
 
 .campaign-banner {
-  height: 120px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 48px;
+  background: linear-gradient(135deg, #FCF6EE 0%, #F5EFEB 100%);
+  border-bottom: 1px solid var(--line);
+  position: relative;
 }
 
 .campaign-body {
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
 }
 
 .campaign-date {
+  font-family: var(--font-heading);
   font-size: 13px;
   font-weight: 700;
   color: var(--accent-dark);
+  background: var(--accent-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  align-self: flex-start;
+  border: 1px solid rgba(224, 122, 95, 0.2);
 }
 
 .campaign-body h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--brown);
+  line-height: 1.35;
 }
 
 .campaign-body p {
   font-size: 14px;
   color: var(--ink-soft);
+  line-height: 1.6;
   flex: 1;
 }
 
-/* modal đăng ký */
+/* Modal đăng ký chiến dịch */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(58, 42, 29, 0.5);
+  background: rgba(42, 27, 20, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 50;
+  z-index: 200;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-overlay[hidden] {
-  display: none;
+  display: none !important;
 }
 
 .modal-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   background: var(--surface);
   border-radius: var(--radius-card);
-  padding: 28px;
+  padding: 32px;
   position: relative;
+  box-shadow: var(--shadow-hover);
+  border: 1px solid var(--line);
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  font-size: 20px;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--cream-soft);
+  border: 1px solid var(--line);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: var(--ink-faint);
+  color: var(--ink-soft);
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--brown);
+  color: #fff;
 }
 
 .modal-card h3 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 20px;
   color: var(--brown);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding-right: 32px;
 }

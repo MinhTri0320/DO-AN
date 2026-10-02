@@ -1,129 +1,271 @@
 /* ============================================================
-   home.css
-   Các section CHỈ xuất hiện ở trang chủ (index.html):
-   hero, dịch vụ, giới thiệu, vì sao chọn, đánh giá, cta banner,
-   phần thông tin liên hệ.
+   home.css - PawnCare Homepage Styles (Pawmily.vn Aesthetic 80%+)
+   - Fonts: Be Vietnam Pro, Lora (Serif display), Quicksand
+   - Warm cream, espresso, tan, terracotta color system
    ============================================================ */
 
-/* ---------- HERO ---------- */
+/* ---------- HERO SECTION ---------- */
 #content {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 64px 30px 76px;
+  padding: 60px 30px 80px;
   display: flex;
   align-items: center;
-  gap: 48px;
+  gap: 56px;
+  position: relative;
 }
 
 .hero-text {
-  flex: 1;
+  flex: 1.1;
 }
 
 .hero-tagline {
-  display: inline-block;
-  background: var(--brown-soft);
-  color: var(--brown);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-family: var(--font-heading);
   font-weight: 700;
   font-size: 13px;
-  padding: 6px 14px;
+  letter-spacing: 0.02em;
+  padding: 7px 16px;
   border-radius: var(--radius-pill);
-  margin-bottom: 16px;
+  border: 1px solid rgba(224, 122, 95, 0.25);
+  margin-bottom: 20px;
 }
 
 .hero-text h1 {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 46px;
+  font-weight: 700;
+  font-size: 48px;
   line-height: 1.18;
   color: var(--brown);
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero-text h1 span.highlight {
+  color: var(--accent-dark);
+  position: relative;
+  display: inline-block;
 }
 
 .hero-text p {
-  font-size: 18px;
-  max-width: 460px;
-  margin-bottom: 28px;
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 490px;
+  margin-bottom: 32px;
   color: var(--ink-soft);
 }
 
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .hero-image {
-  flex: 1;
+  flex: 0.9;
+  position: relative;
   display: flex;
   justify-content: center;
 }
 
-.hero-image img {
+.hero-image-wrapper {
+  position: relative;
   width: 100%;
-  max-width: 480px;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 28px;
-  background: var(--card);
-  box-shadow: var(--shadow-card);
+  max-width: 460px;
 }
 
-/* ---------- SECTION khung dùng chung cho khối trang chủ ---------- */
+.hero-image img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.3s ease;
+}
+
+.hero-image-wrapper:hover img {
+  transform: translateY(-4px);
+}
+
+/* Floating Trust Badges */
+.floating-badge {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px -6px rgba(51, 29, 18, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2;
+  animation: floatSlow 4s ease-in-out infinite alternate;
+}
+
+.badge-top-left {
+  top: -16px;
+  left: -20px;
+}
+
+.badge-bottom-right {
+  bottom: -16px;
+  right: -16px;
+  animation-delay: -2s;
+}
+
+@keyframes floatSlow {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+
+.badge-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.floating-badge div {
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-badge strong {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.floating-badge span {
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+/* ---------- COMMON SECTION STYLES ---------- */
 .section {
-  padding: 76px 0;
+  padding: 84px 0;
 }
 
 .section-alt {
   background: var(--card);
 }
 
-.tag {
+.section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 52px;
+}
+
+.section-badge {
   display: inline-block;
+  font-family: var(--font-heading);
   font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--accent-dark);
-  margin-bottom: 8px;
+  background: var(--accent-soft);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 12px;
+  border: 1px solid rgba(224, 122, 95, 0.2);
 }
 
 .section h2 {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 32px;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.25;
   color: var(--brown);
-  max-width: 640px;
-  margin-bottom: 40px;
+  margin-bottom: 12px;
 }
 
-/* dịch vụ */
+.section-subtitle {
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+/* ---------- SERVICES SECTION ---------- */
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
 }
 
 .service-card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: var(--radius-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--tan);
+  box-shadow: var(--shadow-card);
+}
+
+.service-photo-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  aspect-ratio: 16 / 10;
+  background: var(--card);
 }
 
 .service-photo {
   width: 100%;
-  height: 150px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 14px;
-  margin-bottom: 16px;
+  transition: transform 0.4s ease;
+}
+
+.service-card:hover .service-photo {
+  transform: scale(1.05);
+}
+
+.service-category-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  color: var(--brown);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 6px rgba(51, 29, 18, 0.1);
 }
 
 .service-icon-block {
   width: 100%;
-  height: 150px;
-  border-radius: 14px;
-  background: var(--card);
+  height: 100%;
+  background: linear-gradient(135deg, #FCF6EE 0%, #F5EFEB 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
 }
 
 .service-icon {
   display: inline-flex;
-  width: 46px;
-  height: 46px;
+  width: 56px;
+  height: 56px;
   color: var(--accent-dark);
 }
 
@@ -134,21 +276,83 @@
 
 .service-card h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 19px;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--brown);
   margin-bottom: 8px;
 }
 
 .service-card p {
-  font-size: 15px;
+  font-size: 14.5px;
   color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
 }
 
-/* giới thiệu */
+.service-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px dashed var(--line);
+  padding-top: 14px;
+}
+
+.service-checklist li {
+  font-size: 13.5px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.service-checklist li span.check-icon {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.service-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.service-link {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.service-link:hover {
+  color: var(--brown);
+  transform: translateX(4px);
+}
+
+.service-price-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brown);
+  background: var(--cream-soft);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- ABOUT & STATS SECTION ---------- */
 .about-inner {
   display: flex;
   align-items: center;
-  gap: 56px;
+  gap: 64px;
 }
 
 .about-text,
@@ -156,157 +360,373 @@
   flex: 1;
 }
 
+.about-text .section-badge {
+  margin-bottom: 14px;
+}
+
+.about-text h2 {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1.25;
+  color: var(--brown);
+  margin-bottom: 16px;
+}
+
 .about-desc {
   color: var(--ink-soft);
-  max-width: 480px;
+  font-size: 16px;
+  line-height: 1.7;
   margin-bottom: 32px;
 }
 
 .stats {
-  display: flex;
-  gap: 36px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(51, 29, 18, 0.04);
 }
 
 .stat-number {
   display: block;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 30px;
+  font-weight: 700;
+  font-size: 32px;
   color: var(--accent-dark);
+  line-height: 1.1;
+  margin-bottom: 4px;
 }
 
 .stat-label {
-  font-size: 14px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--ink-soft);
+}
+
+.about-image {
+  position: relative;
+}
+
+.about-image-wrapper {
+  position: relative;
 }
 
 .about-image img {
   width: 100%;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   object-fit: cover;
   aspect-ratio: 4 / 3;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--line);
 }
 
-/* vì sao chọn */
+.about-floating-quote {
+  position: absolute;
+  bottom: -20px;
+  left: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  padding: 14px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px -6px rgba(51, 29, 18, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quote-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.quote-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--brown);
+  line-height: 1.4;
+}
+
+/* ---------- WHY CHOOSE US ---------- */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 
-.feature {
-  border-left: 3px solid var(--accent);
-  padding-left: 18px;
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 26px 22px;
+  box-shadow: 0 4px 12px rgba(51, 29, 18, 0.04);
+  transition: all 0.25s ease;
 }
 
-.feature h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--tan);
+  box-shadow: var(--shadow-card);
+}
+
+.feature-icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(224, 122, 95, 0.2);
+}
+
+.feature-card h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 18px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: var(--brown);
 }
 
-.feature p {
-  font-size: 15px;
+.feature-card p {
+  font-size: 14px;
   color: var(--ink-soft);
+  line-height: 1.6;
 }
 
-/* đánh giá */
+/* ---------- REVIEWS / TESTIMONIALS ---------- */
 .review-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 26px;
 }
 
 .review-card {
   background: var(--surface);
-  border-radius: 20px;
-  padding: 26px;
+  border-radius: var(--radius-card);
+  padding: 28px 24px;
   border: 1px solid var(--line);
+  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card);
+}
+
+.review-stars {
+  color: var(--star-gold);
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
 }
 
 .review-text {
+  font-family: var(--font-body);
+  font-size: 14.5px;
   color: var(--ink-soft);
-  margin-bottom: 20px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+  flex: 1;
+  font-style: italic;
 }
 
 .review-author {
   display: flex;
   align-items: center;
   gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
+.author-avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--brown);
-  color: #fff;
+  background: var(--brown-soft);
+  color: var(--brown);
   font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border: 1.5px solid var(--tan-light);
 }
 
-.avatar-photo {
-  width: 40px;
-  height: 40px;
+.author-avatar-img {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  border: 1.5px solid var(--tan-light);
+}
+
+.author-meta {
+  display: flex;
+  flex-direction: column;
 }
 
 .author-name {
+  font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
+  color: var(--brown);
 }
 
 .author-role {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--ink-faint);
 }
 
-/* cta banner */
+/* ---------- CTA BANNER ---------- */
 .cta-banner {
-  background: var(--brown);
+  max-width: 1140px;
+  margin: 20px auto 60px;
+  padding: 0 30px;
+}
+
+.cta-banner-card {
+  background: linear-gradient(135deg, #331D12 0%, #2A1B14 100%);
   color: #fff;
-}
-
-.cta-inner {
+  border-radius: var(--radius-xl);
+  padding: 56px 48px;
   text-align: center;
-  padding: 64px 30px;
+  box-shadow: 0 20px 40px -10px rgba(51, 29, 18, 0.35);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(220, 201, 182, 0.15);
 }
 
-.cta-banner h2 {
+.cta-banner-card::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(224, 122, 95, 0.12);
+  pointer-events: none;
+}
+
+.cta-banner-card h2 {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 30px;
-  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 32px;
+  color: #fff;
+  margin-bottom: 14px;
 }
 
-.cta-banner p {
-  margin-bottom: 28px;
-  opacity: 0.85;
+.cta-banner-card p {
+  font-size: 16px;
+  max-width: 580px;
+  margin: 0 auto 30px;
+  color: #EBD9C7;
+  line-height: 1.65;
 }
 
-/* liên hệ */
+/* ---------- CONTACT SECTION ---------- */
 .contact-inner {
   display: flex;
   gap: 56px;
+  align-items: flex-start;
 }
 
-.contact-info,
-.contact-form {
+.contact-info {
   flex: 1;
+}
+
+.contact-info .section-badge {
+  margin-bottom: 12px;
+}
+
+.contact-info h2 {
+  font-family: var(--font-display);
+  font-size: 34px;
+  color: var(--brown);
+  line-height: 1.25;
+  margin-bottom: 16px;
+}
+
+.contact-desc {
+  color: var(--ink-soft);
+  font-size: 15.5px;
+  line-height: 1.65;
+  margin-bottom: 28px;
 }
 
 .contact-list {
   list-style: none;
-  color: var(--ink-soft);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .contact-list li {
-  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.contact-list-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--cream-soft);
+  color: var(--accent-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  border: 1px solid var(--line);
+}
+
+.contact-list-text strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  color: var(--brown);
+}
+
+.contact-list-text span {
+  color: var(--ink-soft);
+}
+
+.contact-form-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  box-shadow: var(--shadow-card);
+}
+
+.contact-form-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--brown);
+  margin-bottom: 20px;
 }

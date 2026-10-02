@@ -1,65 +1,140 @@
 /* ============================================================
-   footer.css
-   Chân trang, dùng chung mọi trang.
+   footer.css - PawnCare Footer (Pawmily.vn Aesthetic)
+   - Deep espresso #2A1B14 background
+   - Clean typography with Be Vietnam Pro & Lora
+   - Da Nang contact info, hotline pill, multi-column navigation
    ============================================================ */
 
 #footer {
-  background: var(--brown-dark);
-  color: #ece2d4;
-  padding-top: 56px;
+  background: var(--dark-bg);
+  color: #EBD9C7;
+  padding-top: 64px;
+  position: relative;
+  border-top: 1px solid rgba(220, 201, 182, 0.15);
 }
 
 .footer-inner {
-  display: flex;
-  gap: 48px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(220, 201, 182, 0.12);
 }
 
 .footer-brand {
-  flex: 1.4;
-}
-
-.footer-brand p {
-  margin-top: 10px;
-  color: #c9b9a4;
-  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 #footer .logo-text {
-  color: #fff;
+  color: #FFFFFF;
+  font-size: 24px;
 }
 
 #footer .logo-badge {
   background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.footer-links {
-  flex: 1;
+.footer-brand p {
+  color: #C9B9A4;
+  font-size: 14px;
+  line-height: 1.65;
+  max-width: 320px;
+}
+
+.footer-address {
+  font-size: 13.5px;
+  color: #EBD9C7;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.footer-column {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.footer-links h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 4px;
+.footer-column h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: #FFFFFF;
+  letter-spacing: 0.01em;
+  margin-bottom: 6px;
+  position: relative;
 }
 
-.footer-links .link {
-  color: #c9b9a4;
+.footer-column .link {
+  color: #C9B9A4;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.footer-links .link:hover {
-  color: var(--accent);
+.footer-column .link:hover {
+  color: #FFFFFF;
+  transform: translateX(4px);
+}
+
+.footer-emergency-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(224, 122, 95, 0.18);
+  border: 1px solid rgba(224, 122, 95, 0.4);
+  color: #FFB39F;
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  margin-top: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer-emergency-pill:hover {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
+}
+
+.footer-hours {
+  font-size: 13px;
+  color: #C9B9A4;
+  line-height: 1.5;
+}
+
+.footer-copy-wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 22px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #9C8974;
 }
 
 .footer-copy {
-  text-align: center;
-  font-size: 13px;
-  color: #a08d78;
-  padding: 20px 0;
+  margin: 0;
+}
+
+.footer-badge-student {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  color: #C9B9A4;
 }

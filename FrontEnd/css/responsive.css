@@ -1,7 +1,7 @@
 /* ============================================================
-   responsive.css
-   Toàn bộ @media query của site — load SAU CÙNG (sau mọi file
-   CSS khác) để các rule ở đây có thể override khi cần.
+   responsive.css - Responsive Breakpoints for PawnCare
+   - Tablet: <= 860px
+   - Mobile: <= 480px
    ============================================================ */
 
 @media (max-width: 860px) {
@@ -10,19 +10,23 @@
     order: 2;
   }
 
+  .d-none-mobile {
+    display: none !important;
+  }
+
   #menu {
     order: 4;
     flex-basis: 100%;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.25s ease;
+    transition: max-height 0.3s ease;
   }
 
   #menu.open {
-    max-height: 300px;
-    padding-top: 8px;
+    max-height: 380px;
+    padding-top: 12px;
   }
 
   .auth,
@@ -34,12 +38,17 @@
   #content {
     flex-direction: column-reverse;
     text-align: center;
-    padding: 40px 24px;
+    padding: 40px 24px 60px;
+    gap: 40px;
   }
 
   .hero-text p {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
   }
 
   .service-grid,
@@ -52,22 +61,61 @@
   .about-inner,
   .contact-inner {
     flex-direction: column;
+    gap: 40px;
   }
 
-  .stats {
-    justify-content: center;
-    text-align: center;
+  .about-floating-quote {
+    position: static;
+    margin-top: 16px;
   }
 
   .footer-inner {
-    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 580px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
     gap: 32px;
+  }
+
+  .footer-copy-wrap {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
   }
 }
 
 @media (max-width: 480px) {
   .hero-text h1 {
     font-size: 32px;
+    line-height: 1.25;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn-cta {
+    width: 100%;
+  }
+
+  .floating-badge {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .badge-top-left {
+    top: -10px;
+    left: -6px;
+  }
+
+  .badge-bottom-right {
+    bottom: -10px;
+    right: -6px;
   }
 
   .service-grid,
@@ -78,19 +126,31 @@
   }
 
   .stats {
-    flex-direction: column;
-    gap: 16px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .section h2 {
     font-size: 26px;
   }
 
+  .cta-banner-card {
+    padding: 36px 20px;
+  }
+
+  .cta-banner-card h2 {
+    font-size: 24px;
+  }
+
+  .contact-form-card {
+    padding: 24px 18px;
+  }
+
   .auth-card {
-    padding: 28px 22px;
+    padding: 28px 20px;
   }
 
   .pill-btn span {
-    display: none; /* mobile chỉ hiện icon, ẩn chữ để đỡ chật header */
+    display: none; /* mobile chỉ hiện icon để đỡ chật header */
   }
 }

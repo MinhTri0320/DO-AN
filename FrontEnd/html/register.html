@@ -4,9 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/tokens.css" />
@@ -44,10 +43,16 @@
         </button>
         <nav id="menu">
           <a href="./index.html" class="link">Trang chủ</a>
+          <a href="./index.html#services" class="link">Dịch vụ</a>
+          <a href="./index.html#about" class="link">Giới thiệu</a>
           <a href="./forum.html" class="link">Diễn đàn</a>
           <a href="./campaigns.html" class="link">Chiến dịch</a>
           <a href="./index.html#contact" class="link">Liên hệ</a>
         </nav>
+        <a href="tel:0900123456" class="btn-hotline d-none-mobile">
+          <span>📞</span>
+          <span>0900 123 456</span>
+        </a>
         <div class="auth" id="authGuest">
           <a href="./login.html" class="pill-btn btn-login">
             <svg viewBox="0 0 24 24" fill="none">
@@ -519,21 +524,39 @@
             </span>
             <span class="logo-text">PawnCare</span>
           </a>
-          <p>Chăm sóc toàn diện cho thú cưng của bạn, mỗi ngày.</p>
+          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+          <div class="footer-address">
+            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+          </div>
         </div>
-        <div class="footer-links">
+        <div class="footer-column">
+          <h4>Dịch vụ</h4>
+          <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
+          <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
+          <a href="./index.html#services" class="link">Phục hồi chức năng</a>
+          <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
+        </div>
+        <div class="footer-column">
           <h4>Điều hướng</h4>
           <a href="./index.html" class="link">Trang chủ</a>
-          <a href="./forum.html" class="link">Diễn đàn</a>
-          <a href="./campaigns.html" class="link">Chiến dịch</a>
+          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+          <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
+          <a href="./index.html#contact" class="link">Liên hệ đặt lịch</a>
         </div>
-        <div class="footer-links">
-          <h4>Tài khoản</h4>
-          <a href="./login.html" class="link">Đăng nhập</a>
-          <a href="./register.html" class="link">Đăng ký</a>
+        <div class="footer-column">
+          <h4>Hỗ trợ khẩn cấp</h4>
+          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+          <a href="tel:0900123456" class="footer-emergency-pill">
+            <span>🚨</span>
+            <span>0900 123 456</span>
+          </a>
+          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
         </div>
       </div>
-      <p class="footer-copy">© 2026 PawnCare. Đồ án nhóm CMU-IS 432-AIS.</p>
+      <div class="footer-copy-wrap">
+        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+      </div>
     </footer>
 
     <script type="module" src="../js/main.js"></script>

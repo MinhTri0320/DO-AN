@@ -6,9 +6,12 @@
 #header {
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: var(--cream);
+  z-index: 100;
+  background: rgba(251, 248, 245, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
+  transition: all 0.25s ease;
 }
 
 .header-inner {
@@ -20,58 +23,64 @@
   gap: 32px;
 }
 
-/* logo: mascot tròn + wordmark serif, phỏng theo bố cục Pawmily
-   nhưng KHÔNG dùng lại hình minh họa nhân vật của họ */
+/* logo: mascot tròn + wordmark serif, phỏng theo bố cục Pawmily */
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .logo-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--brown-soft);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #F5EFEB 0%, #EFE3D5 100%);
   color: var(--brown);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border: 1px solid var(--tan-light);
+  box-shadow: 0 2px 6px rgba(51, 29, 18, 0.08);
 }
 
 .logo-badge svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 .logo-text {
   font-family: var(--font-display);
-  font-size: 21px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--brown);
 }
 
-/* nav menu — ngang, dạng chữ đơn giản */
+/* nav menu — ngang, dạng chữ thanh lịch */
 #menu {
   flex: 1;
   display: flex;
   gap: 28px;
+  align-items: center;
 }
 
 #menu .link {
+  font-family: var(--font-heading);
   font-weight: 600;
-  color: var(--ink);
-  padding: 6px 2px;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  font-size: 15px;
+  color: var(--ink-soft);
+  padding: 8px 4px;
+  border-bottom: 2.5px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 #menu .link:hover,
 #menu .link.active {
-  color: var(--accent-dark);
+  color: var(--brown);
   border-bottom-color: var(--accent);
 }
 

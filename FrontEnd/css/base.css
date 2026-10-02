@@ -4,22 +4,41 @@
    Cần load SAU tokens.css (để dùng được các biến --cream, --ink...).
    ============================================================ */
 
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+::selection {
+  background: var(--tan-light);
+  color: var(--brown);
+}
+
 body {
   font-family: var(--font-body);
   color: var(--ink);
   background: var(--cream);
-  line-height: 1.6;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--brown);
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
 }
 
 a {
   text-decoration: none;
   color: inherit;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 img {

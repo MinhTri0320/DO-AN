@@ -1,37 +1,57 @@
 /* ============================================================
-   tokens.css
-   Biến CSS (design tokens) dùng chung cho TOÀN BỘ site.
-   Đổi tông màu cả site chỉ cần sửa ở đây, không cần đụng file khác.
+   tokens.css - PawnCare Design System (phỏng theo Pawmily 80%+)
+   - Font: "Be Vietnam Pro" (nội dung), "Lora" (tiêu đề serif ấm áp),
+           "Quicksand" (tiêu đề bo tròn hiện đại)
+   - Tông màu: Nâu cà phê đậm (#331D12), kem ấm (#F5EFEB, #FBF8F5),
+               vàng cát (#B5997E), cam san hô (#E07A5F, #C95A34)
    ============================================================ */
 
 :root {
-  /* nền */
-  --cream: #faf3ea;       /* nền trang, ấm hơn bản cũ */
-  --card: #f2e6d6;         /* nền section xen kẽ / thẻ nhạt */
-  --surface: #ffffff;      /* nền thẻ nổi (card, input, modal) */
+  /* Nền */
+  --cream: #FBF8F5;          /* Nền trang chính, ấm áp & sạch sẽ */
+  --cream-soft: #F5EFEB;     /* Nền phụ xen kẽ / badge */
+  --card: #FCF6EE;           /* Nền thẻ ấm áp */
+  --surface: #FFFFFF;        /* Nền thẻ trắng nổi bật */
+  --dark-bg: #2A1B14;        /* Nền tối cho Footer */
 
-  /* chữ */
-  --ink: #3a2a1d;           /* chữ chính, nâu đậm thay vì đen */
-  --ink-soft: #6b5645;     /* chữ phụ, mô tả */
-  --ink-faint: #9c8874;    /* chữ rất nhạt, placeholder/icon */
+  /* Chữ */
+  --ink: #331D12;            /* Chữ chính nâu đậm sang trọng */
+  --ink-soft: #634E41;       /* Chữ mô tả, phụ đề */
+  --ink-faint: #968374;      /* Chữ nhạt, placeholder, metadata */
+  --ink-light: #F5EFEB;      /* Chữ sáng màu trên nền tối */
 
-  /* thương hiệu — nâu cà phê làm màu chủ đạo (giống Pawmily) */
-  --brown: #4a3527;
-  --brown-dark: #33231a;
-  --brown-soft: #efe0cd;   /* nền nhạt dùng cho hover pill, badge */
+  /* Thương hiệu PawnCare */
+  --brown: #331D12;          /* Nâu espresso chủ đạo */
+  --brown-dark: #23130B;     /* Nâu đậm hơn khi hover/active */
+  --brown-hover: #452819;    /* Nâu khi hover */
+  --brown-medium: #5B3A29;   /* Nâu vừa cho các chi tiết phụ */
+  --brown-soft: #EFE3D5;     /* Nền nhạt cho hover pill */
+  --tan: #B5997E;            /* Vàng cát sang trọng */
+  --tan-light: #DCC9B6;      /* Đường viền mỏng đặc trưng Pawmily */
 
-  /* điểm nhấn — cam đất ấm, dùng cho CTA/liên kết/badge nổi bật */
-  --accent: #d97757;
-  --accent-dark: #b85f42;
+  /* Điểm nhấn & Trạng thái */
+  --accent: #E07A5F;         /* Cam san hô / đất ấm nổi bật */
+  --accent-dark: #C95A34;    /* Cam đậm khi active/hover */
+  --accent-soft: #FFF2EE;    /* Nền cam nhạt cho badge, tag */
+  --pink-phone: #BE3975;     /* Hồng tím cho icon hotline/điện thoại */
+  --star-gold: #F5A623;      /* Vàng sao đánh giá */
+  --success: #388E3C;
+  --danger: #D32F2F;
 
-  --line: #e7d9c4;
-  --danger: #c85c5c;
-  --success: #4c8c6b;
+  /* Font chữ chuẩn Pawmily */
+  --font-body: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Lora", Georgia, serif;
+  --font-heading: "Quicksand", "Be Vietnam Pro", sans-serif;
+  --font-display: "Lora", serif;
 
-  --font-display: "Fraunces", "Baloo 2", serif;
-  --font-body: "Nunito Sans", sans-serif;
-
-  --radius-pill: 999px;
+  /* Bo góc & Đổ bóng chuẩn hiện đại */
+  --radius-sm: 8px;
+  --radius-md: 14px;
   --radius-card: 24px;
-  --shadow-card: 0 24px 48px -28px rgba(58, 42, 29, 0.35);
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+  --shadow-sm: 0 2px 8px rgba(51, 29, 18, 0.06);
+  --shadow-card: 0 16px 36px -12px rgba(51, 29, 18, 0.12), 0 4px 12px rgba(51, 29, 18, 0.04);
+  --shadow-hover: 0 22px 45px -12px rgba(51, 29, 18, 0.2);
+  --line: #EBD9C7;
 }

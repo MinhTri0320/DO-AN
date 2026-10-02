@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/tokens.css" />
@@ -17,9 +17,10 @@
     <link rel="stylesheet" href="../css/notifications.css" />
     <link rel="stylesheet" href="../css/auth.css" />
     <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Thông báo - PawnCare</title>
+    <title>Thông báo của bạn - PawnCare Đà Nẵng</title>
   </head>
   <body>
+    <!-- ===== HEADER / NAVBAR ===== -->
     <header id="header">
       <div class="header-inner">
         <a href="./index.html" class="logo">
@@ -39,10 +40,16 @@
         </button>
         <nav id="menu">
           <a href="./index.html" class="link">Trang chủ</a>
+          <a href="./index.html#services" class="link">Dịch vụ</a>
+          <a href="./index.html#about" class="link">Giới thiệu</a>
           <a href="./forum.html" class="link">Diễn đàn</a>
           <a href="./campaigns.html" class="link">Chiến dịch</a>
           <a href="./index.html#contact" class="link">Liên hệ</a>
         </nav>
+        <a href="tel:0900123456" class="btn-hotline d-none-mobile">
+          <span>📞</span>
+          <span>0900 123 456</span>
+        </a>
         <div class="auth" id="authGuest">
           <a href="./login.html" class="pill-btn btn-login">
             <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -54,7 +61,7 @@
           </a>
         </div>
         <div class="auth auth-user" id="authUser" hidden>
-          <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+          <a href="./notifications.html" class="icon-btn active" aria-label="Thông báo">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
               <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
               <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -75,21 +82,28 @@
       </div>
     </header>
 
+    <!-- ===== NOTIFICATIONS SECTION ===== -->
     <section class="section">
       <div class="section-inner">
-        <p class="tag">Thông báo</p>
-        <h2>Cập nhật mới nhất dành cho bạn</h2>
+        <div class="section-header">
+          <span class="section-badge">🐾 HỘP THƯ THÔNG BÁO</span>
+          <h2>Cập Nhật Mới Nhất Dành Cho Bạn</h2>
+          <p class="section-subtitle">
+            Theo dõi lịch hẹn khám, ưu đãi spa làm đẹp và tương tác cộng đồng của bạn tại PawnCare.
+          </p>
+        </div>
 
         <div class="notif-toolbar">
           <span></span>
-          <button class="btn-text" id="markAllRead" type="button">Đánh dấu tất cả đã đọc</button>
+          <button class="btn-text" id="markAllRead" type="button">✓ Đánh dấu tất cả đã đọc</button>
         </div>
 
         <div class="notif-list" id="notifList"></div>
-        <p class="empty-state" id="notifEmpty" hidden>Bạn chưa có thông báo nào.</p>
+        <p class="empty-state" id="notifEmpty" hidden>Hiện tại bạn không có thông báo mới nào.</p>
       </div>
     </section>
 
+    <!-- ===== FOOTER ===== -->
     <footer id="footer">
       <div class="section-inner footer-inner">
         <div class="footer-brand">
@@ -105,21 +119,39 @@
             </span>
             <span class="logo-text">PawnCare</span>
           </a>
-          <p>Chăm sóc toàn diện cho thú cưng của bạn, mỗi ngày.</p>
+          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+          <div class="footer-address">
+            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+          </div>
         </div>
-        <div class="footer-links">
+        <div class="footer-column">
+          <h4>Dịch vụ</h4>
+          <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
+          <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
+          <a href="./index.html#services" class="link">Phục hồi chức năng</a>
+          <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
+        </div>
+        <div class="footer-column">
           <h4>Điều hướng</h4>
           <a href="./index.html" class="link">Trang chủ</a>
-          <a href="./forum.html" class="link">Diễn đàn</a>
-          <a href="./campaigns.html" class="link">Chiến dịch</a>
+          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+          <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
+          <a href="./index.html#contact" class="link">Liên hệ đặt lịch</a>
         </div>
-        <div class="footer-links">
-          <h4>Tài khoản</h4>
-          <a href="./login.html" class="link">Đăng nhập</a>
-          <a href="./register.html" class="link">Đăng ký</a>
+        <div class="footer-column">
+          <h4>Hỗ trợ khẩn cấp</h4>
+          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+          <a href="tel:0900123456" class="footer-emergency-pill">
+            <span>🚨</span>
+            <span>0900 123 456</span>
+          </a>
+          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
         </div>
       </div>
-      <p class="footer-copy">© 2026 PawnCare. Đồ án nhóm CMU-IS 432-AIS.</p>
+      <div class="footer-copy-wrap">
+        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+      </div>
     </footer>
 
     <script type="module" src="../js/main.js"></script>
