@@ -180,3 +180,39 @@ export function logoutUser() {
   localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
   notifyAuthChange(null);
 }
+
+export function updateCurrentUser(patch) {
+  const current = getCurrentUser() || {
+    id: "user_" + Date.now(),
+    name: "Minh Anh",
+    phone: "0900123456",
+    email: "minhanh@pawncare.vn",
+    dob: "2000-05-15",
+    gender: "female",
+    memberTier: "Khách hàng Thân thiết",
+    joinedDate: "10/2025",
+    address: {
+      houseNumber: "123",
+      street: "Nguyễn Văn Linh",
+      ward: "Phường Nam Dương",
+      district: "Quận Hải Châu",
+      city: "TP. Đà Nẵng",
+    },
+  };
+
+  const updated = {
+    ...current,
+    ...patch,
+    address: {
+      ...(current.address || {}),
+      ...(patch.address || {}),
+      city: "TP. Đà Nẵng",
+    },
+  };
+
+  setData(STORAGE_KEYS.CURRENT_USER, updated);
+  saveLocalUser(updated);
+  notifyAuthChange(updated);
+  return updated;
+}
+

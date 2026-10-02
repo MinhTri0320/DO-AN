@@ -56,13 +56,22 @@ function initAvatarDropdown() {
 
 function initLogoutButton() {
   const logoutBtn = document.getElementById("logoutBtn");
-  if (!logoutBtn) return;
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      logoutUser();
+      window.location.href = "./index.html";
+    });
+  }
 
-  logoutBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    logoutUser();
-    window.location.href = "./index.html";
-  });
+  const sidebarLogout = document.getElementById("sidebarLogoutLink");
+  if (sidebarLogout) {
+    sidebarLogout.addEventListener("click", (e) => {
+      e.preventDefault();
+      logoutUser();
+      window.location.href = "./index.html";
+    });
+  }
 }
 
 // Hàm duy nhất mà main.js cần gọi — chạy trên MỌI trang

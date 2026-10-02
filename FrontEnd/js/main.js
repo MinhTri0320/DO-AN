@@ -17,6 +17,8 @@ import { initNotificationsPage } from "./notifications.js";
 import { initCampaignsPage } from "./campaigns.js";
 import { initContactForm } from "./contact.js";
 import { initPasswordToggles } from "./password-toggle.js";
+import { initCustomerProfilePage } from "./customer-profile.js";
+import { initPetProfilePage } from "./pet-profile.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initHeader(); // luôn chạy — header có ở mọi trang
@@ -28,4 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initCampaignsPage(); // tự bỏ qua nếu không ở campaigns.html
   initContactForm(); // tự bỏ qua nếu không có #contactForm
   initPasswordToggles(); // gắn cho mọi nút con mắt hiện/ẩn mật khẩu
+  initCustomerProfilePage(); // tự bỏ qua nếu không ở customer-profile
+  initPetProfilePage(); // tự bỏ qua nếu không ở pet-profile
 });

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=./customer-profile.html" />
+    <title>Chuyển hướng - PawnCare Profile</title>
+    <script>
+      // Nếu có hash #pets thì chuyển sang pet-profile.html, ngược lại sang customer-profile.html
+      if (window.location.hash === "#pets") {
+        window.location.replace("./pet-profile.html");
+      } else {
+        window.location.replace("./customer-profile.html");
+      }
+    </script>
+  </head>
+  <body>
+    <p>Đang chuyển hướng đến <a href="./customer-profile.html">Hồ sơ khách hàng</a>...</p>
+  </body>
+</html>

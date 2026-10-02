@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/buttons.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" />
+    <link rel="stylesheet" href="../css/forms.css" />
+    <link rel="stylesheet" href="../css/profile.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <title>Hồ Sơ Thú Cưng (Pet Profile) - PawnCare Đà Nẵng</title>
+  </head>
+  <body>
+    <!-- ===== HEADER / NAVBAR ===== -->
+    <header id="header">
+      <div class="header-inner">
+        <a href="./index.html" class="logo">
+          <span class="logo-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="12" cy="16" rx="6" ry="5" />
+              <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+              <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+              <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+              <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+            </svg>
+          </span>
+          <span class="logo-text">PawnCare</span>
+        </a>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="menu">
+          <a href="./index.html" class="link">Trang chủ</a>
+          <a href="./index.html#services" class="link">Dịch vụ</a>
+          <a href="./index.html#about" class="link">Giới thiệu</a>
+          <a href="./forum.html" class="link">Diễn đàn</a>
+          <a href="./campaigns.html" class="link">Chiến dịch</a>
+          <a href="./index.html#contact" class="link">Liên hệ</a>
+        </nav>
+
+        <a href="tel:0900123456" class="btn-hotline d-none-mobile">
+          <span>📞</span>
+          <span>0900 123 456</span>
+        </a>
+
+        <div class="auth" id="authGuest">
+          <a href="./login.html" class="pill-btn btn-login">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Đăng nhập</span>
+          </a>
+          <a href="./register.html" class="pill-btn btn-signup">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Đăng ký</span>
+          </a>
+        </div>
+
+        <div class="auth auth-user" id="authUser" hidden>
+          <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+              <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="badge" id="notifBadge" hidden>0</span>
+          </a>
+
+          <div class="user-menu">
+            <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+              <span id="userInitial">U</span>
+            </button>
+            <div class="dropdown" id="userDropdown" hidden>
+              <p class="dropdown-name" id="userName">—</p>
+              <a href="./customer-profile.html" class="dropdown-link">Hồ sơ khách hàng</a>
+              <a href="./pet-profile.html" class="dropdown-link">Hồ sơ thú cưng</a>
+              <a href="#" class="dropdown-link" id="logoutBtn">Đăng xuất</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="profile-page">
+      <div class="section-inner profile-layout">
+        <!-- Sidebar trái -->
+        <aside class="profile-sidebar">
+          <div class="profile-user-card">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="sidebarUserInitial">U</div>
+            </div>
+            <h3 id="sidebarUserName">Khách hàng</h3>
+            <p id="sidebarUserPhone">0900 123 456</p>
+            <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
+          </div>
+
+          <nav class="profile-nav">
+            <a href="./customer-profile.html" class="profile-nav-link">
+              <span class="nav-icon">👤</span>
+              <span>Hồ sơ khách hàng</span>
+            </a>
+            <a href="./pet-profile.html" class="profile-nav-link active">
+              <span class="nav-icon">🐾</span>
+              <span>Hồ sơ thú cưng</span>
+            </a>
+            <a href="./notifications.html" class="profile-nav-link">
+              <span class="nav-icon">🔔</span>
+              <span>Hộp thư thông báo</span>
+            </a>
+            <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
+              <span class="nav-icon">🚪</span>
+              <span>Đăng xuất</span>
+            </a>
+          </nav>
+
+          <div class="profile-sidebar-help">
+            <strong>Cần tư vấn thú y?</strong>
+            <p>Bác sĩ PawnCare trực 24/7 tại Đà Nẵng: <a href="tel:0900123456">0900 123 456</a>.</p>
+          </div>
+        </aside>
+
+        <!-- Panel phải: Pet Profile Management -->
+        <section class="profile-main">
+          <div class="profile-header">
+            <div class="profile-header-left">
+              <span class="section-badge">🐾 QUẢN LÝ THÚ CƯNG</span>
+              <h1>Hồ Sơ Thú Cưng (Pet Profile)</h1>
+              <p>Quản lý thông tin hồ sơ của các bé cưng: tên, loài, giống, tuổi, cân nặng và các thông tin liên quan.</p>
+            </div>
+            <div>
+              <button class="btn-cta" id="btnOpenAddPet" type="button">
+                <span>➕</span>
+                <span>Thêm Thú Cưng Mới</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Thanh chỉ số Pet -->
+          <div class="profile-stats-bar">
+            <div class="p-stat-box">
+              <div class="p-stat-icon">🐕</div>
+              <div class="p-stat-info">
+                <strong id="petCountStat">2 bé cưng</strong>
+                <span>Tổng số thú cưng</span>
+              </div>
+            </div>
+            <div class="p-stat-box">
+              <div class="p-stat-icon">💉</div>
+              <div class="p-stat-info">
+                <strong>100% Đầy đủ</strong>
+                <span>Tiêm phòng định kỳ</span>
+              </div>
+            </div>
+            <div class="p-stat-box">
+              <div class="p-stat-icon">🩺</div>
+              <div class="p-stat-info">
+                <strong>BS. Thú Y PawnCare</strong>
+                <span>Hồ sơ y tế chuẩn hóa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danh sách thẻ thú cưng -->
+          <div class="pet-grid" id="petGridContainer"></div>
+
+          <!-- Trạng thái trống khi chưa có Pet nào -->
+          <div class="pet-empty-state" id="petEmptyState" hidden>
+            <div class="pet-empty-icon">🐶</div>
+            <h3>Bạn chưa thêm hồ sơ bé cưng nào</h3>
+            <p>Hãy thêm thông tin bé cưng của bạn để bác sĩ PawnCare dễ dàng theo dõi sức khỏe và lịch trình làm đẹp tốt nhất!</p>
+            <button class="btn-cta" id="btnEmptyAddPet" type="button">
+              <span>+ Thêm thú cưng đầu tiên</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ===== MODAL THÊM / SỬA THÚ CƯNG ===== -->
+    <div class="modal-overlay" id="petModal" hidden>
+      <div class="modal-card pet-modal-card">
+        <button class="modal-close" id="petModalClose" aria-label="Đóng">✕</button>
+        <h3 id="petModalTitle">Thêm Thú Cưng Mới</h3>
+
+        <form id="petForm" class="form">
+          <input type="hidden" name="petId" />
+          <input type="hidden" name="petAvatar" value="../assets/img/golden.jpg" />
+
+          <div class="form-grid-2">
+            <label>
+              <span>Tên bé cưng <strong style="color:var(--danger)">*</strong></span>
+              <input type="text" name="petName" placeholder="VD: Bé Bơ, Miu Miu..." required />
+            </label>
+
+            <label>
+              <span>Loài thú cưng</span>
+              <select name="petSpecies">
+                <option value="Chó" selected>🐶 Chó</option>
+                <option value="Mèo">🐱 Mèo</option>
+                <option value="Khác">🐰 Khác (Thỏ, Hamster...)</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-grid-2">
+            <label>
+              <span>Giống loài</span>
+              <input type="text" name="petBreed" placeholder="VD: Golden Retriever, Poodle, Anh lông ngắn..." />
+            </label>
+
+            <label>
+              <span>Giới tính</span>
+              <select name="petGender">
+                <option value="Đực" selected>♂ Đực</option>
+                <option value="Cái">♀ Cái</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-grid-2">
+            <label>
+              <span>Độ tuổi / Ngày sinh</span>
+              <input type="text" name="petAge" placeholder="VD: 2 tuổi (hoặc 15/06/2024)" />
+            </label>
+
+            <label>
+              <span>Cân nặng (kg)</span>
+              <input type="number" step="0.1" name="petWeight" placeholder="VD: 5.5" />
+            </label>
+          </div>
+
+          <div class="form-grid-2">
+            <label>
+              <span>Tình trạng tiêm phòng</span>
+              <select name="petVaccinated">
+                <option value="Đã tiêm phòng đủ" selected>✓ Đã tiêm phòng đủ</option>
+                <option value="Cần tiêm nhắc lại">⚠️ Cần tiêm nhắc lại</option>
+                <option value="Chưa tiêm phòng">❌ Chưa tiêm phòng</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Tình trạng triệt sản</span>
+              <select name="petSterilized">
+                <option value="Đã triệt sản" selected>✓ Đã triệt sản</option>
+                <option value="Chưa triệt sản">Chưa triệt sản</option>
+              </select>
+            </label>
+          </div>
+
+          <!-- Chọn ảnh đại diện mẫu -->
+          <label>
+            <span>Ảnh đại diện bé cưng (Chọn ảnh mẫu đáng yêu):</span>
+            <div class="pet-preset-photos">
+              <button type="button" class="preset-photo-btn active" data-src="../assets/img/golden.jpg">
+                <img src="../assets/img/golden.jpg" alt="Golden" />
+              </button>
+              <button type="button" class="preset-photo-btn" data-src="../assets/img/frenchie.jpg">
+                <img src="../assets/img/frenchie.jpg" alt="Frenchie" />
+              </button>
+              <button type="button" class="preset-photo-btn" data-src="../assets/img/grooming.jpg">
+                <img src="../assets/img/grooming.jpg" alt="Poodle" />
+              </button>
+              <button type="button" class="preset-photo-btn" data-src="../assets/img/lobby.jpg">
+                <img src="../assets/img/lobby.jpg" alt="Lobby" />
+              </button>
+            </div>
+          </label>
+
+          <label>
+            <span>Ghi chú sức khỏe &amp; thói quen đặc biệt:</span>
+            <textarea name="petNotes" rows="3" placeholder="VD: Dị ứng thịt bò, rất thích gãi tai, ngoan khi tắm và cắt tỉa lông..."></textarea>
+          </label>
+
+          <div class="profile-actions" style="margin-top: 16px; padding-top: 16px;">
+            <button type="submit" class="btn-cta">
+              <span>💾</span>
+              <span>Lưu thông tin hồ sơ bé</span>
+            </button>
+            <button type="button" class="btn-cta btn-cta-outline" id="btnCancelPetModal">
+              <span>Hủy bỏ</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer id="footer">
+      <div class="section-inner footer-inner">
+        <div class="footer-brand">
+          <a href="./index.html" class="logo">
+            <span class="logo-badge">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <ellipse cx="12" cy="16" rx="6" ry="5" />
+                <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+                <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+                <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+                <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+              </svg>
+            </span>
+            <span class="logo-text">PawnCare</span>
+          </a>
+          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+          <div class="footer-address">
+            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Dịch vụ</h4>
+          <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
+          <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
+          <a href="./index.html#services" class="link">Phục hồi chức năng</a>
+          <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
+        </div>
+        <div class="footer-column">
+          <h4>Điều hướng</h4>
+          <a href="./index.html" class="link">Trang chủ</a>
+          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+          <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
+          <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
+          <a href="./pet-profile.html" class="link">Hồ sơ thú cưng</a>
+        </div>
+        <div class="footer-column">
+          <h4>Hỗ trợ khẩn cấp</h4>
+          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+          <a href="tel:0900123456" class="footer-emergency-pill">
+            <span>🚨</span>
+            <span>0900 123 456</span>
+          </a>
+          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
+        </div>
+      </div>
+      <div class="footer-copy-wrap">
+        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+      </div>
+    </footer>
+
+    <script type="module" src="../js/main.js"></script>
+  </body>
+</html>

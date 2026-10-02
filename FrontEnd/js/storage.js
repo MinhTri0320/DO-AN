@@ -9,6 +9,8 @@ export const STORAGE_KEYS = {
   NOTIFICATIONS: "pawncare_notifications",
   FORUM_POSTS: "pawncare_forum_posts",
   CAMPAIGN_REGS: "pawncare_campaign_regs",
+  PETS: "pawncare_pets",
+  CUSTOMER_PROFILES: "pawncare_customer_profiles",
 };
 
 export function getData(key, fallback) {
