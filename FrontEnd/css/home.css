@@ -730,3 +730,30 @@
   color: var(--brown);
   margin-bottom: 20px;
 }
+
+.contact-form-card .form {
+  width: 100%;
+}
+
+.contact-form-card label,
+.contact-form-card .input-icon-wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contact-form-card input,
+.contact-form-card textarea {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.contact-form-card textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contact-form-card .btn-cta {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}

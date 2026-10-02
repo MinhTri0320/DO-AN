@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
 }
 
 .form label {
@@ -16,11 +17,15 @@
   gap: 6px;
   font-weight: 600;
   font-size: 14px;
+  width: 100%;
 }
 
 .form input,
 .form textarea,
 .form select {
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
   font-family: var(--font-body);
   font-size: 16px;
   padding: 16px 18px;
@@ -90,6 +95,8 @@
 /* icon bên trong ô input (email, password, phone...) */
 .input-icon-wrap {
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input-icon-wrap > svg {
@@ -104,11 +111,18 @@
 }
 
 .input-icon-wrap input {
-  padding-left: 42px;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  padding-left: 44px;
 }
 
 .input-icon-wrap textarea {
-  padding-left: 42px;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  padding-left: 44px;
+  min-height: 110px;
 }
 
 /* textarea nhiều dòng: icon neo lên trên thay vì canh giữa */
