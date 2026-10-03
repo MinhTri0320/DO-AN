@@ -13,21 +13,21 @@
 
 .composer {
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
   padding: 24px;
-  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
   transition: all 0.25s ease;
 }
 
 .composer:focus-within {
-  border-color: var(--tan);
+  border-color: var(--accent-border);
   box-shadow: var(--shadow-card);
 }
 
 .composer textarea {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 16px;
   padding: 16px 18px;
   font-family: var(--font-body);
@@ -35,16 +35,17 @@
   line-height: 1.6;
   resize: vertical;
   margin-bottom: 16px;
-  background: var(--cream);
+  background: var(--cream-soft);
   color: var(--ink);
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
 .composer textarea:focus {
-  outline: 2px solid var(--accent);
+  outline: none;
   background: #fff;
-  border-color: var(--accent);
+  border-color: var(--accent-dark);
+  box-shadow: 0 0 0 3.5px rgba(201, 90, 52, 0.12);
 }
 
 .composer-footer {
@@ -55,8 +56,8 @@
 .composer-locked {
   text-align: center;
   padding: 24px 20px;
-  background: var(--card);
-  border: 1px dashed var(--tan);
+  background: var(--accent-soft);
+  border: 1.5px dashed var(--accent-border);
   border-radius: var(--radius-card);
   font-family: var(--font-heading);
   font-weight: 600;
@@ -77,16 +78,16 @@
 
 .post-card {
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
   padding: 26px;
-  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
   transition: all 0.25s ease;
 }
 
 .post-card:hover {
   box-shadow: var(--shadow-card);
-  border-color: var(--tan);
+  border-color: var(--accent-border);
 }
 
 .post-head {
@@ -100,15 +101,15 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--brown-soft);
-  color: var(--brown);
+  background: var(--accent-soft);
+  color: var(--accent-dark);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid var(--tan-light);
+  border: 1.5px solid var(--accent-border);
   flex-shrink: 0;
 }
 

@@ -8,6 +8,7 @@
    ============================================================ */
 
 import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
+import { apiSavePet, apiDeletePet } from "./api.js";
 
 const DEFAULT_PETS = [
   {
@@ -76,6 +77,14 @@ export function savePetItem(petData) {
     pets.push(petData);
   }
   setData(STORAGE_KEYS.PETS, pets);
+
+  // Gửi fetch API tới BackEnd
+  try {
+    apiSavePet(petData);
+  } catch (e) {
+    // API client đã xử lý fallback
+  }
+
   return pets;
 }
 
@@ -83,6 +92,14 @@ export function deletePetItem(petId) {
   let pets = getPetsList();
   pets = pets.filter((p) => p.id !== petId);
   setData(STORAGE_KEYS.PETS, pets);
+
+  // Gửi fetch API xóa tới BackEnd
+  try {
+    apiDeletePet(petId);
+  } catch (e) {
+    // API client đã xử lý fallback
+  }
+
   return pets;
 }
 

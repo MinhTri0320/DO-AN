@@ -9,6 +9,7 @@
 
 import { getCurrentUser, updateCurrentUser } from "./auth.js";
 import { escapeHTML } from "./storage.js";
+import { apiUpdateProfile } from "./api.js";
 
 function showToast(message, type = "success") {
   let toast = document.getElementById("profileToast");
@@ -121,6 +122,14 @@ export function initCustomerProfilePage() {
     // Lưu vào auth & localStorage
     const saved = updateCurrentUser(updatedData);
     updateSidebarCard(saved);
+
+    // Gửi fetch API cập nhật hồ sơ tới BackEnd
+    try {
+      apiUpdateProfile(updatedData);
+    } catch (e) {
+      // API client đã xử lý fallback
+    }
+
     showToast("Cập nhật thông tin hồ sơ khách hàng thành công!");
   });
 

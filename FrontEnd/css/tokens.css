@@ -1,57 +1,85 @@
 /* ============================================================
-   tokens.css - PawnCare Design System (phỏng theo Pawmily 80%+)
+   tokens.css - PawnCare Design System (Pawmily.vn Authentic Palette)
    - Font: "Be Vietnam Pro" (nội dung), "Lora" (tiêu đề serif ấm áp),
            "Quicksand" (tiêu đề bo tròn hiện đại)
-   - Tông màu: Nâu cà phê đậm (#331D12), kem ấm (#F5EFEB, #FBF8F5),
-               vàng cát (#B5997E), cam san hô (#E07A5F, #C95A34)
+   - Bảng màu Pawmily.vn:
+     + Nền chính: Ngà kem ấm áp (#FCF6EE) & Kem mềm (#F5EFEB)
+     + Tông chữ & Cà phê: Espresso đậm (#331D12), Mocha ấm (#5B3A29)
+     + Đường viền & Cát: Vàng cát (#B5997E), Viền bánh quy (#DCC9B6)
+     + Điểm nhấn sống động: Cam đất Terracotta (#C95A34), San hô (#E07A5F),
+       Nền ửng đào kem (#FFF2EE), Viền đào (#F6DBC2)
+     + Màu sắc đa dạng: Xanh thảo mộc Y khoa (#508D69, #EEF8F2), Vàng mật ong (#FB9600, #FEF8E7)
    ============================================================ */
 
 :root {
-  /* Nền */
-  --cream: #FBF8F5;          /* Nền trang chính, ấm áp & sạch sẽ */
-  --cream-soft: #F5EFEB;     /* Nền phụ xen kẽ / badge */
-  --card: #FCF6EE;           /* Nền thẻ ấm áp */
-  --surface: #FFFFFF;        /* Nền thẻ trắng nổi bật */
-  --dark-bg: #2A1B14;        /* Nền tối cho Footer */
+  /* ===== 1. TÔNG NỀN (BACKGROUNDS) ===== */
+  --cream: #FCF6EE;              /* Nền trang chính Pawmily (Ivory Cream ấm cúng, êm dịu) */
+  --cream-soft: #F5EFEB;         /* Nền xen kẽ giữa các section (--color-brand-cream) */
+  --card: #FFFFFF;               /* Nền thẻ nổi bật trên nền kem */
+  --surface: #FFFFFF;            /* Nền thẻ trắng tinh tươm */
+  --surface-alt: #FDFBF7;        /* Nền thẻ ấm nhẹ */
+  --dark-bg: #2A1B14;            /* Nền tối sâu cho Footer */
+  --dark-surface: #331D12;       /* Bề mặt tối cho Banner CTA */
 
-  /* Chữ */
-  --ink: #331D12;            /* Chữ chính nâu đậm sang trọng */
-  --ink-soft: #634E41;       /* Chữ mô tả, phụ đề */
-  --ink-faint: #968374;      /* Chữ nhạt, placeholder, metadata */
-  --ink-light: #F5EFEB;      /* Chữ sáng màu trên nền tối */
+  /* ===== 2. TÔNG CHỮ & TYPOGRAPHY ===== */
+  --ink: #331D12;                /* Chữ tiêu đề & chữ đậm espresso (--color-brand-dark) */
+  --ink-soft: #5B3A29;           /* Chữ nội dung mocha ấm áp (đặc trưng Pawmily, không xám lạnh) */
+  --ink-faint: #8C7769;          /* Chữ nhạt, placeholder, metadata, subtext */
+  --ink-light: #F5EFEB;          /* Chữ sáng màu trên nền tối */
 
-  /* Thương hiệu PawnCare */
-  --brown: #331D12;          /* Nâu espresso chủ đạo */
-  --brown-dark: #23130B;     /* Nâu đậm hơn khi hover/active */
-  --brown-hover: #452819;    /* Nâu khi hover */
-  --brown-medium: #5B3A29;   /* Nâu vừa cho các chi tiết phụ */
-  --brown-soft: #EFE3D5;     /* Nền nhạt cho hover pill */
-  --tan: #B5997E;            /* Vàng cát sang trọng */
-  --tan-light: #DCC9B6;      /* Đường viền mỏng đặc trưng Pawmily */
+  /* ===== 3. TÔNG THƯƠNG HIỆU CÀ PHÊ & CÁT (BRAND COFFEE & TAN) ===== */
+  --brown: #331D12;              /* Nâu espresso chủ đạo */
+  --brown-dark: #23130B;         /* Nâu đậm hơn khi hover/active */
+  --brown-hover: #452819;        /* Nâu khi hover */
+  --brown-medium: #5B3A29;       /* Nâu mocha đậm ấm cúng */
+  --brown-soft: #EFE3D5;         /* Nền kem latte nhạt cho hover pill */
+  --tan: #B5997E;                /* Vàng cát sang trọng (--color-brand-tan) */
+  --tan-light: #DCC9B6;          /* Đường viền mỏng đặc trưng Pawmily */
+  --line: #DCC9B6;               /* Đường viền chuẩn Pawmily #DCC9B6 */
 
-  /* Điểm nhấn & Trạng thái */
-  --accent: #E07A5F;         /* Cam san hô / đất ấm nổi bật */
-  --accent-dark: #C95A34;    /* Cam đậm khi active/hover */
-  --accent-soft: #FFF2EE;    /* Nền cam nhạt cho badge, tag */
-  --pink-phone: #BE3975;     /* Hồng tím cho icon hotline/điện thoại */
-  --star-gold: #F5A623;      /* Vàng sao đánh giá */
-  --success: #388E3C;
+  /* ===== 4. ĐIỂM NHẤN SỐNG ĐỘNG (SIGNATURE WARM ACCENTS) ===== */
+  --accent: #E07A5F;             /* Cam san hô ấm áp */
+  --accent-dark: #C95A34;        /* Cam đất Terracotta chủ đạo Pawmily (CTA chính) */
+  --accent-light: #E28854;       /* Cam hoàng hôn rạng rỡ */
+  --accent-soft: #FFF2EE;        /* Nền ửng đào kem mềm mại cho badge, tag, card highlight */
+  --accent-border: #F6DBC2;      /* Viền đào kem Pawmily cho badge & chip */
+  --accent-gradient: linear-gradient(135deg, #C95A34 0%, #E28854 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #B54A26 0%, #D47543 100%);
+
+  /* ===== 5. MÀU TRẠNG THÁI & CHỦ ĐỀ ĐA DẠNG (SEMANTIC TONES) ===== */
+  /* Xanh thảo mộc y tế chuẩn Pawmily (Chuẩn y khoa, Khám chữa, Đang mở cửa) */
+  --sage-green: #508D69;
+  --sage-soft: #EEF8F2;
+  --sage-border: #C4E6D2;
+
+  /* Vàng mật ong ấm áp (Đánh giá ⭐ 5 sao, Tích điểm thành viên) */
+  --amber-gold: #FB9600;
+  --amber-soft: #FEF8E7;
+  --amber-border: #F8E2AC;
+  --amber-text: #B47806;
+  --star-gold: #FB9600;
+
+  /* Hotline & Trạng thái */
+  --hotline-bg: #FFF2EE;
+  --hotline-color: #C95A34;
+  --hotline-border: #F6DBC2;
+  --success: #508D69;
   --danger: #D32F2F;
 
-  /* Font chữ chuẩn Pawmily */
+  /* ===== 6. FONT CHỮ CHUẨN PAWMILY ===== */
   --font-body: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Lora", Georgia, serif;
   --font-heading: "Quicksand", "Be Vietnam Pro", sans-serif;
   --font-display: "Lora", serif;
 
-  /* Bo góc & Đổ bóng chuẩn hiện đại */
+  /* ===== 7. BO GÓC & ĐỔ BÓNG NGHỆ THUẬT ===== */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-card: 24px;
   --radius-xl: 32px;
   --radius-pill: 9999px;
-  --shadow-sm: 0 2px 8px rgba(51, 29, 18, 0.06);
-  --shadow-card: 0 16px 36px -12px rgba(51, 29, 18, 0.12), 0 4px 12px rgba(51, 29, 18, 0.04);
-  --shadow-hover: 0 22px 45px -12px rgba(51, 29, 18, 0.2);
-  --line: #EBD9C7;
+  --shadow-sm: 0 2px 8px rgba(91, 58, 41, 0.05);
+  --shadow-card: 0 16px 36px -12px rgba(91, 58, 41, 0.08), 0 4px 12px rgba(91, 58, 41, 0.03);
+  --shadow-hover: 0 20px 40px -10px rgba(91, 58, 41, 0.15);
+  --shadow-cta: 0 10px 24px -4px rgba(201, 90, 52, 0.32);
 }

@@ -111,16 +111,17 @@ export function createModalHTML() {
       <!-- ===== 1. PANEL ĐĂNG NHẬP ===== -->
       <div class="auth-form-panel" id="authLoginPanel">
         <form id="modalLoginForm" novalidate>
-          <!-- Số điện thoại -->
+          <!-- Email hoặc Số điện thoại -->
           <div class="auth-field" data-field="phoneOrEmail">
-            <label class="auth-label">SỐ ĐIỆN THOẠI</label>
+            <label class="auth-label">EMAIL / SỐ ĐIỆN THOẠI</label>
             <div class="auth-input-wrap">
-              <span class="auth-input-icon phone-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              <span class="auth-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
               </span>
-              <input type="text" name="phoneOrEmail" class="auth-input" placeholder="Ví dụ: 0987654321" required />
+              <input type="text" name="phoneOrEmail" class="auth-input" placeholder="Email hoặc số điện thoại" required />
             </div>
             <span class="auth-field-error"></span>
           </div>
@@ -135,7 +136,7 @@ export function createModalHTML() {
                   <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
                 </svg>
               </span>
-              <input type="password" name="password" class="auth-input" placeholder="••••••••" required />
+              <input type="password" name="password" class="auth-input" placeholder="Nhập mật khẩu của bạn" required />
               <button type="button" class="auth-eye-btn" aria-label="Hiện/ẩn mật khẩu">
                 <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -167,14 +168,15 @@ export function createModalHTML() {
       <div class="auth-form-panel" id="authForgotPanel">
         <form id="modalForgotForm" novalidate>
           <div class="auth-field" data-field="forgotAccount">
-            <label class="auth-label">SỐ ĐIỆN THOẠI ĐÃ ĐĂNG KÝ</label>
+            <label class="auth-label">SỐ ĐIỆN THOẠI HOẶC EMAIL</label>
             <div class="auth-input-wrap">
-              <span class="auth-input-icon phone-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              <span class="auth-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
               </span>
-              <input type="text" name="forgotAccount" class="auth-input" placeholder="Ví dụ: 0987654321" required />
+              <input type="text" name="forgotAccount" class="auth-input" placeholder="Email hoặc số điện thoại" required />
             </div>
             <span class="auth-field-error"></span>
           </div>
@@ -200,7 +202,7 @@ export function createModalHTML() {
                   <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
                 </svg>
               </span>
-              <input type="text" name="name" class="auth-input" placeholder="Ví dụ: Nguyễn Văn A" required />
+              <input type="text" name="name" class="auth-input" placeholder="Họ và tên của bạn" required />
             </div>
             <span class="auth-field-error"></span>
           </div>
@@ -209,12 +211,27 @@ export function createModalHTML() {
           <div class="auth-field" data-field="phone">
             <label class="auth-label">SỐ ĐIỆN THOẠI</label>
             <div class="auth-input-wrap">
-              <span class="auth-input-icon phone-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <span class="auth-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
               </span>
-              <input type="tel" name="phone" class="auth-input" placeholder="Ví dụ: 0987654321" required />
+              <input type="tel" name="phone" class="auth-input" placeholder="Số điện thoại của bạn" required />
+            </div>
+            <span class="auth-field-error"></span>
+          </div>
+
+          <!-- Địa chỉ Email -->
+          <div class="auth-field" data-field="email">
+            <label class="auth-label">ĐỊA CHỈ EMAIL</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </span>
+              <input type="email" name="email" class="auth-input" placeholder="Địa chỉ email của bạn" required />
             </div>
             <span class="auth-field-error"></span>
           </div>
@@ -229,7 +246,7 @@ export function createModalHTML() {
                   <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
                 </svg>
               </span>
-              <input type="password" name="password" class="auth-input" placeholder="••••••••" required />
+              <input type="password" name="password" class="auth-input" placeholder="Tối thiểu 6 ký tự" required />
               <button type="button" class="auth-eye-btn" aria-label="Hiện/ẩn mật khẩu">
                 <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -588,13 +605,16 @@ export function initAuthModal() {
       e.preventDefault();
       const nameWrap = regForm.querySelector('[data-field="name"]');
       const phoneWrap = regForm.querySelector('[data-field="phone"]');
+      const emailWrap = regForm.querySelector('[data-field="email"]');
       const passWrap = regForm.querySelector('[data-field="password"]');
       clearFieldErr(nameWrap);
       clearFieldErr(phoneWrap);
+      if (emailWrap) clearFieldErr(emailWrap);
       clearFieldErr(passWrap);
 
       const name = regForm.elements.name.value.trim();
       const phone = regForm.elements.phone.value.trim();
+      const email = regForm.elements.email ? regForm.elements.email.value.trim() : "";
       const password = regForm.elements.password.value;
       const petName = regForm.elements.petName.value.trim();
       const houseNumber = regForm.elements.houseNumber.value.trim();
@@ -610,6 +630,10 @@ export function initAuthModal() {
       }
       if (!isValidPhone(phone)) {
         showFieldErr(phoneWrap, "Số điện thoại không hợp lệ (10 chữ số).");
+        valid = false;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (emailWrap) showFieldErr(emailWrap, "Vui lòng nhập địa chỉ email hợp lệ.");
         valid = false;
       }
       if (password.length < 6) {
@@ -629,6 +653,7 @@ export function initAuthModal() {
       try {
         await registerUser({
           name,
+          email,
           phone,
           password,
           petName,

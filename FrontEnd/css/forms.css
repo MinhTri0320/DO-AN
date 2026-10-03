@@ -27,19 +27,28 @@
   box-sizing: border-box;
   display: block;
   font-family: var(--font-body);
-  font-size: 16px;
-  padding: 16px 18px;
+  font-size: 15px;
+  padding: 14px 18px;
   border-radius: 14px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   background: var(--surface);
+  color: var(--ink);
   resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.form input:hover,
+.form textarea:hover,
+.form select:hover {
+  border-color: var(--tan);
 }
 
 .form input:focus,
 .form textarea:focus,
 .form select:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--accent-dark);
+  box-shadow: 0 0 0 3.5px rgba(201, 90, 52, 0.12);
 }
 
 .field-error {

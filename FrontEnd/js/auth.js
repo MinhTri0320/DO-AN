@@ -46,26 +46,38 @@ function saveLocalUser(user) {
 
 export async function registerUser({
   name,
+  email,
   phone,
   password,
   petName = "",
   address = {},
-  email = "",
 }) {
+  const cleanEmail = (email || "").trim() || `${phone.replace(/\D/g, "")}@pawncare.vn`;
   const payload = {
     name: name.trim(),
+    email: cleanEmail,
     phone: phone.trim(),
     password,
     petName: (petName || "").trim(),
     address: address || {},
-    email: (email || "").trim() || `${phone.replace(/\D/g, "")}@pawncare.vn`,
   };
 
   try {
+    console.log(`[AUTH] Đang gửi yêu cầu đăng ký tới BackEnd: ${API_BASE_URL}/register...`, {
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+    });
+
     const res = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        password: payload.password,
+      }),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -73,9 +85,13 @@ export async function registerUser({
       throw new Error(data.message || "Đăng ký không thành công.");
     }
 
-    const user = data.user;
+    const user = {
+      ...(data.user || {}),
+      petName: payload.petName,
+      address: payload.address,
+    };
     setData(STORAGE_KEYS.CURRENT_USER, user);
-    saveLocalUser({ ...payload, id: user.id || "u_" + Date.now() });
+    saveLocalUser({ ...payload, id: user.id || user._id || "u_" + Date.now() });
     notifyAuthChange(user);
     return user;
   } catch (err) {
@@ -83,8 +99,8 @@ export async function registerUser({
     if (err instanceof TypeError) {
       console.warn("BackEnd offline, sử dụng phiên đăng ký cục bộ cho demo.");
       const users = getLocalUsers();
-      if (users.some((u) => u.phone === payload.phone)) {
-        throw new Error("Số điện thoại này đã được đăng ký tài khoản.");
+      if (users.some((u) => u.phone === payload.phone || (u.email && u.email === payload.email))) {
+        throw new Error("Số điện thoại hoặc Email này đã được đăng ký tài khoản.");
       }
 
       const mockUser = {
@@ -108,26 +124,39 @@ export async function registerUser({
 export async function loginUser({ phoneOrEmail, password }) {
   const account = (phoneOrEmail || "").trim();
 
+  // Tìm email tương ứng nếu người dùng nhập số điện thoại
+  const users = getLocalUsers();
+  const matchedUser = users.find((u) => u.phone === account || u.email === account);
+  const emailToSend = account.includes("@") ? account : (matchedUser?.email || account);
+
   try {
+    console.log(`[AUTH] Đang gửi yêu cầu đăng nhập tới BackEnd: ${API_BASE_URL}/login...`, {
+      email: emailToSend,
+    });
+
     const res = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: account.includes("@") ? account : `${account.replace(/\D/g, "")}@pawncare.vn`,
-        phone: account,
-        phoneOrEmail: account,
+        email: emailToSend,
         password,
       }),
     });
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(data.message || "Số điện thoại hoặc mật khẩu không đúng.");
+      throw new Error(data.message || "Email hoặc mật khẩu không đúng.");
     }
 
-    setData(STORAGE_KEYS.CURRENT_USER, data.user);
-    notifyAuthChange(data.user);
-    return data.user;
+    const user = {
+      ...(data.user || {}),
+      petName: matchedUser?.petName || "",
+      address: matchedUser?.address || {},
+    };
+
+    setData(STORAGE_KEYS.CURRENT_USER, user);
+    notifyAuthChange(user);
+    return user;
   } catch (err) {
     // Nếu BackEnd chưa bật, kiểm tra trong kho tài khoản cục bộ
     if (err instanceof TypeError) {

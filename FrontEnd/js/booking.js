@@ -13,6 +13,7 @@ import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
 import { getCurrentUser } from "./auth.js";
 import { getPetsList } from "./pet-profile.js";
 import { renderNotifBadge } from "./notifications.js";
+import { apiCreateAppointment, apiGetAppointments, apiCancelAppointment } from "./api.js";
 
 export const SERVICES_CATALOG = [
   {
@@ -106,10 +107,17 @@ export function getUserAppointments() {
   });
 }
 
-export function saveAppointment(appointment) {
+export async function saveAppointment(appointment) {
   const list = getAppointments();
   list.unshift(appointment);
   setData(STORAGE_KEYS.APPOINTMENTS, list);
+
+  // Gửi fetch API tới BackEnd
+  try {
+    await apiCreateAppointment(appointment);
+  } catch (e) {
+    // API client đã xử lý fallback
+  }
 
   // Tạo thông báo mới trong hệ thống thông báo
   const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
@@ -127,12 +135,19 @@ export function saveAppointment(appointment) {
   return appointment;
 }
 
-export function cancelAppointment(appointmentId) {
+export async function cancelAppointment(appointmentId) {
   const list = getAppointments();
   const target = list.find((a) => a.id === appointmentId);
   if (target) {
     target.status = "Đã hủy";
     setData(STORAGE_KEYS.APPOINTMENTS, list);
+
+    // Gửi fetch API hủy lịch tới BackEnd
+    try {
+      await apiCancelAppointment(appointmentId);
+    } catch (e) {
+      // API client đã xử lý fallback
+    }
 
     // Ghi nhận thông báo vào hệ thống thông báo chuông
     const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
@@ -545,7 +560,7 @@ export function initBookingPage() {
   }
 
   // 6. Xử lý Gửi Form đặt lịch
-  bookingForm.addEventListener("submit", (e) => {
+  bookingForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     // Kiểm tra tính hợp lệ (Validation)
@@ -618,8 +633,8 @@ export function initBookingPage() {
       createdAt: Date.now(),
     };
 
-    // Lưu vào localStorage
-    saveAppointment(newAppointment);
+    // Lưu vào hệ thống và gửi fetch API tới BackEnd
+    await saveAppointment(newAppointment);
 
     // Mở Modal thành công
     if (successBookingId) successBookingId.textContent = `Mã lịch hẹn: ${bookingCode}`;
@@ -761,10 +776,10 @@ export function initBookingPage() {
       .join("");
 
     listContainer.querySelectorAll('[data-action="cancel"]').forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const id = btn.dataset.id;
         if (confirm(`Bạn có chắc chắn muốn hủy lịch hẹn mã ${id} không?`)) {
-          cancelAppointment(id);
+          await cancelAppointment(id);
           renderMyAppointments();
         }
       });

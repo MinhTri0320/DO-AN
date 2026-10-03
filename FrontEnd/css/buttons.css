@@ -1,7 +1,9 @@
 /* ============================================================
-   buttons.css
-   Mọi kiểu nút dùng chung: pill nâu đậm (CTA chính), pill viền
-   (CTA phụ), nút chữ (text button)...
+   buttons.css - Pawmily.vn Button Design System
+   - Nút CTA chính: Cam đất Terracotta gradient rực rỡ, ấm áp
+   - Nút CTA tối: Nâu mocha đẳng cấp (#5B3A29)
+   - Nút Viền mỏng: Biscuit (#DCC9B6) trên nền trắng tinh tế
+   - Nút Hotline: Ửng đào cam (#FFF2EE, #C95A34)
    ============================================================ */
 
 .btn-cta {
@@ -9,8 +11,8 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: var(--brown);
-  color: #fff;
+  background: var(--accent-gradient);
+  color: #ffffff;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 15px;
@@ -19,16 +21,16 @@
   border-radius: var(--radius-pill);
   border: 1.5px solid transparent;
   cursor: pointer;
-  box-shadow: 0 8px 20px -6px rgba(51, 29, 18, 0.25);
+  box-shadow: var(--shadow-cta);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
 }
 
 .btn-cta:hover {
-  background: var(--brown-hover);
+  background: var(--accent-gradient-hover);
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px -6px rgba(51, 29, 18, 0.35);
-  color: #fff;
+  box-shadow: 0 14px 28px -4px rgba(201, 90, 52, 0.42);
+  color: #ffffff;
 }
 
 .btn-cta:active {
@@ -42,19 +44,34 @@
   box-shadow: none;
 }
 
+/* Biến thể nút nâu mocha quý phái */
+.btn-cta-dark {
+  background: var(--brown-medium);
+  color: #ffffff;
+  box-shadow: 0 8px 20px -6px rgba(91, 58, 41, 0.25);
+}
+
+.btn-cta-dark:hover {
+  background: var(--brown);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -6px rgba(91, 58, 41, 0.35);
+  color: #ffffff;
+}
+
+/* Nút viền mỏng thanh lịch */
 .btn-cta-outline {
-  background: transparent;
+  background: #ffffff;
   border: 1.5px solid var(--tan-light);
-  color: var(--brown);
-  box-shadow: none;
+  color: var(--brown-medium);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-cta-outline:hover {
   background: var(--cream-soft);
-  border-color: var(--brown);
-  color: var(--brown);
+  border-color: var(--accent-dark);
+  color: var(--accent-dark);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 8px 20px -6px rgba(91, 58, 41, 0.12);
 }
 
 .btn-cta-light {
@@ -75,24 +92,26 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--accent-soft);
-  color: var(--accent-dark);
-  border: 1.5px solid rgba(224, 122, 95, 0.35);
+  background: var(--hotline-bg);
+  color: var(--hotline-color);
+  border: 1.5px solid var(--hotline-border);
   border-radius: var(--radius-pill);
-  padding: 8px 16px;
+  padding: 8px 18px;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 14px;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(201, 90, 52, 0.08);
 }
 
 .btn-hotline:hover {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+  background: var(--accent-dark);
+  color: #ffffff;
+  border-color: var(--accent-dark);
   transform: translateY(-1px);
+  box-shadow: 0 6px 18px -2px rgba(201, 90, 52, 0.32);
 }
 
 .btn-text {
@@ -110,14 +129,14 @@
 }
 
 .btn-text:hover {
-  color: var(--brown);
+  color: var(--brown-medium);
   text-decoration: underline;
 }
 
 .btn-register {
   margin-top: 12px;
-  background: var(--brown);
-  color: #fff;
+  background: var(--accent-gradient);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-pill);
   padding: 12px 20px;
@@ -131,17 +150,20 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.22);
 }
 
 .btn-register:hover {
-  background: var(--brown-hover);
+  background: var(--accent-gradient-hover);
   transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(201, 90, 52, 0.32);
 }
 
 .btn-register.registered {
-  background: var(--cream-soft);
-  color: var(--success);
-  border: 1.5px solid rgba(56, 142, 60, 0.3);
+  background: var(--sage-soft);
+  color: var(--sage-green);
+  border: 1.5px solid var(--sage-border);
   cursor: default;
   transform: none;
+  box-shadow: none;
 }

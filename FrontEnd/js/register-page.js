@@ -21,14 +21,17 @@ export function initRegisterPage() {
 
     const nameField = form.querySelector('[data-field="name"]');
     const phoneField = form.querySelector('[data-field="phone"]');
+    const emailField = form.querySelector('[data-field="email"]');
     const passField = form.querySelector('[data-field="password"]');
 
     if (nameField) nameField.classList.remove("has-error");
     if (phoneField) phoneField.classList.remove("has-error");
+    if (emailField) emailField.classList.remove("has-error");
     if (passField) passField.classList.remove("has-error");
 
     const name = form.elements.name ? form.elements.name.value.trim() : "";
     const phone = form.elements.phone ? form.elements.phone.value.trim() : "";
+    const email = form.elements.email ? form.elements.email.value.trim() : "";
     const password = form.elements.password ? form.elements.password.value : "";
     const petName = form.elements.petName ? form.elements.petName.value.trim() : "";
     const houseNumber = form.elements.houseNumber ? form.elements.houseNumber.value.trim() : "";
@@ -55,6 +58,15 @@ export function initRegisterPage() {
       valid = false;
     }
 
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (emailField) {
+        emailField.classList.add("has-error");
+        const err = emailField.querySelector(".auth-field-error");
+        if (err) err.textContent = "Vui lòng nhập địa chỉ email hợp lệ.";
+      }
+      valid = false;
+    }
+
     if (password.length < 6) {
       if (passField) {
         passField.classList.add("has-error");
@@ -75,6 +87,7 @@ export function initRegisterPage() {
     try {
       await registerUser({
         name,
+        email,
         phone,
         password,
         petName,

@@ -59,15 +59,15 @@
 }
 
 .booking-tab-btn:hover {
-  border-color: var(--tan);
-  color: var(--brown);
+  border-color: var(--accent-dark);
+  color: var(--accent-dark);
 }
 
 .booking-tab-btn.active {
-  background: var(--brown);
-  border-color: var(--brown);
+  background: var(--accent-gradient);
+  border-color: transparent;
   color: #fff;
-  box-shadow: 0 8px 20px -6px rgba(51, 29, 18, 0.25);
+  box-shadow: 0 8px 20px -6px rgba(201, 90, 52, 0.35);
 }
 
 .booking-tab-badge {
@@ -99,7 +99,7 @@
 
 .booking-step-card {
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
   padding: 32px;
   box-shadow: var(--shadow-card);
@@ -127,7 +127,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(224, 122, 95, 0.3);
+  border: 1.5px solid var(--accent-border);
   flex-shrink: 0;
 }
 
@@ -180,8 +180,8 @@
 .booking-service-item.selected,
 .booking-service-item:has(input:checked) {
   background: var(--accent-soft);
-  border-color: var(--accent);
-  box-shadow: 0 8px 20px -6px rgba(224, 122, 95, 0.25);
+  border-color: var(--accent-dark);
+  box-shadow: 0 8px 20px -6px rgba(201, 90, 52, 0.28);
 }
 
 .service-item-top {
@@ -197,10 +197,11 @@
   height: 44px;
   border-radius: 12px;
   background: #fff;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--accent-border);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(91, 58, 41, 0.06);
 }
 
 .service-item-price {
@@ -209,9 +210,9 @@
   font-size: 13px;
   color: var(--accent-dark);
   background: #fff;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(224, 122, 95, 0.25);
+  border: 1px solid var(--accent-border);
 }
 
 .service-item-name {
@@ -261,8 +262,8 @@
 .booking-pet-item.selected,
 .booking-pet-item:has(input:checked) {
   background: var(--accent-soft);
-  border-color: var(--accent);
-  box-shadow: 0 4px 12px rgba(224, 122, 95, 0.2);
+  border-color: var(--accent-dark);
+  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.22);
 }
 
 .booking-pet-thumb {
@@ -321,10 +322,10 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(135deg, rgba(224, 122, 95, 0.08) 0%, rgba(245, 239, 235, 0.7) 100%);
-  border: 1.5px dashed rgba(224, 122, 95, 0.4);
-  border-radius: 14px;
-  padding: 14px 18px;
+  background: linear-gradient(135deg, #FFF2EE 0%, #FCF6EE 100%);
+  border: 1.5px dashed var(--accent-border);
+  border-radius: 16px;
+  padding: 16px 20px;
 }
 
 .guest-auth-callout .callout-icon {
@@ -353,8 +354,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
-  background: var(--brown);
+  padding: 8px 18px;
+  background: var(--accent-gradient);
   color: #fff;
   border-radius: var(--radius-pill);
   font-family: var(--font-heading);
@@ -364,12 +365,14 @@
   white-space: nowrap;
   flex-shrink: 0;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(201, 90, 52, 0.25);
 }
 
 .btn-guest-login:hover {
-  background: var(--accent);
+  background: var(--accent-gradient-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(224, 122, 95, 0.3);
+  box-shadow: 0 6px 16px rgba(201, 90, 52, 0.35);
+  color: #fff;
 }
 
 /* Form Layout Grids & Inputs dùng chung trong Booking Step Card */
@@ -526,17 +529,17 @@
 
 .time-slot-pill.selected,
 .time-slot-pill:has(input:checked) {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent-gradient);
+  border-color: transparent;
   color: #fff;
-  box-shadow: 0 6px 14px rgba(224, 122, 95, 0.3);
+  box-shadow: 0 6px 16px -2px rgba(201, 90, 52, 0.35);
 }
 
 /* Custom Time Picker Component */
 .custom-time-picker-card {
   margin-top: 24px;
-  background: linear-gradient(135deg, rgba(245, 239, 235, 0.6) 0%, rgba(255, 255, 255, 0.95) 100%);
-  border: 1.5px dashed var(--tan);
+  background: linear-gradient(135deg, #FFF2EE 0%, #FCF6EE 100%);
+  border: 1.5px dashed var(--accent-border);
   border-radius: 16px;
   padding: 18px 20px;
   display: flex;
@@ -679,7 +682,7 @@
   position: sticky;
   top: 96px;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
   padding: 30px 26px;
   box-shadow: var(--shadow-card);
@@ -732,10 +735,10 @@
 }
 
 .summary-fee-box {
-  background: var(--cream);
-  border: 1px solid var(--line);
+  background: var(--accent-soft);
+  border: 1.5px solid var(--accent-border);
   border-radius: 16px;
-  padding: 16px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -779,15 +782,15 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-  color: var(--success);
+  background: var(--sage-soft);
+  color: var(--sage-green);
   font-size: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 18px;
-  border: 2px solid rgba(56, 142, 60, 0.25);
-  box-shadow: 0 8px 20px rgba(56, 142, 60, 0.2);
+  border: 2px solid var(--sage-border);
+  box-shadow: 0 8px 20px rgba(80, 141, 105, 0.2);
 }
 
 .booking-success-card h3 {

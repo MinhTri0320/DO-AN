@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px 16px;
-  background: var(--cream, #faf3ea);
+  background: var(--cream);
 }
 
 .auth-card,
@@ -46,17 +46,17 @@
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: #fffdf9;
-  border: 1.5px solid #ebd9c7;
+  background: #ffffff;
+  border: 1.5px solid var(--line);
   border-radius: 26px;
-  padding: 30px 24px 26px;
-  box-shadow: 0 24px 50px -10px rgba(50, 30, 20, 0.25), 0 10px 20px -5px rgba(50, 30, 20, 0.1);
+  padding: 32px 28px 28px;
+  box-shadow: 0 24px 50px -10px rgba(91, 58, 41, 0.18), 0 10px 20px -5px rgba(91, 58, 41, 0.08);
   box-sizing: border-box;
   animation: authCardEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   max-height: calc(100vh - 36px);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #cfbeaf transparent;
+  scrollbar-color: var(--line) transparent;
 }
 
 .auth-card::-webkit-scrollbar,
@@ -66,7 +66,7 @@
 
 .auth-card::-webkit-scrollbar-thumb,
 .auth-modal-dialog::-webkit-scrollbar-thumb {
-  background: #cfbeaf;
+  background: var(--tan);
   border-radius: 999px;
 }
 
@@ -90,7 +90,7 @@
   height: 32px;
   border: none;
   background: transparent;
-  color: #715c4f;
+  color: var(--ink-faint);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -102,8 +102,8 @@
 }
 
 .auth-modal-close:hover {
-  background: rgba(77, 52, 39, 0.08);
-  color: #3b261b;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
 }
 
 .auth-modal-close svg {
@@ -124,15 +124,15 @@
 .auth-mascot-badge svg {
   width: 64px;
   height: 64px;
-  filter: drop-shadow(0 4px 10px rgba(77, 52, 39, 0.12));
+  filter: drop-shadow(0 4px 10px rgba(91, 58, 41, 0.12));
 }
 
 /* ===== 2. TIÊU ĐỀ & PHỤ ĐỀ ===== */
 .auth-modal-title {
-  font-family: var(--font-display, "Fraunces", serif);
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 700;
-  color: #38251b;
+  color: var(--brown);
   text-align: center;
   margin: 0 0 6px;
   letter-spacing: -0.2px;
@@ -140,8 +140,8 @@
 
 .auth-modal-sub {
   font-size: 13.5px;
-  line-height: 1.45;
-  color: #7c685b;
+  line-height: 1.5;
+  color: var(--ink-soft);
   text-align: center;
   max-width: 330px;
   margin: 0 auto 20px;
@@ -150,9 +150,10 @@
 /* ===== 3. TAB CHUYỂN "ĐĂNG NHẬP / ĐĂNG KÝ" ===== */
 .auth-tab-switch {
   display: flex;
-  background: #f3ede5;
-  border-radius: 14px;
-  padding: 4px;
+  background: var(--cream-soft);
+  border: 1.5px solid var(--accent-border);
+  border-radius: var(--radius-pill);
+  padding: 5px;
   margin-bottom: 22px;
   gap: 4px;
 }
@@ -163,12 +164,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 14px;
-  border-radius: 11px;
+  padding: 9px 14px;
+  border-radius: var(--radius-pill);
   border: none;
-  font-size: 14.5px;
+  font-family: var(--font-heading);
+  font-size: 14px;
   font-weight: 700;
-  color: #5e493b;
+  color: var(--ink-soft);
   background: transparent;
   cursor: pointer;
   transition: all 0.22s ease;
@@ -183,14 +185,14 @@
 }
 
 .auth-tab-btn:hover:not(.active) {
-  background: rgba(77, 52, 39, 0.05);
-  color: #3b261b;
+  background: rgba(201, 90, 52, 0.08);
+  color: var(--accent-dark);
 }
 
 .auth-tab-btn.active {
-  background: #4d3427;
+  background: var(--accent-gradient);
   color: #ffffff;
-  box-shadow: 0 3px 8px rgba(77, 52, 39, 0.22);
+  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.32);
 }
 
 /* ===== 4. NỘI DUNG TỪNG FORM (LOGIN / REGISTER) ===== */
@@ -210,9 +212,10 @@
 }
 
 .auth-label {
+  font-family: var(--font-heading);
   font-size: 11.5px;
-  font-weight: 800;
-  color: #735645;
+  font-weight: 700;
+  color: var(--brown-medium);
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin-bottom: 6px;
@@ -235,33 +238,45 @@
 
 .auth-input {
   width: 100%;
-  background: #ffffff;
-  border: 1.5px solid #5a4335;
-  border-radius: 13px;
-  padding: 11px 14px 11px 40px;
+  background: #FAF8F5;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 11.5px 14px 11.5px 42px;
   font-family: var(--font-body, "Nunito Sans", sans-serif);
-  font-size: 14.5px;
+  font-size: 14px;
   color: #332117;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.auth-input:hover {
+  border-color: var(--tan);
+  background: #FFFFFF;
 }
 
 .auth-input:focus {
-  border-color: #3b261b;
-  box-shadow: 0 0 0 3px rgba(77, 52, 39, 0.12);
+  border-color: var(--accent-dark);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3.5px rgba(201, 90, 52, 0.12);
 }
 
 .auth-input::placeholder {
-  color: #7b8898;
-  font-weight: 500;
-  opacity: 0.85;
+  color: var(--ink-faint);
+  font-size: 13.5px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Chừa chỗ bên phải cho nút toggle mật khẩu */
+.auth-input-wrap .auth-input[type="password"] {
+  padding-right: 44px;
 }
 
 /* Icon bên trái trong input */
 .auth-input-icon {
   position: absolute;
-  left: 13px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   width: 18px;
@@ -270,11 +285,16 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  color: #7b8898;
+  color: var(--ink-faint);
+  transition: color 0.2s ease;
+}
+
+.auth-input-wrap:focus-within .auth-input-icon {
+  color: var(--accent-dark);
 }
 
 .auth-input-icon.phone-icon {
-  color: #be3975; /* màu hồng tím chuẩn mẫu */
+  color: #8C7769;
 }
 
 .auth-input-icon svg {
@@ -300,7 +320,7 @@
 }
 
 .auth-eye-btn:hover {
-  color: #4d3427;
+  color: var(--accent-dark);
 }
 
 .auth-eye-btn svg {
@@ -325,13 +345,13 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #fff4ed;
-  border: 1px solid #fedecd;
-  border-radius: 8px;
-  padding: 6px 12px;
+  background: var(--accent-soft);
+  border: 1.5px solid var(--accent-border);
+  border-radius: 10px;
+  padding: 7px 12px;
   margin-top: 6px;
   font-size: 12px;
-  color: #c3512e;
+  color: var(--accent-dark);
   font-weight: 600;
 }
 
@@ -352,40 +372,47 @@
 }
 
 .auth-sublabel {
-  font-size: 11px;
+  font-family: var(--font-heading);
+  font-size: 11.5px;
   font-weight: 700;
-  color: #735645;
+  color: var(--ink-soft);
   margin-bottom: 4px;
 }
 
 .auth-input-sm {
   width: 100%;
-  background: #ffffff;
-  border: 1.5px solid #5a4335;
+  background: #FAF8F5;
+  border: 1.5px solid var(--line);
   border-radius: 12px;
   padding: 10px 12px;
-  font-family: var(--font-body, "Nunito Sans", sans-serif);
+  font-family: var(--font-body);
   font-size: 13.5px;
-  color: #332117;
+  color: var(--ink);
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.auth-input-sm:hover {
+  border-color: var(--tan);
+  background: #FFFFFF;
 }
 
 .auth-input-sm:focus {
-  border-color: #3b261b;
-  box-shadow: 0 0 0 3px rgba(77, 52, 39, 0.12);
+  border-color: var(--accent-dark);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(201, 90, 52, 0.12);
 }
 
 .auth-input-sm::placeholder {
-  color: #7b8898;
-  font-weight: 500;
+  color: var(--ink-faint);
+  font-weight: 400;
   opacity: 0.85;
 }
 
 /* Lỗi trường */
 .auth-field-error {
-  color: #c85c5c;
+  color: var(--danger);
   font-size: 12px;
   font-weight: 600;
   margin-top: 4px;
@@ -398,7 +425,7 @@
 
 .auth-field.has-error .auth-input,
 .auth-field.has-error .auth-input-sm {
-  border-color: #c85c5c;
+  border-color: var(--danger);
 }
 
 /* Dòng Ghi nhớ & Quên mật khẩu */
@@ -409,7 +436,7 @@
   font-size: 13px;
   margin-top: -4px;
   margin-bottom: 14px;
-  color: #6b5645;
+  color: var(--ink-soft);
 }
 
 .auth-checkbox-wrap {
@@ -420,19 +447,20 @@
   user-select: none;
   font-size: 13px;
   font-weight: 600;
-  color: #6b5645;
+  color: var(--ink-soft);
 }
 
 .auth-checkbox-wrap input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #4d3427;
+  accent-color: var(--accent-dark);
   cursor: pointer;
   border-radius: 4px;
 }
 
 .auth-forgot-link {
-  color: #be3975;
+  color: var(--accent-dark);
+  font-family: var(--font-heading);
   font-weight: 700;
   text-decoration: none;
   font-size: 13px;
@@ -441,32 +469,32 @@
 
 .auth-forgot-link:hover {
   text-decoration: underline;
-  color: #9c285d;
+  color: var(--brown);
 }
 
 /* ===== 6. NÚT SUBMIT CHÍNH (ĐĂNG KÝ THÀNH VIÊN / ĐĂNG NHẬP NGAY) ===== */
 .auth-submit-btn {
   width: 100%;
-  background: #4d3427;
+  background: var(--accent-gradient);
   color: #ffffff;
-  font-family: var(--font-body, "Nunito Sans", sans-serif);
+  font-family: var(--font-heading);
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   padding: 13.5px 18px;
-  border-radius: 13px;
+  border-radius: var(--radius-pill);
   border: none;
   cursor: pointer;
-  margin-top: 8px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(77, 52, 39, 0.25);
+  margin-top: 10px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-cta);
 }
 
 .auth-submit-btn:hover {
-  background: #3b261b;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(59, 38, 27, 0.3);
+  background: var(--accent-gradient-hover);
+  transform: translateY(-1.5px);
+  box-shadow: 0 12px 28px -4px rgba(201, 90, 52, 0.42);
 }
 
 .auth-submit-btn:active {
@@ -474,9 +502,10 @@
 }
 
 .auth-submit-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.65;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 /* ===== 7. HỘP THÔNG BÁO FORM TRẠNG THÁI ===== */
@@ -494,15 +523,15 @@
 }
 
 .auth-alert.success {
-  background: rgba(76, 140, 107, 0.12);
-  color: #3b7c5b;
-  border: 1px solid rgba(76, 140, 107, 0.25);
+  background: var(--sage-soft);
+  color: var(--sage-green);
+  border: 1px solid var(--sage-border);
 }
 
 .auth-alert.error {
-  background: rgba(200, 92, 92, 0.12);
-  color: #c85c5c;
-  border: 1px solid rgba(200, 92, 92, 0.25);
+  background: rgba(211, 47, 47, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(211, 47, 47, 0.25);
 }
 
 /* Responsive trên màn hình nhỏ */

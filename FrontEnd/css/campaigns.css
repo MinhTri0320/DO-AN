@@ -11,19 +11,19 @@
 
 .campaign-card {
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .campaign-card:hover {
   transform: translateY(-6px);
-  border-color: var(--tan);
-  box-shadow: var(--shadow-card);
+  border-color: var(--accent);
+  box-shadow: 0 20px 40px -10px rgba(91, 58, 41, 0.12);
 }
 
 .campaign-banner {
@@ -33,7 +33,7 @@
   justify-content: center;
   font-size: 48px;
   background: linear-gradient(135deg, #FCF6EE 0%, #F5EFEB 100%);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1.5px solid var(--line);
   position: relative;
 }
 
@@ -54,10 +54,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: var(--radius-pill);
   align-self: flex-start;
-  border: 1px solid rgba(224, 122, 95, 0.2);
+  border: 1.5px solid var(--accent-border);
 }
 
 .campaign-body h3 {
