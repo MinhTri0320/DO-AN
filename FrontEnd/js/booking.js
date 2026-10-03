@@ -133,6 +133,19 @@ export function cancelAppointment(appointmentId) {
   if (target) {
     target.status = "Đã hủy";
     setData(STORAGE_KEYS.APPOINTMENTS, list);
+
+    // Ghi nhận thông báo vào hệ thống thông báo chuông
+    const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
+    notifs.unshift({
+      id: Date.now(),
+      icon: "ℹ️",
+      title: "Hủy lịch hẹn thành công",
+      desc: `Lịch hẹn ${target.serviceName} cho bé ${target.petName} (Mã: ${target.id}) đã được hủy theo yêu cầu của bạn.`,
+      time: Date.now(),
+      read: false,
+    });
+    setData(STORAGE_KEYS.NOTIFICATIONS, notifs);
+    renderNotifBadge();
   }
   return list;
 }
@@ -685,7 +698,7 @@ export function initBookingPage() {
     if (guestAuthBox) guestAuthBox.hidden = true;
     if (filterBar) filterBar.style.display = "flex";
 
-    const list = getUserAppointments();
+    let list = getUserAppointments();
     updateBadgeCount();
 
     if (list.length === 0) {
@@ -696,7 +709,26 @@ export function initBookingPage() {
 
     if (emptyBox) emptyBox.hidden = true;
 
-    listContainer.innerHTML = list
+    // Lọc theo bộ lọc trạng thái nếu có
+    let displayList = list;
+    if (currentStatusFilter === "pending") {
+      displayList = list.filter((a) => a.status === "Chờ xác nhận");
+    } else if (currentStatusFilter === "confirmed") {
+      displayList = list.filter((a) => a.status === "Đã xác nhận");
+    } else if (currentStatusFilter === "cancelled") {
+      displayList = list.filter((a) => a.status === "Đã hủy");
+    }
+
+    if (displayList.length === 0) {
+      listContainer.innerHTML = `
+        <div style="text-align:center; padding: 40px 20px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius-card); color:var(--ink-soft);">
+          Không có lịch hẹn nào ở trạng thái này.
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = displayList
       .map((a) => {
         let statusClass = "pending";
         if (a.status === "Đã xác nhận") statusClass = "confirmed";
@@ -739,6 +771,21 @@ export function initBookingPage() {
     });
   }
 
+  let currentStatusFilter = "all";
+  function setupFilterButtons() {
+    const filterContainer = document.getElementById("apptStatusFilters");
+    if (!filterContainer) return;
+    const buttons = filterContainer.querySelectorAll(".appt-filter-btn");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentStatusFilter = btn.dataset.filter || "all";
+        renderMyAppointments();
+      });
+    });
+  }
+
   function switchToBookingTab() {
     tabNewBooking.classList.add("active");
     tabMyAppointments.classList.remove("active");
@@ -767,8 +814,13 @@ export function initBookingPage() {
   prefillUserInfo();
   updateSummary();
   updateBadgeCount();
+  setupFilterButtons();
 
-  if (window.location.hash === "#my-appts" || window.location.hash === "#my-appointments") {
+  if (
+    window.location.hash === "#my-appts" ||
+    window.location.hash === "#my-appointments" ||
+    window.location.pathname.includes("appointment-list")
+  ) {
     switchToMyAppointmentsTab();
   }
 }

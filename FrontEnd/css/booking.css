@@ -846,6 +846,40 @@
   font-family: var(--font-display);
   font-size: 24px;
   color: var(--brown);
+  margin-bottom: 4px;
+}
+
+.appointment-filter-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.appt-filter-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.appt-filter-btn:hover {
+  background: var(--cream);
+  color: var(--brown);
+}
+
+.appt-filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(224, 122, 95, 0.25);
 }
 
 .appointment-cards-list {

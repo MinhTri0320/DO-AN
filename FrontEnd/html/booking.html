@@ -359,7 +359,15 @@
         <!-- KHỐI 2: XEM DANH SÁCH LỊCH HẸN ĐÃ ĐẶT (MY APPOINTMENTS) -->
         <div id="viewMyAppointments" class="my-appointments-wrapper" hidden>
           <div class="appointments-filter-bar">
-            <h2>Lịch hẹn của bạn tại PawnCare Đà Nẵng</h2>
+            <div>
+              <h2>Lịch hẹn của bạn tại PawnCare Đà Nẵng</h2>
+              <div class="appointment-filter-tags" id="apptStatusFilters">
+                <button type="button" class="appt-filter-btn active" data-filter="all">Tất cả</button>
+                <button type="button" class="appt-filter-btn" data-filter="pending">Chờ xác nhận</button>
+                <button type="button" class="appt-filter-btn" data-filter="confirmed">Đã xác nhận</button>
+                <button type="button" class="appt-filter-btn" data-filter="cancelled">Đã hủy</button>
+              </div>
+            </div>
             <button class="btn-cta btn-cta-outline" id="btnBookAnotherAppt" type="button" onclick="document.getElementById('tabNewBooking').click();">
               <span>+ Đặt thêm lịch mới</span>
             </button>

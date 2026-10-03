@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="../css/booking.css" />
     <link rel="stylesheet" href="../css/auth.css" />
     <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Đặt Lịch Hẹn (Appointment Booking) - PawnCare Đà Nẵng</title>
+    <title>Danh Sách Lịch Hẹn (Appointment List) - PawnCare Đà Nẵng</title>
   </head>
   <body>
     <!-- ===== HEADER / NAVBAR ===== -->
@@ -97,29 +97,28 @@
       <div class="section-inner">
         <!-- Tiêu đề trang -->
         <div class="booking-header">
-          <span class="section-badge">🐾 ĐẶT LỊCH HẸN TRỰC TUYẾN</span>
-          <h1>Đặt Lịch Chăm Sóc Thú Cưng</h1>
+          <span class="section-badge">📋 QUẢN LÝ LỊCH HẸN</span>
+          <h1>Danh Sách Lịch Hẹn Thú Cưng</h1>
           <p>
-            Chọn dịch vụ, bé cưng và khung giờ phù hợp — Đội ngũ bác sĩ thú y &amp; chuyên viên PawnCare Đà Nẵng
-            sẽ chuẩn bị chu đáo để đón tiếp Boss!
+            Theo dõi thời gian, dịch vụ, trạng thái xác nhận và quản lý hủy lịch hẹn của Boss cưng tại PawnCare Đà Nẵng.
           </p>
         </div>
 
-        <!-- Chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt (Chỉ hiển thị khi đã đăng nhập) -->
-        <div class="booking-view-tabs" id="bookingViewTabs" style="display: none;">
-          <button type="button" class="booking-tab-btn active" id="tabNewBooking">
+        <!-- Chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt -->
+        <div class="booking-view-tabs" id="bookingViewTabs">
+          <button type="button" class="booking-tab-btn" id="tabNewBooking">
             <span>📅</span>
             <span>Đặt lịch hẹn mới</span>
           </button>
-          <button type="button" class="booking-tab-btn" id="tabMyAppointments">
+          <button type="button" class="booking-tab-btn active" id="tabMyAppointments">
             <span>📋</span>
             <span>Lịch hẹn của tôi</span>
             <span class="booking-tab-badge" id="apptBadgeCount">0</span>
           </button>
         </div>
 
-        <!-- KHỐI 1: FORM ĐẶT LỊCH HẸN (VIEW CHÍNH) -->
-        <div id="viewBookingForm">
+        <!-- KHỐI 1: FORM ĐẶT LỊCH HẸN (ẨN MẶC ĐỊNH TRÊN TRANG NÀY) -->
+        <div id="viewBookingForm" hidden>
           <form id="appointmentBookingForm" class="booking-layout">
             <!-- Cột trái: Các bước đặt lịch -->
             <div class="booking-steps-wrapper">
@@ -356,8 +355,8 @@
           </form>
         </div>
 
-        <!-- KHỐI 2: XEM DANH SÁCH LỊCH HẸN ĐÃ ĐẶT (MY APPOINTMENTS) -->
-        <div id="viewMyAppointments" class="my-appointments-wrapper" hidden>
+        <!-- KHỐI 2: XEM DANH SÁCH LỊCH HẸN ĐÃ ĐẶT (MY APPOINTMENTS - HIỂN THỊ CHÍNH) -->
+        <div id="viewMyAppointments" class="my-appointments-wrapper">
           <div class="appointments-filter-bar">
             <div>
               <h2>Lịch hẹn của bạn tại PawnCare Đà Nẵng</h2>
