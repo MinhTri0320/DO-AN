@@ -86,10 +86,24 @@ const DEFAULT_APPOINTMENTS = [
 export function getAppointments() {
   const existing = getData(STORAGE_KEYS.APPOINTMENTS, null);
   if (existing && Array.isArray(existing)) {
-    return existing;
+    // Lọc bỏ mockup demo cũ nếu có trong localStorage
+    return existing.filter((a) => a.id !== "PC-202610-8821");
   }
-  setData(STORAGE_KEYS.APPOINTMENTS, DEFAULT_APPOINTMENTS);
-  return DEFAULT_APPOINTMENTS;
+  return [];
+}
+
+export function getUserAppointments() {
+  const user = getCurrentUser();
+  if (!user) return [];
+  const all = getAppointments();
+  // Lọc lịch hẹn của tài khoản hiện tại
+  return all.filter((a) => {
+    return (
+      (user.phone && a.ownerPhone === user.phone) ||
+      (user.email && a.userEmail === user.email) ||
+      (user.name && a.ownerName === user.name)
+    );
+  });
 }
 
 export function saveAppointment(appointment) {
@@ -361,6 +375,23 @@ export function initBookingPage() {
   }
 
   // 3. Khởi tạo Ngày & Khung giờ
+  function isWithinClinicHours(timeStr) {
+    if (!timeStr) return false;
+    const parts = timeStr.split(":");
+    if (parts.length < 2) return false;
+    const h = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    if (isNaN(h) || isNaN(m)) return false;
+    const totalMinutes = h * 60 + m;
+
+    // Sáng: 08:30 (510 phút) đến 11:30 (690 phút)
+    const isMorning = totalMinutes >= 8 * 60 + 30 && totalMinutes <= 11 * 60 + 30;
+    // Chiều & Tối: 13:30 (810 phút) đến 19:30 (1170 phút)
+    const isAfternoon = totalMinutes >= 13 * 60 + 30 && totalMinutes <= 19 * 60 + 30;
+
+    return isMorning || isAfternoon;
+  }
+
   function initDateTime() {
     // Thiết lập ngày tối thiểu là ngày hôm nay
     const today = new Date();
@@ -380,7 +411,10 @@ export function initBookingPage() {
       });
     }
 
-    // Gắn sự kiện cho các pill time-slot
+    const customTimeInput = document.getElementById("customTimeInput");
+    const customTimeError = document.getElementById("customTimeError");
+
+    // Gắn sự kiện cho các pill time-slot cố định
     if (timeSlotsContainer) {
       const slots = timeSlotsContainer.querySelectorAll(".time-slot-pill");
       slots.forEach((pill) => {
@@ -389,7 +423,15 @@ export function initBookingPage() {
           pill.classList.add("selected");
           const radio = pill.querySelector('input[type="radio"]');
           if (radio) radio.checked = true;
-          currentSelection.time = pill.dataset.time || radio?.value || "09:30";
+
+          // Bỏ custom time khi khách click chọn pill cố định
+          if (customTimeInput) {
+            customTimeInput.value = "";
+            customTimeInput.classList.remove("custom-time-active");
+          }
+          if (customTimeError) customTimeError.hidden = true;
+
+          currentSelection.time = pill.dataset.time || radio?.value || "08:30";
           updateSummary();
         });
       });
@@ -402,6 +444,43 @@ export function initBookingPage() {
         if (radio) radio.checked = true;
         currentSelection.time = firstSlot.dataset.time || "08:30";
       }
+    }
+
+    // Gắn sự kiện cho ô TỰ CHỌN GIỜ RIÊNG (Custom Time Picker)
+    if (customTimeInput) {
+      const handleCustomTimeChange = () => {
+        const val = customTimeInput.value;
+        if (!val) {
+          customTimeInput.classList.remove("custom-time-active");
+          if (customTimeError) customTimeError.hidden = true;
+          return;
+        }
+
+        if (isWithinClinicHours(val)) {
+          // Bỏ chọn các pill cố định để khách toàn quyền chọn giờ riêng
+          if (timeSlotsContainer) {
+            timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((p) => {
+              p.classList.remove("selected");
+              const r = p.querySelector('input[type="radio"]');
+              if (r) r.checked = false;
+            });
+          }
+          customTimeInput.classList.add("custom-time-active");
+          if (customTimeError) customTimeError.hidden = true;
+
+          currentSelection.time = val;
+          updateSummary();
+        } else {
+          customTimeInput.classList.remove("custom-time-active");
+          if (customTimeError) {
+            customTimeError.textContent = "⚠️ Khung giờ này ngoài ca tiếp nhận. Vui lòng chọn trong khoảng 08:30 – 11:30 (sáng) hoặc 13:30 – 19:30 (chiều tối).";
+            customTimeError.hidden = false;
+          }
+        }
+      };
+
+      customTimeInput.addEventListener("input", handleCustomTimeChange);
+      customTimeInput.addEventListener("change", handleCustomTimeChange);
     }
   }
 
@@ -502,8 +581,12 @@ export function initBookingPage() {
     // Tạo mã lịch hẹn ngẫu nhiên sang trọng
     const bookingCode = `PC-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
 
+    const user = getCurrentUser();
+
     const newAppointment = {
       id: bookingCode,
+      userId: user ? user.phone : null,
+      userEmail: user ? user.email : null,
       serviceId: currentSelection.service.id,
       serviceName: currentSelection.service.name,
       serviceIcon: currentSelection.service.icon,
@@ -544,24 +627,65 @@ export function initBookingPage() {
   if (btnViewMyAppts) {
     btnViewMyAppts.addEventListener("click", () => {
       successModal.hidden = true;
-      switchToMyAppointmentsTab();
+      const user = getCurrentUser();
+      if (user) {
+        switchToMyAppointmentsTab();
+      } else {
+        alert("Để xem và quản lý lịch hẹn vừa đặt, bạn hãy đăng nhập hoặc tạo tài khoản mới!");
+        window.location.href = "./login.html";
+      }
     });
   }
 
   // 7. Xử lý Tab "Lịch hẹn đã đặt (My Appointments)"
   function updateBadgeCount() {
-    const list = getAppointments();
+    const user = getCurrentUser();
+    const bookingViewTabs = document.getElementById("bookingViewTabs");
+
+    if (!user) {
+      // Khách vãng lai: ẨN hoàn toàn thanh tab "Lịch hẹn của tôi" và badge
+      if (bookingViewTabs) bookingViewTabs.style.display = "none";
+      if (tabMyAppointments) tabMyAppointments.hidden = true;
+      if (apptBadgeCount) {
+        apptBadgeCount.textContent = "0";
+        apptBadgeCount.hidden = true;
+      }
+      return;
+    }
+
+    // Đã đăng nhập: Hiện tab chuyển đổi và badge số lượng thật
+    if (bookingViewTabs) bookingViewTabs.style.display = "inline-flex";
+    if (tabMyAppointments) tabMyAppointments.hidden = false;
+
+    const myAppts = getUserAppointments();
     if (apptBadgeCount) {
-      apptBadgeCount.textContent = list.length;
+      apptBadgeCount.textContent = myAppts.length;
+      apptBadgeCount.hidden = myAppts.length === 0;
     }
   }
 
   function renderMyAppointments() {
     const listContainer = document.getElementById("appointmentCardsList");
     const emptyBox = document.getElementById("emptyAppointmentsBox");
+    const guestAuthBox = document.getElementById("guestAuthPromptBox");
+    const filterBar = document.querySelector(".appointments-filter-bar");
     if (!listContainer) return;
 
-    const list = getAppointments();
+    const user = getCurrentUser();
+    if (!user) {
+      // Khách chưa đăng nhập: Không hiển thị danh sách của ai cả, mà hiện nhắc đăng nhập
+      if (guestAuthBox) guestAuthBox.hidden = false;
+      if (emptyBox) emptyBox.hidden = true;
+      if (listContainer) listContainer.innerHTML = "";
+      if (filterBar) filterBar.style.display = "none";
+      updateBadgeCount();
+      return;
+    }
+
+    if (guestAuthBox) guestAuthBox.hidden = true;
+    if (filterBar) filterBar.style.display = "flex";
+
+    const list = getUserAppointments();
     updateBadgeCount();
 
     if (list.length === 0) {

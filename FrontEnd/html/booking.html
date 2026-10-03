@@ -105,8 +105,8 @@
           </p>
         </div>
 
-        <!-- Chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt -->
-        <div class="booking-view-tabs">
+        <!-- Chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt (Chỉ hiển thị khi đã đăng nhập) -->
+        <div class="booking-view-tabs" id="bookingViewTabs" style="display: none;">
           <button type="button" class="booking-tab-btn active" id="tabNewBooking">
             <span>📅</span>
             <span>Đặt lịch hẹn mới</span>
@@ -114,7 +114,7 @@
           <button type="button" class="booking-tab-btn" id="tabMyAppointments">
             <span>📋</span>
             <span>Lịch hẹn của tôi</span>
-            <span class="booking-tab-badge" id="apptBadgeCount">1</span>
+            <span class="booking-tab-badge" id="apptBadgeCount">0</span>
           </button>
         </div>
 
@@ -234,6 +234,28 @@
                       <span>19:30</span>
                     </label>
                   </div>
+
+                  <!-- Tự chọn giờ chính xác theo ý muốn của khách -->
+                  <div class="custom-time-picker-card">
+                    <div class="custom-time-header">
+                      <span class="custom-time-icon">⏱️</span>
+                      <div class="custom-time-title">
+                        <strong>Hoặc tự chọn mốc giờ cụ thể theo lịch trình của bạn:</strong>
+                        <p>Khung giờ tiếp nhận: Sáng (08:30 – 11:30) &amp; Chiều tối (13:30 – 19:30)</p>
+                      </div>
+                    </div>
+                    <div class="custom-time-input-row">
+                      <div class="input-icon-wrap" style="max-width: 240px;">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                          <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        <input type="time" id="customTimeInput" min="08:30" max="19:30" step="300" />
+                      </div>
+                      <span class="custom-time-hint" id="customTimeHint">💡 Bạn có thể chọn mốc giờ lẻ như 09:15, 10:20, 14:15, 17:45...</span>
+                    </div>
+                    <p class="custom-time-error" id="customTimeError" hidden></p>
+                  </div>
                 </div>
               </div>
 
@@ -352,6 +374,19 @@
             <button class="btn-cta" id="btnBookFirstAppt" type="button">
               <span>Đặt lịch hẹn ngay ➔</span>
             </button>
+          </div>
+
+          <!-- Màn hình nhắc đăng nhập khi khách vãng lai cố mở tab lịch hẹn -->
+          <div class="guest-auth-prompt-box" id="guestAuthPromptBox" hidden>
+            <div class="guest-auth-icon">🔒</div>
+            <h3>Vui lòng đăng nhập tài khoản</h3>
+            <p>
+              Chức năng theo dõi và quản lý lịch hẹn yêu cầu đăng nhập để bảo mật thông tin thú cưng và đồng bộ dữ liệu của bạn.
+            </p>
+            <div class="guest-auth-actions">
+              <a href="./login.html" class="pill-btn btn-login">Đăng nhập ngay</a>
+              <a href="./register.html" class="pill-btn btn-signup">Đăng ký tài khoản</a>
+            </div>
           </div>
         </div>
       </div>

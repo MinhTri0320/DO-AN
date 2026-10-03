@@ -532,6 +532,130 @@
   box-shadow: 0 6px 14px rgba(224, 122, 95, 0.3);
 }
 
+/* Custom Time Picker Component */
+.custom-time-picker-card {
+  margin-top: 24px;
+  background: linear-gradient(135deg, rgba(245, 239, 235, 0.6) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border: 1.5px dashed var(--tan);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-time-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.custom-time-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.custom-time-title strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--brown);
+  margin-bottom: 2px;
+}
+
+.custom-time-title p {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin: 0;
+}
+
+.custom-time-input-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#customTimeInput {
+  max-width: 220px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--brown);
+  cursor: pointer;
+}
+
+#customTimeInput.custom-time-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.2);
+}
+
+.custom-time-hint {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.custom-time-error {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--danger);
+  margin: 0;
+}
+
+/* Guest Auth Required Box trong Tab Lịch hẹn */
+.guest-auth-prompt-box {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-card);
+  padding: 48px 30px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 520px;
+  margin: 20px auto;
+}
+
+.guest-auth-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--brown);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border: 1px solid var(--line);
+}
+
+.guest-auth-prompt-box h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--brown);
+  margin: 0;
+}
+
+.guest-auth-prompt-box p {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  max-width: 440px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.guest-auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
 /* Step 4: Customer Details in Step Card */
 .clinic-address-notice {
   background: var(--cream-soft);
