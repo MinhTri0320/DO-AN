@@ -394,11 +394,12 @@
       </div>
     </section>
 
-    <!-- ===== LIÊN HỆ & ĐẶT LỊCH ===== -->
+    <!-- ===== LIÊN HỆ & TƯ VẤN ===== -->
     <section id="contact" class="section">
       <div class="section-inner contact-inner">
+        <!-- Cột trái: Thông tin liên hệ + Sáng kiến 2 (Card đặt lịch trực tuyến) + Sáng kiến 3 (Bản đồ Google Maps) -->
         <div class="contact-info">
-          <span class="section-badge">📞 LIÊN HỆ ĐẶT LỊCH</span>
+          <span class="section-badge">💬 LIÊN HỆ &amp; TƯ VẤN</span>
           <h2>Ghé Thăm PawnCare Hoặc Nhận Tư Vấn Trực Tuyến</h2>
           <p class="contact-desc">
             Chúng tôi luôn sẵn sàng lắng nghe và giải đáp mọi thắc mắc về sức khỏe cũng như thói quen sinh hoạt của Boss cưng.
@@ -415,7 +416,7 @@
               <div class="contact-list-icon">📞</div>
               <div class="contact-list-text">
                 <strong>Hotline tư vấn &amp; cấp cứu 24/7:</strong>
-                <span>0900 123 456</span>
+                <a href="tel:0900123456" style="color:var(--accent-dark); font-weight:700; text-decoration:none;">0900 123 456</a>
               </div>
             </li>
             <li>
@@ -433,42 +434,112 @@
               </div>
             </li>
           </ul>
+
+          <!-- Sáng kiến 3: Bản đồ Google Maps Đà Nẵng -->
+          <div class="contact-map-wrapper">
+            <div class="map-header">
+              <span>📍</span>
+              <strong>Vị trí showroom PawnCare Đà Nẵng:</strong>
+            </div>
+            <div class="map-frame-box">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.120613242784!2d108.21404137577573!3d16.05924703971485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314219c96899b503%3A0x6b840eb1a742880b!2zMTIzIE5ndXnhu4VuIFbEg24gTGluaCwgTuG6oWkgQ2jDonUsIMSQw6AgTuG6tW5n!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s"
+                width="100%"
+                height="220"
+                style="border:0; border-radius: 12px; display:block;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Bản đồ vị trí PawnCare 123 Nguyễn Văn Linh, Đà Nẵng">
+              </iframe>
+            </div>
+            <div class="map-footer-row">
+              <span>📌 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+              <a href="https://maps.google.com/?q=123+Nguy%E1%BB%85n+V%C4%83n+Linh,+H%E1%BA%A3i+Ch%C3%A2u,+%C4%90%C3%A0+N%E1%BA%B5ng" target="_blank" rel="noopener noreferrer" class="map-direct-link">
+                <span>Chỉ đường ➔</span>
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div class="contact-form-card">
-          <h3 class="contact-form-title">Gửi yêu cầu đặt lịch hẹn</h3>
-          <form class="form" id="contactForm">
-            <label data-field="name">
-              <span class="sr-only">Họ và tên</span>
-              <div class="input-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
-                  <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <input type="text" name="name" placeholder="Họ và tên của bạn" required />
+        <!-- Cột phải: Sáng kiến 1 (Form Tư vấn) + Sáng kiến 2 (Card Đặt lịch trực tuyến) -->
+        <div class="contact-right-col">
+          <!-- Sáng kiến 1: Form Tư vấn & Gửi thắc mắc -->
+          <div class="contact-form-card">
+            <h3 class="contact-form-title">Gửi Lời Nhắn &amp; Yêu Cầu Tư Vấn</h3>
+            <p class="contact-form-subtitle">Điền thông tin bên dưới, chuyên viên PawnCare sẽ liên hệ giải đáp trong 15 phút.</p>
+
+            <form class="form" id="contactForm">
+              <div class="form-grid-2">
+                <label data-field="name">
+                  <span class="sr-only">Họ và tên</span>
+                  <div class="input-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+                      <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" name="name" placeholder="Họ và tên của bạn *" required />
+                  </div>
+                </label>
+                <label data-field="phone">
+                  <span class="sr-only">Số điện thoại</span>
+                  <div class="input-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    </svg>
+                    <input type="tel" name="phone" placeholder="Số điện thoại liên hệ *" required />
+                  </div>
+                </label>
               </div>
-            </label>
-            <label data-field="phone">
-              <span class="sr-only">Số điện thoại</span>
-              <div class="input-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                </svg>
-                <input type="tel" name="phone" placeholder="Số điện thoại liên hệ" required />
+
+              <label data-field="topic">
+                <span class="sr-only">Chủ đề tư vấn</span>
+                <div class="input-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6h16M4 12h16M4 18h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                  <select name="topic" id="contactTopic">
+                    <option value="tuvan">🩺 Tư vấn sức khỏe, dinh dưỡng &amp; tiêm phòng</option>
+                    <option value="dichvu">✂️ Thắc mắc về dịch vụ Spa, Khách sạn thú cưng</option>
+                    <option value="lichhen">📅 Hỏi về lịch hẹn đã đặt / Hỗ trợ đổi giờ</option>
+                    <option value="gopy">💬 Góp ý chất lượng dịch vụ &amp; Phản hồi</option>
+                    <option value="khac">✨ Câu hỏi hoặc yêu cầu khác</option>
+                  </select>
+                </div>
+              </label>
+
+              <label data-field="message">
+                <span class="sr-only">Lời nhắn</span>
+                <div class="input-icon-wrap icon-top">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 5h16v11H8l-4 4V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                  </svg>
+                  <textarea name="message" rows="4" placeholder="Nhập câu hỏi, thắc mắc hoặc lời nhắn cho đội ngũ PawnCare..." required></textarea>
+                </div>
+              </label>
+              <p class="form-message" id="contactMessage"></p>
+              <button type="submit" class="btn-cta" style="width: 100%;">Gửi thắc mắc &amp; Yêu cầu tư vấn ngay ➔</button>
+            </form>
+          </div>
+
+          <!-- Sáng kiến 2: Quick Booking Showcase Card (Nằm dưới Form tư vấn ở cột phải) -->
+          <div class="booking-showcase-card">
+            <div class="showcase-card-header">
+              <span class="showcase-icon">✨</span>
+              <div>
+                <h4>Đặt Lịch Khám &amp; Spa Trực Tuyến</h4>
+                <p>Chủ động chọn bác sĩ, dịch vụ và tự chọn giờ riêng linh hoạt chỉ trong 1 phút</p>
               </div>
-            </label>
-            <label data-field="message">
-              <span class="sr-only">Lời nhắn</span>
-              <div class="input-icon-wrap icon-top">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4 5h16v11H8l-4 4V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                </svg>
-                <textarea name="message" rows="4" placeholder="Boss nhà bạn tên gì, cần dịch vụ khám, spa hay khách sạn?"></textarea>
-              </div>
-            </label>
-            <p class="form-message" id="contactMessage"></p>
-            <button type="submit" class="btn-cta" style="width: 100%;">Gửi yêu cầu đặt lịch ngay</button>
-          </form>
+            </div>
+            <div class="showcase-highlights">
+              <span>🩺 Chuẩn y khoa 5 sao</span>
+              <span>⏱️ Tự chọn giờ riêng linh hoạt</span>
+              <span>🔔 Nhắc lịch tự động</span>
+            </div>
+            <a href="./booking.html" class="btn-cta btn-showcase-book">
+              <span>📅 Đặt lịch chăm sóc Boss ngay ➔</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>

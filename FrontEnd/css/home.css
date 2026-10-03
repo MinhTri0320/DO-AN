@@ -715,12 +715,20 @@
 }
 
 .contact-form-card {
-  flex: 1;
+  width: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   padding: 32px;
   box-shadow: var(--shadow-card);
+  box-sizing: border-box;
+}
+
+.contact-right-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .contact-form-title {
@@ -728,7 +736,7 @@
   font-weight: 700;
   font-size: 18px;
   color: var(--brown);
-  margin-bottom: 20px;
+  margin-bottom: 6px;
 }
 
 .contact-form-card .form {
@@ -757,3 +765,171 @@
   width: 100% !important;
   box-sizing: border-box !important;
 }
+
+/* ---------- INITIATIVE 2: QUICK BOOKING SHOWCASE CARD ---------- */
+.booking-showcase-card {
+  margin-top: 0;
+  background: linear-gradient(135deg, rgba(224, 122, 95, 0.08) 0%, rgba(245, 239, 235, 0.75) 100%);
+  border: 1.5px solid rgba(224, 122, 95, 0.28);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.booking-showcase-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(51, 29, 18, 0.06);
+}
+
+.showcase-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.showcase-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(224, 122, 95, 0.2);
+}
+
+.showcase-card-header h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--brown);
+  margin: 0 0 2px;
+}
+
+.showcase-card-header p {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.showcase-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 4px 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+.btn-showcase-book {
+  width: 100% !important;
+  text-align: center;
+  justify-content: center;
+  padding: 12px 18px !important;
+  font-size: 14.5px !important;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- INITIATIVE 3: GOOGLE MAPS SHOWROOM DA NANG ---------- */
+.contact-map-wrapper {
+  margin-top: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.map-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brown);
+  margin-bottom: 12px;
+}
+
+.map-frame-box {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.map-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.map-direct-link {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent-dark);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.map-direct-link:hover {
+  color: var(--brown);
+}
+
+/* ---------- INITIATIVE 1: REFINED CONSULTATION / SUPPORT FORM ---------- */
+.contact-form-subtitle {
+  font-size: 13.5px;
+  color: var(--ink-faint);
+  margin: 0 0 20px;
+  line-height: 1.45;
+}
+
+.contact-form-card select {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  padding: 14px 18px 14px 44px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  appearance: auto;
+  transition: all 0.2s ease;
+}
+
+.contact-form-card select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.contact-form-card .form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .contact-form-card .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
