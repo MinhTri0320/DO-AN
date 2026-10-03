@@ -15,12 +15,12 @@
 }
 
 .header-inner {
-  max-width: 1140px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 14px 30px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
 }
 
 /* logo: mascot tròn + wordmark serif, phỏng theo bố cục Pawmily */
@@ -57,25 +57,29 @@
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--brown);
+  white-space: nowrap;
 }
 
 /* nav menu — ngang, dạng chữ thanh lịch */
 #menu {
   flex: 1;
   display: flex;
-  gap: 28px;
+  gap: 16px;
   align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 #menu .link {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14.5px;
   color: var(--ink-soft);
-  padding: 8px 4px;
+  padding: 6px 2px;
   border-bottom: 2.5px solid transparent;
   transition: all 0.2s ease;
   position: relative;
+  white-space: nowrap;
 }
 
 #menu .link:hover,

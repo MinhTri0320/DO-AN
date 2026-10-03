@@ -1,0 +1,924 @@
+/* ============================================================
+   booking.css - PawnCare Appointment Booking (Pawmily.vn Aesthetic)
+   - Layout: Step-by-step Booking Flow + Live Summary Card (Sticky)
+   - Service cards selection with price tags
+   - Pet selection pills from user's pets
+   - Date & Time Slot pills (Morning & Afternoon)
+   - Real-time validation, Booking confirmation modal, My Appointments
+   ============================================================ */
+
+.booking-page {
+  padding: 48px 0 80px;
+  background: var(--cream);
+  min-height: calc(100vh - 140px);
+}
+
+.booking-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 40px;
+}
+
+.booking-header h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 36px;
+  color: var(--brown);
+  margin-bottom: 12px;
+}
+
+.booking-header p {
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* Tab chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt */
+.booking-view-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.booking-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.booking-tab-btn:hover {
+  border-color: var(--tan);
+  color: var(--brown);
+}
+
+.booking-tab-btn.active {
+  background: var(--brown);
+  border-color: var(--brown);
+  color: #fff;
+  box-shadow: 0 8px 20px -6px rgba(51, 29, 18, 0.25);
+}
+
+.booking-tab-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.booking-tab-btn.active .booking-tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* 2-Column Main Layout */
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 36px;
+  align-items: flex-start;
+}
+
+/* ===== LEFT COLUMN: BOOKING STEPS ===== */
+.booking-steps-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.booking-step-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.2s ease;
+}
+
+.step-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(224, 122, 95, 0.3);
+  flex-shrink: 0;
+}
+
+.step-title h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--brown);
+  margin-bottom: 2px;
+}
+
+.step-title p {
+  font-size: 13.5px;
+  color: var(--ink-faint);
+}
+
+/* Step 1: Services Grid */
+.booking-services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.booking-service-item {
+  position: relative;
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  background: var(--cream);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.booking-service-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.booking-service-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--tan);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.booking-service-item.selected,
+.booking-service-item:has(input:checked) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px -6px rgba(224, 122, 95, 0.25);
+}
+
+.service-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.service-item-icon {
+  font-size: 26px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-item-price {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent-dark);
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(224, 122, 95, 0.25);
+}
+
+.service-item-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--brown);
+}
+
+.service-item-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* Step 2: Pets Grid */
+.booking-pets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.booking-pet-item {
+  position: relative;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: var(--cream);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.booking-pet-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.booking-pet-item:hover {
+  background: #fff;
+  border-color: var(--tan);
+}
+
+.booking-pet-item.selected,
+.booking-pet-item:has(input:checked) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(224, 122, 95, 0.2);
+}
+
+.booking-pet-thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+
+.booking-pet-info strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--brown);
+}
+
+.booking-pet-info span {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.booking-pet-new-btn {
+  border: 1.5px dashed var(--tan);
+  border-radius: 16px;
+  padding: 14px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  transition: all 0.2s ease;
+}
+
+.booking-pet-new-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* Guest Pet Profile State (Khi người dùng CHƯA đăng nhập) */
+.guest-pet-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.guest-auth-callout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(224, 122, 95, 0.08) 0%, rgba(245, 239, 235, 0.7) 100%);
+  border: 1.5px dashed rgba(224, 122, 95, 0.4);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+
+.guest-auth-callout .callout-icon {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.guest-auth-callout .callout-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.guest-auth-callout .callout-text strong {
+  color: var(--brown);
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+}
+
+.btn-guest-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: var(--brown);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-guest-login:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(224, 122, 95, 0.3);
+}
+
+/* Form Layout Grids & Inputs dùng chung trong Booking Step Card */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 680px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.booking-step-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--brown);
+  width: 100%;
+}
+
+.booking-step-card .input-icon-wrap {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.booking-step-card .input-icon-wrap > svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--tan);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.booking-step-card .input-icon-wrap.icon-top > svg {
+  top: 18px;
+  transform: none;
+}
+
+.booking-step-card input[type="text"],
+.booking-step-card input[type="tel"],
+.booking-step-card input[type="date"],
+.booking-step-card input[type="email"],
+.booking-step-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  background: #FFFFFF;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 13px 18px 13px 48px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(51, 29, 18, 0.04);
+}
+
+.booking-step-card textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.booking-step-card input:hover,
+.booking-step-card textarea:hover {
+  border-color: var(--tan);
+}
+
+.booking-step-card input:focus,
+.booking-step-card textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3.5px rgba(224, 122, 95, 0.16);
+}
+
+.booking-step-card .input-icon-wrap:focus-within > svg {
+  color: var(--accent);
+}
+
+/* Step 3: Date & Time Slots */
+.date-picker-wrap {
+  margin-bottom: 22px;
+}
+
+.date-picker-wrap input[type="date"] {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--brown);
+  cursor: pointer;
+}
+
+.time-slot-group-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 16px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.time-slot-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 10px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--brown);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.time-slot-pill input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.time-slot-pill:hover {
+  border-color: var(--tan);
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.time-slot-pill.selected,
+.time-slot-pill:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(224, 122, 95, 0.3);
+}
+
+/* Step 4: Customer Details in Step Card */
+.clinic-address-notice {
+  background: var(--cream-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--ink);
+  margin-top: 14px;
+}
+
+.clinic-address-notice strong {
+  color: var(--brown);
+}
+
+/* ===== RIGHT COLUMN: STICKY BOOKING SUMMARY ===== */
+.booking-summary-card {
+  position: sticky;
+  top: 96px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 30px 26px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.summary-header h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.summary-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.summary-row .label {
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary-row .value {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--brown);
+  text-align: right;
+  max-width: 60%;
+}
+
+.summary-fee-box {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fee-label {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.fee-amount {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--accent-dark);
+}
+
+.booking-guarantees {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  padding-top: 10px;
+}
+
+.booking-guarantees span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== SUCCESS MODAL ===== */
+.booking-success-card {
+  max-width: 480px;
+  text-align: center;
+  padding: 36px 32px;
+}
+
+.success-badge-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  color: var(--success);
+  font-size: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  border: 2px solid rgba(56, 142, 60, 0.25);
+  box-shadow: 0 8px 20px rgba(56, 142, 60, 0.2);
+}
+
+.booking-success-card h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--brown);
+  margin-bottom: 8px;
+}
+
+.booking-id-pill {
+  display: inline-block;
+  background: var(--cream-soft);
+  color: var(--brown);
+  border: 1px solid var(--tan-light);
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.booking-recap-box {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 20px;
+  text-align: left;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.booking-recap-box strong {
+  color: var(--brown);
+}
+
+/* ===== MY APPOINTMENTS TAB VIEW ===== */
+.my-appointments-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.appointments-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.appointments-filter-bar h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--brown);
+}
+
+.appointment-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.appointment-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  box-shadow: 0 4px 16px rgba(51, 29, 18, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  transition: all 0.25s ease;
+}
+
+.appointment-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tan);
+  box-shadow: var(--shadow-card);
+}
+
+.appt-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.appt-icon-box {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: var(--cream-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.appt-info h4 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brown);
+  margin-bottom: 4px;
+}
+
+.appt-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+}
+
+.appt-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.appt-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.appt-status {
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.appt-status.pending {
+  background: rgba(245, 166, 35, 0.14);
+  color: #B25E00;
+  border: 1px solid rgba(245, 166, 35, 0.35);
+}
+
+.appt-status.confirmed {
+  background: rgba(56, 142, 60, 0.12);
+  color: var(--success);
+  border: 1px solid rgba(56, 142, 60, 0.25);
+}
+
+.appt-status.cancelled {
+  background: rgba(211, 47, 47, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(211, 47, 47, 0.2);
+}
+
+.btn-cancel-appt {
+  background: transparent;
+  border: 1px solid rgba(211, 47, 47, 0.3);
+  color: var(--danger);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-appt:hover {
+  background: rgba(211, 47, 47, 0.08);
+}
+
+.empty-appointments-box {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--surface);
+  border: 2px dashed var(--tan-light);
+  border-radius: var(--radius-card);
+}
+
+.empty-appointments-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.empty-appointments-box h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--brown);
+  margin-bottom: 6px;
+}
+
+.empty-appointments-box p {
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-summary-card {
+    position: static;
+  }
+
+  .booking-services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-pets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .time-slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .appointment-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .appt-right {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 580px) {
+  .booking-step-card {
+    padding: 24px 18px;
+  }
+
+  .booking-pets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .time-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .booking-header h1 {
+    font-size: 28px;
+  }
+}
