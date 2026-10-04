@@ -9,7 +9,7 @@
 
 import { getCurrentUser, updateCurrentUser } from "./auth.js";
 import { escapeHTML } from "./storage.js";
-import { apiUpdateProfile } from "./api.js";
+import { apiGetUserProfile, apiUpdateProfile } from "./api.js";
 
 function showToast(message, type = "success") {
   let toast = document.getElementById("profileToast");
@@ -84,15 +84,57 @@ export function initCustomerProfilePage() {
     if (sideInitial) sideInitial.textContent = (data.name || "U").trim().charAt(0).toUpperCase();
   }
 
+  // 1. Hiển thị ngay từ phiên hiện tại/cache để UI không bị giật
   populateForm(user);
 
-  // Xử lý submit lưu thông tin
-  form.addEventListener("submit", (e) => {
+  // 2. Fetch dữ liệu trực tiếp từ MongoDB thông qua API GET BackEnd
+  async function loadProfileFromDatabase() {
+    const currentUser = getCurrentUser() || user;
+    const identifier = currentUser?.id || currentUser?._id || currentUser?.email || currentUser?.phone;
+    if (!identifier) return;
+
+    try {
+      console.log(`[CustomerProfile] Đang gửi GET lấy dữ liệu hồ sơ từ MongoDB cho: ${identifier}...`);
+      const mongoUser = await apiGetUserProfile(identifier);
+      if (mongoUser && typeof mongoUser === "object") {
+        console.log("[CustomerProfile] Đã nhận dữ liệu hồ sơ từ MongoDB:", mongoUser);
+        const mergedUser = {
+          ...(currentUser || {}),
+          ...mongoUser,
+          id: mongoUser._id || mongoUser.id || currentUser?.id,
+          name: mongoUser.name || currentUser?.name,
+          phone: mongoUser.phone || currentUser?.phone,
+          email: mongoUser.email || currentUser?.email,
+          dob: mongoUser.dob || currentUser?.dob || "2000-05-15",
+          gender: mongoUser.gender || currentUser?.gender || "female",
+          address: {
+            ...(currentUser?.address || {}),
+            ...(mongoUser.address || {}),
+          },
+        };
+
+        // Điền dữ liệu từ MongoDB vào form & sidebar
+        populateForm(mergedUser);
+        // Đồng bộ cache lưu trữ cục bộ
+        updateCurrentUser(mergedUser);
+      }
+    } catch (err) {
+      console.warn("[CustomerProfile] Không thể lấy profile từ MongoDB, dùng fallback cục bộ:", err);
+    }
+  }
+
+  loadProfileFromDatabase();
+
+  // Xử lý submit lưu thông tin lên máy chủ MongoDB
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const selectedGender = form.querySelector('input[name="gender"]:checked');
+    const currentUser = getCurrentUser() || user;
+    const userId = currentUser.id || currentUser._id || currentUser.email;
 
     const updatedData = {
+      id: userId,
       name: (form.elements.fullName.value || "").trim(),
       phone: (form.elements.phone.value || "").trim(),
       email: (form.elements.email.value || "").trim(),
@@ -119,25 +161,50 @@ export function initCustomerProfilePage() {
       return;
     }
 
-    // Lưu vào auth & localStorage
-    const saved = updateCurrentUser(updatedData);
-    updateSidebarCard(saved);
-
-    // Gửi fetch API cập nhật hồ sơ tới BackEnd
-    try {
-      apiUpdateProfile(updatedData);
-    } catch (e) {
-      // API client đã xử lý fallback
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>⏳</span> <span>Đang lưu...</span>`;
     }
 
-    showToast("Cập nhật thông tin hồ sơ khách hàng thành công!");
+    try {
+      // 1. Gửi fetch API cập nhật hồ sơ tới BackEnd/MongoDB
+      const apiResult = await apiUpdateProfile(updatedData, userId);
+      const finalUser = (apiResult && typeof apiResult === "object") ? { ...updatedData, ...apiResult } : updatedData;
+
+      // 2. Lưu vào auth & localStorage đồng bộ
+      const saved = updateCurrentUser(finalUser);
+      updateSidebarCard(saved);
+      showToast("Cập nhật thông tin hồ sơ lên cơ sở dữ liệu thành công!");
+    } catch (err) {
+      console.warn("[CustomerProfile] Lỗi khi lưu profile tới BackEnd, fallback cục bộ:", err);
+      const saved = updateCurrentUser(updatedData);
+      updateSidebarCard(saved);
+      showToast("Đã lưu thông tin hồ sơ (chế độ cục bộ)!");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+      }
+    }
   });
 
   // Nút Hủy khôi phục lại giá trị hiện tại
   const cancelBtn = document.getElementById("btnCancelCustomerEdit");
   if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
-      populateForm(getCurrentUser() || user);
+    cancelBtn.addEventListener("click", async () => {
+      const currentUser = getCurrentUser();
+      const identifier = currentUser?.id || currentUser?._id || currentUser?.email;
+      if (identifier) {
+        const mongoUser = await apiGetUserProfile(identifier);
+        if (mongoUser) {
+          populateForm({ ...currentUser, ...mongoUser });
+          showToast("Đã khôi phục thông tin từ máy chủ.", "info");
+          return;
+        }
+      }
+      populateForm(currentUser || user);
       showToast("Đã khôi phục thông tin ban đầu.", "info");
     });
   }

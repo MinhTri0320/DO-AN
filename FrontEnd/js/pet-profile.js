@@ -4,11 +4,13 @@
    - Cho phép người dùng quản lý thông tin hồ sơ của thú cưng:
      tên, loài, giống, tuổi, cân nặng và các thông tin liên quan.
    - Người dùng có thể xem, thêm mới, cập nhật và xóa thú cưng.
-   - Dữ liệu lưu bền vững trong localStorage (pawncare_pets).
+   - Kết nối trực tiếp cơ sở dữ liệu MongoDB thông qua Back-End Express API.
+   - Tự động đồng bộ với localStorage (pawncare_pets) và trang Đặt lịch hẹn.
    ============================================================ */
 
 import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
-import { apiSavePet, apiDeletePet } from "./api.js";
+import { apiGetPets, apiSavePet, apiDeletePet } from "./api.js";
+import { getCurrentUser } from "./auth.js";
 
 const DEFAULT_PETS = [
   {
@@ -54,51 +56,111 @@ function showToast(message, type = "success") {
   }, 3200);
 }
 
+/**
+ * Lấy danh sách thú cưng từ kho lưu trữ cục bộ (dùng ngay để UI hiển thị tức thời)
+ */
 export function getPetsList() {
   const existing = getData(STORAGE_KEYS.PETS, null);
-  if (existing && Array.isArray(existing)) {
+  if (existing && Array.isArray(existing) && existing.length > 0) {
     return existing;
   }
   setData(STORAGE_KEYS.PETS, DEFAULT_PETS);
   return DEFAULT_PETS;
 }
 
-export function savePetItem(petData) {
-  const pets = getPetsList();
-  if (petData.id) {
-    const idx = pets.findIndex((p) => p.id === petData.id);
-    if (idx >= 0) {
-      pets[idx] = { ...pets[idx], ...petData };
-    } else {
-      pets.push(petData);
+/**
+ * Tải danh sách thú cưng mới nhất từ MongoDB thông qua API GET /api/pets
+ */
+export async function fetchPetsFromDatabase() {
+  const currentUser = getCurrentUser();
+  const userId = currentUser?.id || currentUser?._id || currentUser?.phone || currentUser?.email;
+
+  try {
+    console.log(`[PetProfile] Đang gửi GET lấy danh sách thú cưng từ MongoDB cho user: ${userId || "all"}...`);
+    const mongoPets = await apiGetPets(userId);
+    if (mongoPets && Array.isArray(mongoPets)) {
+      console.log(`[PetProfile] Đã nhận ${mongoPets.length} thú cưng từ MongoDB:`, mongoPets);
+      // Chuẩn hóa dữ liệu từ MongoDB
+      const normalizedPets = mongoPets.map((p, idx) => ({
+        id: p._id || p.id || `pet_${idx + 1}`,
+        name: p.name || "Bé cưng",
+        species: p.species || "Chó",
+        breed: p.breed || "Chưa rõ",
+        age: p.age || "1 tuổi",
+        gender: p.gender || "Đực",
+        weight: p.weight || "5.0",
+        vaccinated: p.vaccinated || "Đã tiêm phòng đủ",
+        sterilized: p.sterilized || "Đã triệt sản",
+        avatar: p.avatar || (p.species === "Mèo" ? "../assets/img/frenchie.jpg" : "../assets/img/golden.jpg"),
+        notes: p.notes || "",
+        ...(p.userId ? { userId: p.userId } : {}),
+      }));
+
+      // Đồng bộ vào localStorage để duy trì cache và phục vụ các trang khác (như booking)
+      setData(STORAGE_KEYS.PETS, normalizedPets);
+      return normalizedPets;
     }
+  } catch (err) {
+    console.warn("[PetProfile] Không thể lấy danh sách thú cưng từ MongoDB, dùng fallback cục bộ:", err);
+  }
+
+  return getPetsList();
+}
+
+/**
+ * Lưu hồ sơ thú cưng lên MongoDB và đồng bộ với kho cục bộ
+ */
+export async function savePetItem(petData) {
+  const currentUser = getCurrentUser();
+  if (currentUser) {
+    petData.userId = currentUser.id || currentUser._id;
+    petData.ownerPhone = currentUser.phone;
+    petData.ownerEmail = currentUser.email;
+  }
+
+  // 1. Gửi fetch API tới MongoDB/BackEnd
+  let savedFromDb = null;
+  try {
+    savedFromDb = await apiSavePet(petData);
+    console.log("[PetProfile] Đã lưu thú cưng lên MongoDB thành công:", savedFromDb);
+  } catch (e) {
+    console.warn("[PetProfile] Không thể lưu qua API MongoDB, dùng fallback cục bộ:", e);
+  }
+
+  // 2. Chuẩn hóa ID từ MongoDB
+  const finalPet = (savedFromDb && typeof savedFromDb === "object") ? { ...petData, ...savedFromDb } : petData;
+  if (!finalPet.id && finalPet._id) finalPet.id = finalPet._id;
+  if (!finalPet.id) finalPet.id = "pet_" + Date.now();
+
+  // 3. Đồng bộ với kho lưu trữ cục bộ
+  const pets = getPetsList();
+  const idx = pets.findIndex((p) => p.id === finalPet.id || (finalPet._id && p._id === finalPet._id));
+  if (idx >= 0) {
+    pets[idx] = { ...pets[idx], ...finalPet };
   } else {
-    petData.id = "pet_" + Date.now();
-    pets.push(petData);
+    pets.push(finalPet);
   }
   setData(STORAGE_KEYS.PETS, pets);
-
-  // Gửi fetch API tới BackEnd
-  try {
-    apiSavePet(petData);
-  } catch (e) {
-    // API client đã xử lý fallback
-  }
 
   return pets;
 }
 
-export function deletePetItem(petId) {
-  let pets = getPetsList();
-  pets = pets.filter((p) => p.id !== petId);
-  setData(STORAGE_KEYS.PETS, pets);
-
-  // Gửi fetch API xóa tới BackEnd
+/**
+ * Xóa thú cưng khỏi MongoDB và đồng bộ kho cục bộ
+ */
+export async function deletePetItem(petId) {
+  // 1. Gửi fetch API xóa tới MongoDB/BackEnd
   try {
-    apiDeletePet(petId);
+    console.log(`[PetProfile] Đang gửi yêu cầu xóa thú cưng ${petId} trên MongoDB...`);
+    await apiDeletePet(petId);
   } catch (e) {
-    // API client đã xử lý fallback
+    console.warn("[PetProfile] Không thể xóa qua API MongoDB, dùng fallback cục bộ:", e);
   }
+
+  // 2. Đồng bộ xóa trong kho lưu trữ cục bộ
+  let pets = getPetsList();
+  pets = pets.filter((p) => p.id !== petId && p._id !== petId);
+  setData(STORAGE_KEYS.PETS, pets);
 
   return pets;
 }
@@ -118,8 +180,19 @@ export function initPetProfilePage() {
 
   let editingPetId = null;
 
-  function renderPets() {
-    const pets = getPetsList();
+  // Cập nhật card sidebar người dùng nếu đã đăng nhập
+  const currentUser = getCurrentUser();
+  if (currentUser) {
+    const sideName = document.getElementById("sidebarUserName");
+    const sidePhone = document.getElementById("sidebarUserPhone");
+    const sideInitial = document.getElementById("sidebarUserInitial");
+    if (sideName) sideName.textContent = currentUser.name || "Khách hàng";
+    if (sidePhone) sidePhone.textContent = currentUser.phone || currentUser.email || "0900 123 456";
+    if (sideInitial) sideInitial.textContent = (currentUser.name || "U").trim().charAt(0).toUpperCase();
+  }
+
+  function renderPets(customPets = null) {
+    const pets = customPets || getPetsList();
 
     if (petCountStat) {
       petCountStat.textContent = `${pets.length} bé cưng`;
@@ -214,6 +287,18 @@ export function initPetProfilePage() {
     });
   }
 
+  // 1. Render ngay từ kho lưu trữ cục bộ để giao diện tức thời không bị giật
+  renderPets();
+
+  // 2. Fetch danh sách mới nhất trực tiếp từ MongoDB thông qua API GET
+  async function syncPetsFromDatabase() {
+    const mongoPets = await fetchPetsFromDatabase();
+    if (mongoPets && Array.isArray(mongoPets)) {
+      renderPets(mongoPets);
+    }
+  }
+  syncPetsFromDatabase();
+
   function openAddPetModal() {
     editingPetId = null;
     if (modalTitle) modalTitle.textContent = "Thêm Thú Cưng Mới";
@@ -257,13 +342,13 @@ export function initPetProfilePage() {
     editingPetId = null;
   }
 
-  function confirmDeletePet(petId) {
+  async function confirmDeletePet(petId) {
     const pets = getPetsList();
     const target = pets.find((p) => p.id === petId);
     const name = target ? target.name : "thú cưng này";
 
     if (confirm(`Bạn có chắc chắn muốn xóa hồ sơ của ${name} không? Thao tác này không thể hoàn tác.`)) {
-      deletePetItem(petId);
+      await deletePetItem(petId);
       renderPets();
       showToast(`Đã xóa hồ sơ của ${name}.`, "info");
     }
@@ -303,7 +388,7 @@ export function initPetProfilePage() {
   if (modalCancelBtn) modalCancelBtn.addEventListener("click", closeModal);
 
   if (petForm) {
-    petForm.addEventListener("submit", (e) => {
+    petForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const name = (petForm.elements.petName.value || "").trim();
@@ -327,13 +412,26 @@ export function initPetProfilePage() {
         avatar: petForm.elements.petAvatar.value || "../assets/img/golden.jpg",
       };
 
-      savePetItem(petData);
-      closeModal();
-      renderPets();
-      showToast(editingPetId ? "Cập nhật hồ sơ thú cưng thành công!" : "Đã thêm thú cưng mới vào danh sách!");
+      const submitBtn = petForm.querySelector('button[type="submit"]');
+      const origBtnText = submitBtn ? submitBtn.innerHTML : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span>⏳</span> <span>Đang lưu...</span>`;
+      }
+
+      try {
+        await savePetItem(petData);
+        closeModal();
+        renderPets();
+        showToast(editingPetId ? "Cập nhật hồ sơ thú cưng thành công!" : "Đã thêm thú cưng mới vào cơ sở dữ liệu!");
+      } catch (err) {
+        console.error("Lỗi khi lưu thú cưng:", err);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origBtnText;
+        }
+      }
     });
   }
-
-  // Render lần đầu
-  renderPets();
 }

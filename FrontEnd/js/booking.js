@@ -11,7 +11,7 @@
 
 import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
 import { getCurrentUser } from "./auth.js";
-import { getPetsList } from "./pet-profile.js";
+import { getPetsList, fetchPetsFromDatabase } from "./pet-profile.js";
 import { renderNotifBadge } from "./notifications.js";
 import { apiCreateAppointment, apiGetAppointments, apiCancelAppointment } from "./api.js";
 
@@ -329,6 +329,7 @@ export function initBookingPage() {
       petStepSubtitle.textContent = `Hồ sơ thú cưng đã đăng ký của bạn (${user.name || "Khách hàng"})`;
     }
 
+    fetchPetsFromDatabase().catch(() => {});
     const pets = getPetsList();
 
     let html = pets
