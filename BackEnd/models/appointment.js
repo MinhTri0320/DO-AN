@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+ 
 const appointmentSchema = new mongoose.Schema(
   {
     bookingCode: {
@@ -35,10 +35,77 @@ const appointmentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+ 
 appointmentSchema.index(
   { dateISO: 1, time: 1 },
   { unique: true, partialFilterExpression: { slotReserved: true } }
 );
+ 
 
+const todayISO = () =>
+  new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Ho_Chi_Minh" });
+ 
+
+const ownerFilter = (user = {}) => {
+  const or = [];
+  if (user.userId) or.push({ userId: String(user.userId) });
+  if (user.userEmail) or.push({ userEmail: String(user.userEmail).toLowerCase() });
+  if (!or.length) {
+    const err = new Error("Vui lòng đăng nhập tài khoản");
+    err.status = 401;
+    throw err;
+  }
+  return { $or: or };
+};
+ 
+
+appointmentSchema.statics.listByUser = async function (user, options = {}) {
+  const { status, tab, page = 1, limit = 10 } = options;
+  const filter = { ...ownerFilter(user) };
+ 
+  if (status) filter.status = status;
+  if (tab === "upcoming") {
+    filter.dateISO = { $gte: todayISO() };
+    filter.status = status || { $ne: "Đã hủy" };
+  } else if (tab === "past") {
+    filter.dateISO = { $lt: todayISO() };
+  }
+ 
+  const p = Math.max(parseInt(page, 10) || 1, 1);
+  const l = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 50);
+  const dir = tab === "past" ? -1 : 1; 
+ 
+  const [rows, total] = await Promise.all([
+    this.find(filter)
+      .sort({ dateISO: dir, time: dir })
+      .skip((p - 1) * l)
+      .limit(l)
+      .lean(),
+    this.countDocuments(filter),
+  ]);
+ 
+  const today = todayISO();
+  const items = rows.map((a) => ({
+    ...a,
+    
+    canCancel: a.status !== "Đã hủy" && a.dateISO >= today,
+  }));
+ 
+  return { items, total, page: p, limit: l, totalPages: Math.ceil(total / l) };
+};
+ 
+
+appointmentSchema.statics.statsByUser = async function (user) {
+  const rows = await this.aggregate([
+    { $match: ownerFilter(user) },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+  const stats = { total: 0, "Chờ xác nhận": 0, "Đã xác nhận": 0, "Đã hủy": 0 };
+  rows.forEach((r) => {
+    stats[r._id] = r.count;
+    stats.total += r.count;
+  });
+  return stats;
+};
+ 
 module.exports = mongoose.model("Appointment", appointmentSchema, "appointments");
