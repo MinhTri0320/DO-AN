@@ -12,8 +12,12 @@
 import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
 import { getCurrentUser } from "./auth.js";
 import { getPetsList, fetchPetsFromDatabase } from "./pet-profile.js";
-import { renderNotifBadge } from "./notifications.js";
-import { apiCreateAppointment, apiGetAppointments, apiCancelAppointment } from "./api.js";
+import { createNotification, renderNotifBadge } from "./notifications.js";
+import {
+  apiCreateAppointment,
+  apiCancelAppointment,
+  apiGetBookedSlots,
+} from "./api.js";
 
 export const SERVICES_CATALOG = [
   {
@@ -112,13 +116,6 @@ export async function saveAppointment(appointment) {
   list.unshift(appointment);
   setData(STORAGE_KEYS.APPOINTMENTS, list);
 
-  // Gửi fetch API tới BackEnd
-  try {
-    await apiCreateAppointment(appointment);
-  } catch (e) {
-    // API client đã xử lý fallback
-  }
-
   // Tạo thông báo mới trong hệ thống thông báo
   const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
   notifs.unshift({
@@ -139,15 +136,11 @@ export async function cancelAppointment(appointmentId) {
   const list = getAppointments();
   const target = list.find((a) => a.id === appointmentId);
   if (target) {
+    if (target.bookingCode) {
+      await apiCancelAppointment(target.bookingCode);
+    }
     target.status = "Đã hủy";
     setData(STORAGE_KEYS.APPOINTMENTS, list);
-
-    // Gửi fetch API hủy lịch tới BackEnd
-    try {
-      await apiCancelAppointment(appointmentId);
-    } catch (e) {
-      // API client đã xử lý fallback
-    }
 
     // Ghi nhận thông báo vào hệ thống thông báo chuông
     const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
@@ -208,6 +201,8 @@ export function initBookingPage() {
     date: "",
     time: "",
   };
+  let bookedTimes = new Set();
+  let availabilityLoaded = false;
 
   // 1. Khởi tạo danh sách Dịch vụ
   function renderServices() {
@@ -436,6 +431,27 @@ export function initBookingPage() {
 
       dateInput.addEventListener("change", () => {
         currentSelection.date = formatDateVN(dateInput.value);
+        currentSelection.time = "";
+        const customTimeInput = document.getElementById("customTimeInput");
+        if (customTimeInput) {
+          customTimeInput.value = "";
+          customTimeInput.classList.remove("custom-time-active");
+        }
+        if (timeSlotsContainer) {
+          timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((pill) => {
+            pill.classList.remove("selected");
+            const radio = pill.querySelector('input[type="radio"]');
+            if (radio) radio.checked = false;
+          });
+          const firstSlot = timeSlotsContainer.querySelector(".time-slot-pill");
+          if (firstSlot) {
+            firstSlot.classList.add("selected");
+            const radio = firstSlot.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            currentSelection.time = firstSlot.dataset.time || radio?.value || "";
+          }
+        }
+        refreshBookedSlots();
         updateSummary();
       });
     }
@@ -448,6 +464,10 @@ export function initBookingPage() {
       const slots = timeSlotsContainer.querySelectorAll(".time-slot-pill");
       slots.forEach((pill) => {
         pill.addEventListener("click", () => {
+          if (pill.classList.contains("booked")) {
+            alert("Khung giờ đã được đặt trước.");
+            return;
+          }
           slots.forEach((p) => p.classList.remove("selected"));
           pill.classList.add("selected");
           const radio = pill.querySelector('input[type="radio"]');
@@ -464,16 +484,15 @@ export function initBookingPage() {
           updateSummary();
         });
       });
-
-      // Mặc định chọn khung giờ đầu tiên
       const firstSlot = slots[0];
       if (firstSlot) {
         firstSlot.classList.add("selected");
         const radio = firstSlot.querySelector('input[type="radio"]');
         if (radio) radio.checked = true;
-        currentSelection.time = firstSlot.dataset.time || "08:30";
+        currentSelection.time = firstSlot.dataset.time || radio?.value || "";
       }
     }
+    refreshBookedSlots();
 
     // Gắn sự kiện cho ô TỰ CHỌN GIỜ RIÊNG (Custom Time Picker)
     if (customTimeInput) {
@@ -486,6 +505,16 @@ export function initBookingPage() {
         }
 
         if (isWithinClinicHours(val)) {
+          if (bookedTimes.has(val)) {
+            customTimeInput.classList.remove("custom-time-active");
+            currentSelection.time = "";
+            if (customTimeError) {
+              customTimeError.textContent = "Khung giờ đã được đặt trước.";
+              customTimeError.hidden = false;
+            }
+            updateSummary();
+            return;
+          }
           // Bỏ chọn các pill cố định để khách toàn quyền chọn giờ riêng
           if (timeSlotsContainer) {
             timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((p) => {
@@ -510,6 +539,48 @@ export function initBookingPage() {
 
       customTimeInput.addEventListener("input", handleCustomTimeChange);
       customTimeInput.addEventListener("change", handleCustomTimeChange);
+    }
+  }
+
+  async function refreshBookedSlots() {
+    if (!dateInput?.value) return;
+    const selectedDate = dateInput.value;
+    availabilityLoaded = false;
+    try {
+      const result = await apiGetBookedSlots(selectedDate);
+      if (dateInput.value !== selectedDate) return;
+      bookedTimes = new Set(result.bookedTimes || []);
+      availabilityLoaded = true;
+      const slots = [...(timeSlotsContainer?.querySelectorAll(".time-slot-pill") || [])];
+      slots.forEach((pill) => {
+        const time = pill.dataset.time;
+        const isBooked = bookedTimes.has(time);
+        pill.classList.toggle("booked", isBooked);
+        pill.setAttribute("aria-disabled", String(isBooked));
+        pill.title = isBooked ? "Khung giờ đã được đặt trước" : "";
+        const radio = pill.querySelector('input[type="radio"]');
+        if (radio) radio.disabled = isBooked;
+        if (isBooked && currentSelection.time === time) {
+          pill.classList.remove("selected");
+          if (radio) radio.checked = false;
+          currentSelection.time = "";
+        }
+      });
+      if (!currentSelection.time) {
+        const firstAvailable = slots.find((pill) => !pill.classList.contains("booked"));
+        if (firstAvailable) {
+          firstAvailable.classList.add("selected");
+          const radio = firstAvailable.querySelector('input[type="radio"]');
+          if (radio) radio.checked = true;
+          currentSelection.time = firstAvailable.dataset.time || radio?.value || "";
+        }
+      }
+      updateSummary();
+    } catch (error) {
+      if (dateInput.value === selectedDate) {
+        availabilityLoaded = false;
+        console.error("Không thể kiểm tra khung giờ đã đặt:", error);
+      }
     }
   }
 
@@ -607,35 +678,70 @@ export function initBookingPage() {
       return;
     }
 
-    // Tạo mã lịch hẹn ngẫu nhiên sang trọng
-    const bookingCode = `PC-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
-
     const user = getCurrentUser();
+    if (!availabilityLoaded) {
+      await refreshBookedSlots();
+      if (!availabilityLoaded) {
+        alert("Không thể kiểm tra khung giờ. Vui lòng thử lại sau.");
+        return;
+      }
+    }
+    if (bookedTimes.has(currentSelection.time)) {
+      alert("Khung giờ đã được đặt trước.");
+      await refreshBookedSlots();
+      return;
+    }
 
-    const newAppointment = {
-      id: bookingCode,
-      userId: user ? user.phone : null,
-      userEmail: user ? user.email : null,
-      serviceId: currentSelection.service.id,
-      serviceName: currentSelection.service.name,
-      serviceIcon: currentSelection.service.icon,
-      petName: currentSelection.pet.name,
-      petSpecies: currentSelection.pet.species || "Thú cưng",
-      petBreed: currentSelection.pet.breed || "",
-      petAvatar: currentSelection.pet.avatar || "../assets/img/golden.jpg",
-      date: formatDateVN(dateInput.value),
-      time: currentSelection.time,
-      ownerName: ownerName,
-      ownerPhone: ownerPhone,
-      notes: (notesInput?.value || "").trim(),
-      location: "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng",
-      status: "Chờ xác nhận",
-      feeDisplay: currentSelection.service.priceDisplay,
-      createdAt: Date.now(),
-    };
-
-    // Lưu vào hệ thống và gửi fetch API tới BackEnd
-    await saveAppointment(newAppointment);
+    let newAppointment;
+    try {
+      const result = await apiCreateAppointment({
+        userId: user?.id ? String(user.id) : undefined,
+        userEmail: user?.email,
+        serviceId: currentSelection.service.id,
+        serviceName: currentSelection.service.name,
+        serviceIcon: currentSelection.service.icon,
+        petName: currentSelection.pet.name,
+        petSpecies: currentSelection.pet.species || "Thú cưng",
+        petBreed: currentSelection.pet.breed || "",
+        petAvatar: currentSelection.pet.avatar || "../assets/img/golden.jpg",
+        dateISO: dateInput.value,
+        time: currentSelection.time,
+        ownerName,
+        ownerPhone,
+        notes: (notesInput?.value || "").trim(),
+        location: "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng",
+        feeDisplay: currentSelection.service.priceDisplay,
+      });
+      newAppointment = {
+        ...result,
+        id: result.bookingCode,
+        bookingCode: result.bookingCode,
+        date: formatDateVN(dateInput.value),
+        createdAt: Date.now(),
+      };
+      await saveAppointment(newAppointment);
+    } catch (error) {
+      if (error.statusCode === 409) {
+        alert("Khung giờ đã được đặt trước.");
+        await refreshBookedSlots();
+        return;
+      }
+      console.error("Không thể đặt lịch:", error);
+      alert(error.message || "Không thể đặt lịch lúc này. Vui lòng thử lại.");
+      return;
+    }
+    const bookingCode = newAppointment.bookingCode;
+    if (user?.id) {
+      createNotification({
+        userId: String(user.id),
+        type: "appointment",
+        title: "Đặt lịch hẹn thành công!",
+        message: `Lịch hẹn ${newAppointment.serviceName} cho ${newAppointment.petName} vào ${newAppointment.time} ngày ${newAppointment.date} đã được ghi nhận. Mã: ${newAppointment.id}.`,
+        icon: "📅",
+      }).catch((error) => {
+        console.error("Không thể lưu thông báo đặt lịch:", error);
+      });
+    }
 
     // Mở Modal thành công
     if (successBookingId) successBookingId.textContent = `Mã lịch hẹn: ${bookingCode}`;
@@ -780,8 +886,13 @@ export function initBookingPage() {
       btn.addEventListener("click", async () => {
         const id = btn.dataset.id;
         if (confirm(`Bạn có chắc chắn muốn hủy lịch hẹn mã ${id} không?`)) {
-          await cancelAppointment(id);
-          renderMyAppointments();
+          try {
+            await cancelAppointment(id);
+            renderMyAppointments();
+          } catch (error) {
+            console.error("Không thể hủy lịch hẹn:", error);
+            alert(error.message || "Không thể hủy lịch hẹn lúc này.");
+          }
         }
       });
     });

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
@@ -5,12 +6,14 @@ const connectDB = require("./config/database");
 
 const registerR = require("./routes/registerR");
 const loginR = require("./routes/loginR");
+const formsR = require("./routes/formsR");
+const notificationsR = require("./routes/notificationsR");
+const campaignsR = require("./routes/campaignsR");
+const appointmentsR = require("./routes/appointmentsR");
+const { startCampaignReminderScheduler } = require("./services/campaignReminders");
+const Appointment = require("./models/appointment");
 
 const app = express();
-
-
-// Kết nối Database
-connectDB();
 
 
 // Middleware
@@ -20,10 +23,11 @@ app.use(express.json());
 
 // Route đăng ký
 app.use("/api", registerR);
-
-
-// Route đăng nhập
 app.use("/api", loginR);
+app.use("/api", formsR);
+app.use("/api", notificationsR);
+app.use("/api", campaignsR);
+app.use("/api", appointmentsR);
 
 
 // Kiểm tra server
@@ -31,8 +35,24 @@ app.get("/", (req, res) => {
     res.send("PawnCare Backend đang chạy");
 });
 
-
-// Chạy server
-app.listen(3000, () => {
-    console.log("SERVER DANG CHAY TAI http://localhost:3000");
+app.get("/health", (req, res) => {
+    res.json({ status: "ok", database: require("mongoose").connection.readyState === 1 ? "connected" : "disconnected" });
 });
+
+const port = Number(process.env.PORT) || 3000;
+
+async function startServer() {
+    try {
+        await connectDB();
+        await Appointment.init();
+        startCampaignReminderScheduler();
+        app.listen(port, () => {
+            console.log(`SERVER DANG CHAY TAI http://localhost:${port}`);
+        });
+    } catch (error) {
+        console.error("Không thể khởi động backend:", error.message);
+        process.exitCode = 1;
+    }
+}
+
+startServer();

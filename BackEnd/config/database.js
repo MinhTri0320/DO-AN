@@ -1,15 +1,11 @@
-   const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-   const connectDB = async () => {
-     try {
-       await mongoose.connect(process.env.MONGODB_URI, {
-         dbName: process.env.DB_NAME,
-       });
-       console.log("Đã kết nối MongoDB");
-     } catch (err) {
-       console.error("Lỗi kết nối:", err.message);
-       process.exit(1);
-     }
-   };
+const connectDB = async () => {
+  const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/pawncare";
+  const options = process.env.DB_NAME ? { dbName: process.env.DB_NAME } : {};
 
-   module.exports = connectDB;
+  await mongoose.connect(uri, options);
+  console.log("Đã kết nối MongoDB");
+};
+
+module.exports = connectDB;

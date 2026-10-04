@@ -771,6 +771,36 @@
   gap: 6px;
 }
 
+/* ===== BOOKING MODALS ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(42, 27, 20, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay[hidden] {
+  display: none !important;
+}
+
+.time-slot-pill.booked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  background: #eee9e5;
+  border-color: var(--line);
+}
+
+.time-slot-pill.booked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* ===== SUCCESS MODAL ===== */
 .booking-success-card {
   max-width: 480px;

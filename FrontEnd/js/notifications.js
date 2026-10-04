@@ -1,113 +1,138 @@
-/* ============================================================
-   notifications.js
-   Task "Notification": chuông thông báo trên header (badge số) +
-   trang notifications.html (danh sách, đánh dấu đã đọc).
-   ============================================================ */
+import { formatTimeAgo, escapeHTML } from "./storage.js";
+import { getCurrentUser } from "./auth.js";
+import { apiRequest } from "./api.js";
 
-import { STORAGE_KEYS, getData, setData, formatTimeAgo, escapeHTML } from "./storage.js";
+function getUserQuery() {
+  const user = getCurrentUser();
+  const userId = user?.id ? String(user.id) : user?.email || null;
+  if (!userId) return null;
 
-function seedNotificationsIfEmpty() {
-  const existing = getData(STORAGE_KEYS.NOTIFICATIONS, null);
-  if (existing) return existing;
-
-  const now = Date.now();
-  const seeded = [
-    {
-      id: 1,
-      icon: "📅",
-      title: "Lịch hẹn sắp tới",
-      desc: "Boss Mít có lịch khám sức khỏe định kỳ vào 9:00 sáng mai.",
-      time: now - 2 * 60 * 60 * 1000,
-      read: false,
-    },
-    {
-      id: 2,
-      icon: "🎉",
-      title: "Ưu đãi tháng 9",
-      desc: "Giảm 20% dịch vụ Spa & Tỉa lông cho khách hàng thân thiết.",
-      time: now - 26 * 60 * 60 * 1000,
-      read: false,
-    },
-    {
-      id: 3,
-      icon: "💬",
-      title: "Phản hồi diễn đàn",
-      desc: "Có người vừa bình luận vào bài viết của bạn trên Diễn đàn.",
-      time: now - 50 * 60 * 60 * 1000,
-      read: true,
-    },
-  ];
-  setData(STORAGE_KEYS.NOTIFICATIONS, seeded);
-  return seeded;
+  const params = new URLSearchParams({ userId });
+  if (user?.email) params.set("email", user.email);
+  return params.toString();
 }
 
-// Được gọi ở MỌI trang (qua header.js) để cập nhật số đỏ trên chuông
-export function renderNotifBadge() {
+export async function createNotification(notification) {
+  const result = await apiRequest("/notifications", {
+    method: "POST",
+    body: JSON.stringify(notification),
+  });
+  await renderNotifBadge();
+  return result.notification;
+}
+
+export async function renderNotifBadge() {
   const badge = document.getElementById("notifBadge");
   if (!badge) return;
-  const list = seedNotificationsIfEmpty();
-  const unread = list.filter((n) => !n.read).length;
-  if (unread > 0) {
-    badge.hidden = false;
-    badge.textContent = unread > 9 ? "9+" : String(unread);
-  } else {
+
+  const userQuery = getUserQuery();
+  if (!userQuery) {
     badge.hidden = true;
+    return;
+  }
+
+  try {
+    const data = await apiRequest(`/notifications?${userQuery}`);
+    const unread = data.unreadCount;
+    if (unread > 0) {
+      badge.hidden = false;
+      badge.textContent = unread > 9 ? "9+" : String(unread);
+    } else {
+      badge.hidden = true;
+    }
+  } catch (error) {
+    badge.hidden = true;
+    console.error("Không thể tải số lượng thông báo:", error);
   }
 }
 
-// Chỉ chạy khi đang ở notifications.html (có #notifList trong DOM)
 export function initNotificationsPage() {
   const listEl = document.getElementById("notifList");
   if (!listEl) return;
 
-  function draw() {
-    const list = seedNotificationsIfEmpty().sort((a, b) => b.time - a.time);
+  const emptyEl = document.getElementById("notifEmpty");
+  const markAllBtn = document.getElementById("markAllRead");
 
-    if (list.length === 0) {
+  async function draw() {
+    const userQuery = getUserQuery();
+    if (!userQuery) {
       listEl.innerHTML = "";
-      document.getElementById("notifEmpty").hidden = false;
+      emptyEl.textContent = "Đăng nhập để xem thông báo của bạn.";
+      emptyEl.hidden = false;
       return;
     }
-    document.getElementById("notifEmpty").hidden = true;
 
-    listEl.innerHTML = list
-      .map(
-        (n) => `
-        <div class="notif-item ${n.read ? "read" : "unread"}" data-id="${n.id}">
+    try {
+      const { notifications } = await apiRequest(
+        `/notifications?${userQuery}`
+      );
+      if (notifications.length === 0) {
+        listEl.innerHTML = "";
+        emptyEl.textContent = "Hiện tại bạn không có thông báo mới nào.";
+        emptyEl.hidden = false;
+        return;
+      }
+
+      emptyEl.hidden = true;
+      listEl.innerHTML = notifications
+        .map((notification) => {
+          const timestamp = new Date(notification.createdAt).getTime();
+          const time = Number.isNaN(timestamp) ? "" : formatTimeAgo(timestamp);
+          return `
+        <div class="notif-item ${notification.read ? "read" : "unread"}" data-id="${escapeHTML(notification._id)}">
           <span class="notif-dot"></span>
-          <span class="notif-icon">${n.icon}</span>
+          <span class="notif-icon">${escapeHTML(notification.icon || "🔔")}</span>
           <div>
-            <p class="notif-title">${escapeHTML(n.title)}</p>
-            <p class="notif-desc">${escapeHTML(n.desc)}</p>
-            <p class="notif-time">${formatTimeAgo(n.time)}</p>
+            <p class="notif-title">${escapeHTML(notification.title)}</p>
+            <p class="notif-desc">${escapeHTML(notification.message)}</p>
+            <p class="notif-time">${escapeHTML(time)}</p>
           </div>
-        </div>`
-      )
-      .join("");
+        </div>`;
+        })
+        .join("");
 
-    listEl.querySelectorAll(".notif-item").forEach((el) => {
-      el.addEventListener("click", () => {
-        const id = Number(el.dataset.id);
-        const all = getData(STORAGE_KEYS.NOTIFICATIONS, []);
-        const target = all.find((n) => n.id === id);
-        if (target) target.read = true;
-        setData(STORAGE_KEYS.NOTIFICATIONS, all);
-        draw();
-        renderNotifBadge();
+      listEl.querySelectorAll(".notif-item").forEach((element) => {
+        element.addEventListener("click", async () => {
+          if (element.classList.contains("read")) return;
+          try {
+            await apiRequest(
+              `/notifications/${encodeURIComponent(element.dataset.id)}/read?${userQuery}`,
+              { method: "PATCH" }
+            );
+            await draw();
+            await renderNotifBadge();
+          } catch (error) {
+            emptyEl.textContent = error.message || "Không thể cập nhật thông báo.";
+            emptyEl.hidden = false;
+          }
+        });
       });
-    });
+    } catch (error) {
+      listEl.innerHTML = "";
+      emptyEl.textContent = error.message || "Không thể tải thông báo. Vui lòng thử lại.";
+      emptyEl.hidden = false;
+    }
   }
 
-  const markAllBtn = document.getElementById("markAllRead");
   if (markAllBtn) {
-    markAllBtn.addEventListener("click", () => {
-      const all = getData(STORAGE_KEYS.NOTIFICATIONS, []).map((n) => ({
-        ...n,
-        read: true,
-      }));
-      setData(STORAGE_KEYS.NOTIFICATIONS, all);
-      draw();
-      renderNotifBadge();
+    markAllBtn.addEventListener("click", async () => {
+      const userQuery = getUserQuery();
+      if (!userQuery) return;
+
+      markAllBtn.disabled = true;
+      try {
+        await apiRequest(
+          `/notifications/read-all?${userQuery}`,
+          { method: "PATCH" }
+        );
+        await draw();
+        await renderNotifBadge();
+      } catch (error) {
+        emptyEl.textContent = error.message || "Không thể cập nhật thông báo.";
+        emptyEl.hidden = false;
+      } finally {
+        markAllBtn.disabled = false;
+      }
     });
   }
 

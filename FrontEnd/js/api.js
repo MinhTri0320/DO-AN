@@ -30,12 +30,26 @@ async function request(endpoint, options = {}) {
   if (!response.ok) {
     const errorMsg = data.message || `Lỗi yêu cầu: ${response.status} ${response.statusText}`;
     const err = new Error(errorMsg);
+    err.statusCode = response.status;
     err.status = response.status;
     err.data = data;
     throw err;
   }
 
   return data;
+}
+
+export async function apiRequest(endpoint, options = {}) {
+  try {
+    return await request(endpoint, options);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        "Không kết nối được máy chủ. Hãy bật MongoDB và chạy backend bằng lệnh npm start trong thư mục BackEnd."
+      );
+    }
+    throw error;
+  }
 }
 
 /* ============================================================
@@ -87,17 +101,15 @@ export async function apiLogin({ email, password }) {
  * Gửi tới: POST http://localhost:3000/api/appointments
  */
 export async function apiCreateAppointment(appointment) {
-  try {
-    console.log(`[API] Đang tạo lịch hẹn mới tới ${API_BASE_URL}/appointments...`, appointment);
-    const data = await request("/appointments", {
-      method: "POST",
-      body: JSON.stringify(appointment),
-    });
-    return data.appointment || data;
-  } catch (err) {
-    console.warn("[API] BackEnd offline hoặc chưa có route /api/appointments, đồng bộ lưu trữ cục bộ:", err.message);
-    return null;
-  }
+  const data = await apiRequest("/appointments", {
+    method: "POST",
+    body: JSON.stringify(appointment),
+  });
+  return data.appointment || data;
+}
+
+export async function apiGetBookedSlots(date) {
+  return apiRequest(`/appointments/slots?date=${encodeURIComponent(date)}`);
 }
 
 /**
@@ -120,17 +132,9 @@ export async function apiGetAppointments() {
  * Gửi tới: PUT http://localhost:3000/api/appointments/:id/cancel
  */
 export async function apiCancelAppointment(appointmentId) {
-  try {
-    console.log(`[API] Đang gửi yêu cầu hủy lịch hẹn tới ${API_BASE_URL}/appointments/${appointmentId}/cancel...`);
-    const data = await request(`/appointments/${appointmentId}/cancel`, {
-      method: "PUT",
-      body: JSON.stringify({ status: "Đã hủy" }),
-    });
-    return data;
-  } catch (err) {
-    console.warn("[API] BackEnd offline hoặc chưa có route hủy lịch, cập nhật trạng thái cục bộ:", err.message);
-    return null;
-  }
+  return apiRequest(`/appointments/${encodeURIComponent(appointmentId)}/cancel`, {
+    method: "PATCH",
+  });
 }
 
 /* ============================================================
@@ -327,4 +331,3 @@ export async function apiUpdateProfile(profileData, userId = null) {
     return null;
   }
 }
-

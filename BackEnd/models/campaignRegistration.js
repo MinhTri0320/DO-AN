@@ -1,21 +1,25 @@
 const mongoose = require("mongoose");
+
 const campaignRegistrationSchema = new mongoose.Schema(
   {
-    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: "Campaign", required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    petId: { type: mongoose.Schema.Types.ObjectId, ref: "Pet", default: null },
-    note: { type: String, trim: true },
-    status: {
-      type: String,
-      enum: ["registered", "cancelled"],
-      default: "registered",
-    },
+    campaignId: { type: String, required: true, trim: true, maxlength: 100 },
+    name: { type: String, required: true, trim: true, maxlength: 120 },
+    phone: { type: String, required: true, trim: true, maxlength: 20 },
+    email: { type: String, required: true, trim: true, lowercase: true, maxlength: 254 },
+    userId: { type: String, trim: true, maxlength: 100 },
+    reminderSentAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
-campaignRegistrationSchema.index({ campaignId: 1, userId: 1, petId: 1 }, { unique: true });
+
+campaignRegistrationSchema.index({ campaignId: 1, email: 1 }, { unique: true });
+campaignRegistrationSchema.index(
+  { campaignId: 1, userId: 1 },
+  { unique: true, partialFilterExpression: { userId: { $type: "string" } } }
+);
+
 module.exports = mongoose.model(
   "CampaignRegistration",
   campaignRegistrationSchema,
-  "campaignregistrations"
+  "campaignRegistrations"
 );

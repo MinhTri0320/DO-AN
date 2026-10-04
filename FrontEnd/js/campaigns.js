@@ -4,8 +4,9 @@
    đăng ký tham gia.
    ============================================================ */
 
-import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
+import { escapeHTML, getData, setData, STORAGE_KEYS } from "./storage.js";
 import { getCurrentUser } from "./auth.js";
+import { apiRequest } from "./api.js";
 
 const CAMPAIGNS = [
   {
@@ -31,21 +32,61 @@ const CAMPAIGNS = [
   },
 ];
 
-function getCampaignRegs() {
-  return getData(STORAGE_KEYS.CAMPAIGN_REGS, []);
-}
-
-function isRegistered(campaignId) {
-  const user = getCurrentUser();
-  if (!user) return false;
-  return getCampaignRegs().some(
-    (r) => r.campaignId === campaignId && r.email === user.email
-  );
-}
-
 export function initCampaignsPage() {
   const grid = document.getElementById("campaignGrid");
   if (!grid) return; // không ở trang campaigns thì bỏ qua
+  const user = getCurrentUser();
+  const registrations = getData(STORAGE_KEYS.CAMPAIGN_REGS, []);
+  const registeredCampaigns = new Set(
+    Array.isArray(registrations)
+      ? registrations
+          .filter((registration) => {
+        const sameUser = Boolean(
+          user &&
+            user.id &&
+            String(registration.userId || "") === String(user.id)
+        );
+        const sameEmail = Boolean(
+          user &&
+            user.email &&
+            String(registration.email || "").toLowerCase() ===
+              String(user.email).toLowerCase()
+        );
+            return (
+              registration.campaignId &&
+              (!user || sameUser || sameEmail)
+            );
+          })
+          .map((registration) => registration.campaignId)
+      : []
+  );
+
+  function saveRegistration(campaignId, email) {
+    const savedRegistrations = getData(STORAGE_KEYS.CAMPAIGN_REGS, []);
+    const allRegistrations = Array.isArray(savedRegistrations)
+      ? savedRegistrations
+      : [];
+    const normalizedEmail = email.trim().toLowerCase();
+    const userId = user?.id ? String(user.id) : normalizedEmail;
+    const alreadySaved = allRegistrations.some(
+      (registration) =>
+        registration.campaignId === campaignId &&
+        ((userId && String(registration.userId || "") === userId) ||
+          (normalizedEmail &&
+            String(registration.email || "").toLowerCase() ===
+              normalizedEmail))
+    );
+
+    if (!alreadySaved) {
+      allRegistrations.push({
+        campaignId,
+        userId,
+        email: normalizedEmail,
+      });
+      setData(STORAGE_KEYS.CAMPAIGN_REGS, allRegistrations);
+    }
+    registeredCampaigns.add(campaignId);
+  }
 
   function draw() {
     grid.innerHTML = CAMPAIGNS.map(
@@ -56,8 +97,8 @@ export function initCampaignsPage() {
           <span class="campaign-date">${c.date}</span>
           <h3>${escapeHTML(c.title)}</h3>
           <p>${escapeHTML(c.desc)}</p>
-          <button class="btn-register ${isRegistered(c.id) ? "registered" : ""}" data-id="${c.id}">
-            ${isRegistered(c.id) ? "✓ Đã đăng ký" : "Đăng ký tham gia"}
+          <button class="btn-register ${registeredCampaigns.has(c.id) ? "registered" : ""}" data-id="${c.id}">
+            ${registeredCampaigns.has(c.id) ? "✓ Đã đăng ký" : "Đăng ký tham gia"}
           </button>
         </div>
       </article>`
@@ -106,11 +147,13 @@ export function initCampaignsPage() {
   }
 
   if (form) {
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (!form.reportValidity()) return;
       const name = form.elements.regName.value.trim();
       const phone = form.elements.regPhone.value.trim();
       const email = form.elements.regEmail.value.trim();
+      const submitButton = form.querySelector('button[type="submit"]');
 
       if (!name || !phone || !email) {
         msgEl.textContent = "Vui lòng điền đầy đủ thông tin.";
@@ -119,18 +162,46 @@ export function initCampaignsPage() {
         return;
       }
 
-      const regs = getCampaignRegs();
-      regs.push({ campaignId: activeCampaignId, name, phone, email, at: Date.now() });
-      setData(STORAGE_KEYS.CAMPAIGN_REGS, regs);
+      if (submitButton) submitButton.disabled = true;
+      try {
+        await apiRequest("/campaigns/register", {
+          method: "POST",
+          body: JSON.stringify({
+            campaignId: activeCampaignId,
+            name,
+            phone,
+            email,
+            userId: user?.id || email,
+          }),
+        });
 
-      msgEl.textContent = "Đăng ký thành công! Cảm ơn bạn đã đồng hành cùng PawnCare 💛";
-      msgEl.classList.remove("error");
-      msgEl.classList.add("show", "success");
+        saveRegistration(activeCampaignId, email);
+        msgEl.textContent = "Đăng ký thành công! Cảm ơn bạn đã đồng hành cùng PawnCare 💛";
+        msgEl.classList.remove("error");
+        msgEl.classList.add("show", "success");
 
-      setTimeout(() => {
-        closeCampaignModal();
-        draw();
-      }, 1200);
+        setTimeout(() => {
+          closeCampaignModal();
+          draw();
+        }, 1200);
+      } catch (error) {
+        if (error.statusCode === 409) {
+          saveRegistration(activeCampaignId, email);
+          msgEl.textContent = "Bạn đã đăng ký chiến dịch này.";
+          msgEl.classList.remove("error");
+          msgEl.classList.add("show", "success");
+          setTimeout(() => {
+            closeCampaignModal();
+            draw();
+          }, 1200);
+          return;
+        }
+        msgEl.textContent = error.message || "Không thể đăng ký chiến dịch. Vui lòng thử lại.";
+        msgEl.classList.remove("success");
+        msgEl.classList.add("show", "error");
+      } finally {
+        if (submitButton) submitButton.disabled = false;
+      }
     });
   }
 
