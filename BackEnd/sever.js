@@ -10,6 +10,7 @@ const formsR = require("./routes/formsR");
 const notificationsR = require("./routes/notificationsR");
 const campaignsR = require("./routes/campaignsR");
 const appointmentsR = require("./routes/appointmentsR");
+const customerProfileR = require("./routes/customerProfileR");
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
 
@@ -28,7 +29,6 @@ app.use("/api", notificationsR);
 app.use("/api", campaignsR);
 app.use("/api", appointmentsR);
 
-// Route Customer Profile
 app.use("/api", customerProfileR);
 
 // Kiểm tra server
