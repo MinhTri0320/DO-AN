@@ -540,7 +540,7 @@ export function initAuthModal() {
       submitBtn.textContent = "ĐANG ĐĂNG NHẬP...";
 
       try {
-        const user = await loginUser({ phoneOrEmail, password });
+        const user = await loginUser({ phone: phoneOrEmail, password });  
 
         // Xử lý ghi nhớ đăng nhập
         if (rememberChecked) {

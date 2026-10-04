@@ -116,13 +116,39 @@ export async function apiGetBookedSlots(date) {
  * Lấy danh sách lịch hẹn (Appointment List)
  * Gửi tới: GET http://localhost:3000/api/appointments
  */
-export async function apiGetAppointments() {
+export async function apiGetAppointments(userId, userEmail) {
   try {
-    console.log(`[API] Đang lấy danh sách lịch hẹn từ ${API_BASE_URL}/appointments...`);
-    const data = await request("/appointments", { method: "GET" });
+    console.log(
+      `[API] Đang lấy danh sách lịch hẹn từ ${API_BASE_URL}/appointments...`
+    );
+
+    const params = new URLSearchParams();
+
+    if (userId) {
+      params.append("userId", userId);
+    }
+
+    if (userEmail) {
+      params.append("userEmail", userEmail);
+    }
+
+    const query = params.toString();
+
+    const endpoint = query
+      ? `/appointments?${query}`
+      : "/appointments";
+
+    const data = await request(endpoint, {
+      method: "GET",
+    });
+
     return data.appointments || data;
   } catch (err) {
-    console.warn("[API] BackEnd offline hoặc chưa có route /api/appointments, lấy dữ liệu cục bộ:", err.message);
+    console.warn(
+      "[API] BackEnd offline hoặc chưa có route /api/appointments, lấy dữ liệu cục bộ:",
+      err.message
+    );
+
     return null;
   }
 }

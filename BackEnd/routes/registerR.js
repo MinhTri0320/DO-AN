@@ -1,5 +1,6 @@
 const express = require("express");
-const register = require("../controllers/registerC");
+
+const { register } = require("../controllers/registerC");
 
 const router = express.Router();
 
