@@ -2,12 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
+    name: { type: String, required: true, trim: true },
     phone: {
       type: String,
       required: true,
@@ -15,17 +10,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/^0\d{9}$/, "Số điện thoại không hợp lệ"],
     },
-
-    password: {
+    password: { type: String, required: true },
+    role: {
       type: String,
-      required: true,
-    },
-
-    address: {
-      houseNumber: { type: String, trim: true },
-      street: { type: String, trim: true },
-      ward: { type: String, trim: true },
-      city: { type: String, trim: true },
+      enum: ["pet_owner", "doctor", "receptionist", "admin"],
+      default: "pet_owner",
     },
   },
   { timestamps: true }
