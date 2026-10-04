@@ -7,6 +7,11 @@ const petSchema = new mongoose.Schema(
     breed: { type: String, trim: true },
     gender: { type: String, enum: ["male", "female"] },
     birthDate: { type: Date },
+    weight: { type: Number, min: 0 }, // kg
+    vaccinated: { type: Boolean, default: false },
+    sterilized: { type: Boolean, default: false },
+    avatar: { type: String, trim: true }, // đường dẫn ảnh
+    notes: { type: String, trim: true },
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
