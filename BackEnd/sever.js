@@ -20,7 +20,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 // Route đăng ký
 app.use("/api", registerR);
 app.use("/api", loginR);
@@ -29,6 +28,8 @@ app.use("/api", notificationsR);
 app.use("/api", campaignsR);
 app.use("/api", appointmentsR);
 
+// Route Customer Profile
+app.use("/api", customerProfileR);
 
 // Kiểm tra server
 app.get("/", (req, res) => {
