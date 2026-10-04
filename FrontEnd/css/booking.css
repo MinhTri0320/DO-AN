@@ -806,6 +806,10 @@
   max-width: 480px;
   text-align: center;
   padding: 36px 32px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-hover);
 }
 
 .success-badge-icon {
