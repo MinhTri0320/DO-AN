@@ -357,3 +357,140 @@ export async function apiUpdateProfile(profileData, userId = null) {
     return null;
   }
 }
+
+
+/* ============================================================
+   5. SPRINT 3: MEDICAL RECORD, PET MEDICAL HISTORY & DIAGNOSIS APIS
+   ============================================================ */
+
+/**
+ * Lấy danh sách hồ sơ y tế / bệnh án của thú cưng từ MongoDB
+ * Gửi tới: GET http://localhost:3000/api/medical-records?petId=...
+ */
+export async function apiGetMedicalRecords(petId = null) {
+  try {
+    const query = petId ? `?petId=${encodeURIComponent(petId)}` : "";
+    console.log(`[API] Đang tải danh sách hồ sơ y tế từ MongoDB/BackEnd: ${API_BASE_URL}/medical-records${query}...`);
+    const data = await request(`/medical-records${query}`, { method: "GET" });
+    return data.records || data.medicalRecords || data.data || (Array.isArray(data) ? data : null);
+  } catch (err) {
+    console.warn("[API] BackEnd offline hoặc chưa có route GET /api/medical-records, dùng dữ liệu cục bộ:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lấy chi tiết một bệnh án theo ID
+ * Gửi tới: GET http://localhost:3000/api/medical-records/:id
+ */
+export async function apiGetMedicalRecordById(recordId) {
+  try {
+    console.log(`[API] Đang tải chi tiết bệnh án từ MongoDB/BackEnd: ${API_BASE_URL}/medical-records/${recordId}...`);
+    const data = await request(`/medical-records/${encodeURIComponent(recordId)}`, { method: "GET" });
+    return data.record || data.data || data;
+  } catch (err) {
+    console.warn("[API] Không thể tải chi tiết bệnh án từ MongoDB:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lưu hoặc cập nhật hồ sơ y tế / bệnh án vào MongoDB
+ * Nếu đã có ID: PUT /api/medical-records/:id, nếu mới: POST /api/medical-records
+ */
+export async function apiSaveMedicalRecord(record) {
+  try {
+    const isUpdate = Boolean(record.id && !record.id.startsWith("local_"));
+    console.log(`[API] Đang lưu hồ sơ y tế tới MongoDB/BackEnd...`, { isUpdate, record });
+
+    let resData = null;
+    if (isUpdate) {
+      try {
+        resData = await request(`/medical-records/${encodeURIComponent(record.id)}`, {
+          method: "PUT",
+          body: JSON.stringify(record),
+        });
+      } catch (e) {
+        resData = await request("/medical-records", {
+          method: "POST",
+          body: JSON.stringify(record),
+        });
+      }
+    } else {
+      resData = await request("/medical-records", {
+        method: "POST",
+        body: JSON.stringify(record),
+      });
+    }
+
+    return resData?.record || resData?.data || resData;
+  } catch (err) {
+    console.warn("[API] BackEnd offline hoặc chưa có route lưu bệnh án, lưu cục bộ:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Xóa một hồ sơ bệnh án
+ * Gửi tới: DELETE http://localhost:3000/api/medical-records/:id
+ */
+export async function apiDeleteMedicalRecord(recordId) {
+  try {
+    console.log(`[API] Đang xóa hồ sơ y tế: ${API_BASE_URL}/medical-records/${recordId}...`);
+    return await request(`/medical-records/${encodeURIComponent(recordId)}`, { method: "DELETE" });
+  } catch (err) {
+    console.warn("[API] Không thể xóa hồ sơ y tế trên server:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lấy thông tin hồ sơ sức khỏe nền của bé (Nhóm máu, microchip, tiền sử dị ứng)
+ * Gửi tới: GET http://localhost:3000/api/pets/:id/health-profile
+ */
+export async function apiGetPetHealthProfile(petId) {
+  try {
+    console.log(`[API] Đang tải hồ sơ sức khỏe nền của bé ${petId}...`);
+    const data = await request(`/pets/${encodeURIComponent(petId)}/health-profile`, { method: "GET" });
+    return data.healthProfile || data.data || data;
+  } catch (err) {
+    console.warn("[API] BackEnd offline hoặc chưa có route health profile, dùng dữ liệu cục bộ:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Cập nhật thông tin sức khỏe nền của bé
+ * Gửi tới: PUT http://localhost:3000/api/pets/:id/health-profile
+ */
+export async function apiSavePetHealthProfile(petId, profileData) {
+  try {
+    console.log(`[API] Đang cập nhật hồ sơ sức khỏe nền cho bé ${petId}...`, profileData);
+    const data = await request(`/pets/${encodeURIComponent(petId)}/health-profile`, {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+    return data.healthProfile || data.data || data;
+  } catch (err) {
+    console.warn("[API] BackEnd offline, lưu hồ sơ sức khỏe nền cục bộ:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lưu kết quả chẩn đoán chi tiết sau khám bệnh
+ * Gửi tới: POST/PUT http://localhost:3000/api/diagnoses
+ */
+export async function apiSaveDiagnosis(diagnosisData) {
+  try {
+    console.log(`[API] Đang lưu thông tin chẩn đoán bệnh...`, diagnosisData);
+    const data = await request("/diagnoses", {
+      method: "POST",
+      body: JSON.stringify(diagnosisData),
+    });
+    return data.diagnosis || data.data || data;
+  } catch (err) {
+    console.warn("[API] BackEnd offline hoặc chưa có route /api/diagnoses, lưu cục bộ:", err.message);
+    return null;
+  }
+}

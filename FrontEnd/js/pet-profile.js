@@ -261,11 +261,14 @@ export function initPetProfilePage() {
           </div>
 
           <div class="pet-card-footer">
+            <a href="./medical-record.html?petId=${p.id}" class="btn-pet-action btn-medical-pet">
+              <span>🩺</span><span>Hồ sơ y tế</span>
+            </a>
             <button class="btn-pet-action btn-edit-pet" data-action="edit" data-id="${p.id}" type="button">
-              ✏️ Chỉnh sửa
+              <span>✏️</span><span>Sửa</span>
             </button>
             <button class="btn-pet-action btn-delete-pet" data-action="delete" data-id="${p.id}" type="button">
-              🗑️ Xóa hồ sơ
+              <span>🗑️</span><span>Xóa</span>
             </button>
           </div>
         </article>

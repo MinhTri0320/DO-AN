@@ -19,6 +19,9 @@ import { initContactForm } from "./contact.js";
 import { initPasswordToggles } from "./password-toggle.js";
 import { initCustomerProfilePage } from "./customer-profile.js";
 import { initPetProfilePage } from "./pet-profile.js";
+import { initMedicalRecordPage } from "./medical-record.js";
+import { initPetMedicalHistoryPage } from "./pet-medical-history.js";
+import { initDiagnosisPage } from "./diagnosis.js";
 import { initBookingPage } from "./booking.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -33,5 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initPasswordToggles(); // gắn cho mọi nút con mắt hiện/ẩn mật khẩu
   initCustomerProfilePage(); // tự bỏ qua nếu không ở customer-profile
   initPetProfilePage(); // tự bỏ qua nếu không ở pet-profile
+  initMedicalRecordPage(); // tự bỏ qua nếu không ở medical-record.html
+  initPetMedicalHistoryPage(); // tự bỏ qua nếu không ở pet-medical-history.html
+  initDiagnosisPage(); // tự bỏ qua nếu không ở diagnosis.html
   initBookingPage(); // tự bỏ qua nếu không ở booking.html
 });

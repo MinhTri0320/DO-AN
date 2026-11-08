@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/buttons.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" />
+    <link rel="stylesheet" href="../css/forms.css" />
+    <link rel="stylesheet" href="../css/profile.css" />
+    <link rel="stylesheet" href="../css/pet-medical-history.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <title>Lịch Sử Bệnh Thú Cưng (Pet Medical History) - PawnCare Đà Nẵng</title>
+  </head>
+  <body>
+    <!-- ===== HEADER / NAVBAR ===== -->
+    <header id="header">
+      <div class="header-inner">
+        <a href="./index.html" class="logo">
+          <span class="logo-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="12" cy="16" rx="6" ry="5" />
+              <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+              <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+              <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+              <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+            </svg>
+          </span>
+          <span class="logo-text">PawnCare</span>
+        </a>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="menu">
+          <a href="./index.html" class="link">Trang chủ</a>
+          <a href="./index.html#services" class="link">Dịch vụ</a>
+          <a href="./booking.html" class="link">Đặt lịch</a>
+          <a href="./index.html#about" class="link">Giới thiệu</a>
+          <a href="./forum.html" class="link">Diễn đàn</a>
+          <a href="./campaigns.html" class="link">Chiến dịch</a>
+          <a href="./index.html#contact" class="link">Liên hệ</a>
+        </nav>
+
+        <a href="tel:0900123456" class="btn-hotline d-none-mobile">
+          <span>📞</span>
+          <span>0900 123 456</span>
+        </a>
+
+        <!-- Khối Guest (khi chưa đăng nhập) -->
+        <div class="auth" id="authGuest">
+          <a href="./login.html" class="pill-btn btn-login">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Đăng nhập</span>
+          </a>
+          <a href="./register.html" class="pill-btn btn-signup">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Đăng ký</span>
+          </a>
+        </div>
+
+        <!-- Khối User (khi đã đăng nhập) -->
+        <div class="auth auth-user" id="authUser" hidden>
+          <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+              <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="badge" id="notifBadge" hidden>0</span>
+          </a>
+
+          <div class="user-menu">
+            <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+              <span id="userInitial">U</span>
+            </button>
+            <div class="dropdown" id="userDropdown" hidden>
+              <p class="dropdown-name" id="userName">—</p>
+              <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+              <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+              <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+              <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+              <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="profile-page" id="petMedicalHistoryPage">
+      <div class="section-inner profile-layout">
+        <!-- Sidebar trái -->
+        <aside class="profile-sidebar">
+          <div class="profile-user-card">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="sidebarUserInitial">U</div>
+            </div>
+            <h3 id="sidebarUserName">Khách hàng</h3>
+            <p id="sidebarUserPhone">0900 123 456</p>
+            <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
+          </div>
+
+          <nav class="profile-nav">
+            <a href="./customer-profile.html" class="profile-nav-link">
+              <span class="nav-icon">👤</span>
+              <span>Hồ sơ khách hàng</span>
+            </a>
+            <a href="./pet-profile.html" class="profile-nav-link">
+              <span class="nav-icon">🐾</span>
+              <span>Hồ sơ thú cưng</span>
+            </a>
+            <a href="./medical-record.html" class="profile-nav-link active">
+              <span class="nav-icon">🩺</span>
+              <span>Hồ sơ y tế &amp; Bệnh án</span>
+            </a>
+            <a href="./booking.html" class="profile-nav-link">
+              <span class="nav-icon">📅</span>
+              <span>Đặt lịch hẹn mới</span>
+            </a>
+            <a href="./booking.html#my-appts" class="profile-nav-link">
+              <span class="nav-icon">📋</span>
+              <span>Lịch hẹn đã đặt</span>
+            </a>
+            <a href="./notifications.html" class="profile-nav-link">
+              <span class="nav-icon">🔔</span>
+              <span>Hộp thư thông báo</span>
+            </a>
+            <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
+              <span class="nav-icon">🚪</span>
+              <span>Đăng xuất</span>
+            </a>
+          </nav>
+
+          <div class="profile-sidebar-help">
+            <strong>Bác sĩ Thú y Trực 24/7</strong>
+            <p>Hỗ trợ khẩn cấp y tế &amp; tư vấn sức khỏe cho thú cưng tại Đà Nẵng: <a href="tel:0900123456">0900 123 456</a>.</p>
+          </div>
+        </aside>
+
+        <!-- Panel phải: Pet Medical History Timeline -->
+        <section class="profile-main">
+          <!-- Tiêu đề trang -->
+          <div class="profile-header">
+            <div class="profile-header-left">
+              <span class="section-badge">⏱️ LỊCH SỬ BỆNH THÚ CƯNG</span>
+              <h1>Lịch Sử Bệnh Thú Cưng (Pet Medical History)</h1>
+              <p>Cho phép người dùng xem và quản lý lịch sử bệnh của thú cưng, bao gồm các lần mắc bệnh, quá trình khám và điều trị trước đây. Thông tin được lưu trữ để thuận tiện cho việc theo dõi sức khỏe của thú cưng.</p>
+            </div>
+          </div>
+
+          <!-- THANH ĐIỀU HƯỚNG GIỮA 3 CHỨC NĂNG RIÊNG BIỆT -->
+          <div class="medical-feature-nav-tabs">
+            <a href="./medical-record.html" class="medical-nav-tab-item">
+              <span>📋</span>
+              <span>1. Hồ sơ bệnh án (Medical Record)</span>
+            </a>
+            <a href="./pet-medical-history.html" class="medical-nav-tab-item active">
+              <span>⏱️</span>
+              <span>2. Lịch sử bệnh (Pet Medical History)</span>
+            </a>
+            <a href="./diagnosis.html" class="medical-nav-tab-item">
+              <span>🔬</span>
+              <span>3. Kết quả chẩn đoán (Diagnosis)</span>
+            </a>
+          </div>
+
+          <!-- 1. THANH CHỌN THÚ CƯNG (PET SWITCHER) -->
+          <div class="pet-switch-strip">
+            <div class="pet-switch-header">
+              <div class="pet-switch-title">
+                <span>🐾</span>
+                <span>Chọn thú cưng xem dòng thời gian bệnh:</span>
+              </div>
+              <a href="./pet-profile.html" style="font-size:12.5px; color:var(--accent); text-decoration:underline; font-weight:700;">+ Quản lý thú cưng</a>
+            </div>
+            <div class="pet-switch-list" id="petSwitchList">
+              <!-- JS nạp danh sách thú cưng -->
+            </div>
+          </div>
+
+          <!-- 2. THANH TỔNG HỢP NHANH LỊCH SỬ SỨC KHỎE -->
+          <div class="history-summary-ribbon" id="historySummaryRibbon">
+            <!-- JS nạp tóm tắt tỷ lệ hồi phục, số đợt khám -->
+          </div>
+
+          <!-- 3. DÒNG THỜI GIAN LỊCH SỬ BỆNH (MEDICAL TIMELINE) -->
+          <div class="medical-timeline" id="medicalTimelineContainer">
+            <!-- JS nạp danh sách các mốc khám & điều trị theo thứ tự thời gian -->
+          </div>
+
+          <!-- 4. BIỂU ĐỒ DIỄN TIẾN CÂN NẶNG & THỂ TRẠNG -->
+          <div class="weight-trend-box" id="weightTrendBox">
+            <div class="weight-trend-title">
+              <h3>
+                <span>⚖️</span>
+                <span>Diễn Tiến Cân Nặng Qua Các Lần Khám</span>
+              </h3>
+              <span style="font-size:12px; color:var(--ink-faint);">Dữ liệu ghi nhận từ hồ sơ thú y</span>
+            </div>
+            <div class="weight-timeline-bars" id="weightTimelineBars">
+              <!-- JS nạp các mốc cân nặng -->
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer id="footer">
+      <div class="section-inner footer-inner">
+        <div class="footer-brand">
+          <a href="./index.html" class="logo">
+            <span class="logo-badge">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <ellipse cx="12" cy="16" rx="6" ry="5" />
+                <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+                <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+                <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+                <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+              </svg>
+            </span>
+            <span class="logo-text">PawnCare</span>
+          </a>
+          <p class="footer-desc">
+            Bệnh viện &amp; Spa thú cưng uy tín hàng đầu tại Đà Nẵng. Đồng hành trọn đời cùng sức khỏe bé cưng.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="section-inner footer-bottom-inner">
+          <p>© 2026 PawnCare Danang. Bản quyền thuộc về Đồ Án Nhóm.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div class="toast-notice" id="profileToast" role="alert"></div>
+
+    <script type="module" src="../js/main.js"></script>
+  </body>
+</html>
