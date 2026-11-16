@@ -15,6 +15,8 @@ const petProfileR = require("./routes/petProfileR");
 
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
+const MedicalRecord = require("./models/medicalRecord");
+const PetHealthProfile = require("./models/petHealthProfile");
 
 const app = express();
 
@@ -59,6 +61,8 @@ async function startServer() {
         await connectDB();
 
         await Appointment.init();
+        await MedicalRecord.init();
+        await PetHealthProfile.init();
 
         startCampaignReminderScheduler();
 
