@@ -12,6 +12,7 @@ const campaignsR = require("./routes/campaignsR");
 const appointmentsR = require("./routes/appointmentsR");
 const customerProfileR = require("./routes/customerProfileR");
 const petProfileR = require("./routes/petProfileR");
+const medicalRecordsR = require("./routes/medicalRecordsR");
 
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
@@ -35,6 +36,7 @@ app.use("/api", campaignsR);
 app.use("/api", appointmentsR);
 app.use("/api", customerProfileR);
 app.use("/api", petProfileR);
+app.use("/api", medicalRecordsR);
 
 
 // Kiểm tra server
