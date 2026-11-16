@@ -1,6 +1,6 @@
 /* ============================================================
    base.css
-   Reset CSS + các rule nền tảng áp dụng cho toàn site.
+   Reset CSS + các rule nền tảng & hiệu ứng Reveal GPU áp dụng toàn site.
    Cần load SAU tokens.css (để dùng được các biến --cream, --ink...).
    ============================================================ */
 
@@ -38,7 +38,7 @@ h1, h2, h3, h4, h5, h6 {
 a {
   text-decoration: none;
   color: inherit;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition: color 0.22s var(--ease-pawmily), opacity 0.22s var(--ease-pawmily);
 }
 
 img {
@@ -54,6 +54,37 @@ button {
   max-width: 1140px;
   margin: 0 auto;
   padding: 0 30px;
+}
+
+/* Hiệu ứng cuộn mượt chuẩn Pawmily (60fps GPU-composited) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0) scale(0.985);
+  transition:
+    opacity 0.62s var(--ease-pawmily),
+    transform 0.62s var(--ease-pawmily);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Giảm chuyển động cho người dùng cấu hình Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* nếu 1 phần tử vừa có class set "display: flex/grid" vừa bị JS gán

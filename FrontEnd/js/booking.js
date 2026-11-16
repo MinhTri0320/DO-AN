@@ -203,12 +203,15 @@ export function initBookingPage() {
   };
   let bookedTimes = new Set();
   let availabilityLoaded = false;
+  let activePromo = null;
 
   // 1. Khởi tạo danh sách Dịch vụ
   function renderServices() {
     // Đọc query string URL xem có pre-select service không (vd ?service=spa)
     const urlParams = new URLSearchParams(window.location.search);
-    const preselectedId = urlParams.get("service") || "vet";
+    const rawService = urlParams.get("service") || "vet";
+    const serviceAliasMap = { bath: "spa", grooming: "spa" };
+    const preselectedId = serviceAliasMap[rawService] || rawService;
 
     servicesContainer.innerHTML = SERVICES_CATALOG.map((s) => {
       const isChecked = s.id === preselectedId;
@@ -627,8 +630,63 @@ export function initBookingPage() {
       sumLocation.textContent = "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng";
     }
     if (sumFee) {
-      sumFee.textContent = currentSelection.service ? currentSelection.service.priceDisplay : "120.000đ";
+      if (currentSelection.service) {
+        const basePrice = currentSelection.service.price || 120000;
+        if (activePromo) {
+          const discounted = Math.round(basePrice * (1 - activePromo.discount));
+          sumFee.innerHTML = `<span style="text-decoration:line-through; font-size:13px; color:var(--ink-faint); margin-right:6px;">${basePrice.toLocaleString("vi-VN")}đ</span> ${discounted.toLocaleString("vi-VN")}đ`;
+        } else {
+          sumFee.textContent = currentSelection.service.priceDisplay;
+        }
+      } else {
+        sumFee.textContent = "120.000đ";
+      }
     }
+  }
+
+  // Khởi tạo xử lý Voucher ưu đãi (Pawmily vouchers: WELOVEPML20, DOUB5, TRIP7)
+  const promoInput = document.getElementById("bookingPromoInput");
+  const btnApplyPromo = document.getElementById("btnApplyPromo");
+  const promoStatus = document.getElementById("promoStatusMessage");
+
+  const PROMO_CODES = {
+    WELOVEPML20: { discount: 0.2, label: "Giảm 20% (Ưu đãi khách hàng mới)" },
+    DOUB5: { discount: 0.05, label: "Giảm 5% (Ưu đãi từ 2 bé cưng)" },
+    TRIP7: { discount: 0.07, label: "Giảm 7% (Ưu đãi từ 3 bé cưng)" },
+  };
+
+  function applyPromoCode(codeStr) {
+    if (!codeStr) return;
+    const cleanCode = codeStr.trim().toUpperCase();
+    if (PROMO_CODES[cleanCode]) {
+      activePromo = { code: cleanCode, ...PROMO_CODES[cleanCode] };
+      if (promoInput) promoInput.value = cleanCode;
+      if (promoStatus) {
+        promoStatus.hidden = false;
+        promoStatus.style.color = "var(--sage-green)";
+        promoStatus.textContent = `✓ Đã áp dụng: ${activePromo.label}`;
+      }
+    } else {
+      activePromo = null;
+      if (promoStatus) {
+        promoStatus.hidden = false;
+        promoStatus.style.color = "var(--danger)";
+        promoStatus.textContent = "❌ Mã ưu đãi không hợp lệ hoặc đã hết hạn.";
+      }
+    }
+    updateSummary();
+  }
+
+  if (btnApplyPromo && promoInput) {
+    btnApplyPromo.addEventListener("click", () => {
+      applyPromoCode(promoInput.value);
+    });
+  }
+
+  // Tự động kiểm tra param ?promo=... từ URL
+  const paramPromo = new URLSearchParams(window.location.search).get("promo");
+  if (paramPromo) {
+    applyPromoCode(paramPromo);
   }
 
   // 6. Xử lý Gửi Form đặt lịch

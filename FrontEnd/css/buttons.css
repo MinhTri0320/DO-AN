@@ -1,12 +1,14 @@
 /* ============================================================
-   buttons.css - Pawmily.vn Button Design System
-   - Nút CTA chính: Cam đất Terracotta gradient rực rỡ, ấm áp
+   buttons.css - Pawmily.vn 100% Authentic Espresso & Latte Button System
+   - Nút CTA chính: Espresso nâu đậm (#4E2A14 -> #683D22) sang trọng
    - Nút CTA tối: Nâu mocha đẳng cấp (#5B3A29)
-   - Nút Viền mỏng: Biscuit (#DCC9B6) trên nền trắng tinh tế
-   - Nút Hotline: Ửng đào cam (#FFF2EE, #C95A34)
+   - Nút Viền mỏng: Bánh quy (#DCC9B6) trên nền trắng tinh tế
+   - Nút Sáng (trên banner tối): Kem ngà sang trọng (#FFFFFF -> #FAF3EB)
    ============================================================ */
 
 .btn-cta {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -22,19 +24,38 @@
   border: 1.5px solid transparent;
   cursor: pointer;
   box-shadow: var(--shadow-cta);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    transform 0.28s var(--ease-pawmily),
+    box-shadow 0.28s var(--ease-pawmily),
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
   text-decoration: none;
+}
+
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 25%, rgba(255, 255, 255, 0.16) 50%, transparent 75%);
+  transform: translateX(-110%);
+  transition: transform 0.65s var(--ease-pawmily);
+  pointer-events: none;
+}
+
+.btn-cta:hover::after {
+  transform: translateX(110%);
 }
 
 .btn-cta:hover {
   background: var(--accent-gradient-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px -4px rgba(201, 90, 52, 0.42);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 14px 28px -6px rgba(78, 42, 20, 0.42);
   color: #ffffff;
 }
 
 .btn-cta:active {
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0) scale(0.985);
 }
 
 .btn-cta:disabled {
@@ -48,13 +69,13 @@
 .btn-cta-dark {
   background: var(--brown-medium);
   color: #ffffff;
-  box-shadow: 0 8px 20px -6px rgba(91, 58, 41, 0.25);
+  box-shadow: 0 8px 20px -6px rgba(78, 42, 20, 0.28);
 }
 
 .btn-cta-dark:hover {
-  background: var(--brown);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -6px rgba(91, 58, 41, 0.35);
+  background: var(--espresso);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 12px 24px -6px rgba(78, 42, 20, 0.38);
   color: #ffffff;
 }
 
@@ -66,27 +87,34 @@
   box-shadow: var(--shadow-sm);
 }
 
-.btn-cta-outline:hover {
-  background: var(--cream-soft);
-  border-color: var(--accent-dark);
-  color: var(--accent-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px -6px rgba(91, 58, 41, 0.12);
+.btn-cta-outline::after {
+  display: none;
 }
 
+.btn-cta-outline:hover {
+  background: var(--accent-soft);
+  border-color: var(--caramel-dark);
+  color: var(--espresso);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 8px 20px -6px rgba(78, 42, 20, 0.14);
+}
+
+/* Nút sáng nổi bật trên banner tối (#331D12) */
 .btn-cta-light {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 8px 20px -6px rgba(224, 122, 95, 0.4);
+  background: #ffffff;
+  color: var(--espresso);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.25);
 }
 
 .btn-cta-light:hover {
-  background: var(--accent-dark);
-  color: #fff;
-  box-shadow: 0 12px 24px -6px rgba(201, 90, 52, 0.45);
+  background: var(--cream-latte);
+  color: var(--espresso-dark);
+  border-color: #ffffff;
+  box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.35);
 }
 
-/* Nút hotline đặc trưng kiểu Pawmily */
+/* Nút hotline đặc trưng trên Header Caramel Pawmily */
 .btn-hotline {
   display: inline-flex;
   align-items: center;
@@ -99,19 +127,19 @@
   padding: 8px 18px;
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13.5px;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(201, 90, 52, 0.08);
+  transition: transform 0.25s var(--ease-pawmily), background-color 0.22s ease, box-shadow 0.25s ease;
+  box-shadow: 0 2px 8px rgba(59, 33, 18, 0.12);
 }
 
 .btn-hotline:hover {
-  background: var(--accent-dark);
+  background: rgba(255, 255, 255, 0.34);
   color: #ffffff;
-  border-color: var(--accent-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px -2px rgba(201, 90, 52, 0.32);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 6px 16px rgba(59, 33, 18, 0.22);
 }
 
 .btn-text {
@@ -129,7 +157,7 @@
 }
 
 .btn-text:hover {
-  color: var(--brown-medium);
+  color: var(--caramel-dark);
   text-decoration: underline;
 }
 
@@ -144,19 +172,23 @@
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.25s var(--ease-pawmily), box-shadow 0.25s var(--ease-pawmily), background-color 0.2s ease;
   width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.22);
+  box-shadow: var(--shadow-cta);
 }
 
 .btn-register:hover {
   background: var(--accent-gradient-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(201, 90, 52, 0.32);
+  transform: translate3d(0, -1.5px, 0);
+  box-shadow: 0 12px 24px -4px rgba(78, 42, 20, 0.36);
+}
+
+.btn-register:active {
+  transform: scale(0.985);
 }
 
 .btn-register.registered {

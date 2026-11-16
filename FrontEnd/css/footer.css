@@ -74,7 +74,7 @@
 .footer-column .link {
   color: #C9B9A4;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: transform 0.22s var(--ease-pawmily), color 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -82,16 +82,16 @@
 
 .footer-column .link:hover {
   color: #FFFFFF;
-  transform: translateX(4px);
+  transform: translate3d(4px, 0, 0);
 }
 
 .footer-emergency-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(201, 90, 52, 0.18);
-  border: 1.5px solid rgba(201, 90, 52, 0.45);
-  color: #FFB39F;
+  background: rgba(152, 117, 88, 0.22);
+  border: 1.5px solid rgba(220, 201, 182, 0.38);
+  color: #FAF3EB;
   padding: 10px 18px;
   border-radius: var(--radius-pill);
   font-family: var(--font-heading);
@@ -99,15 +99,15 @@
   font-size: 14px;
   margin-top: 8px;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: transform 0.24s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.24s ease;
 }
 
 .footer-emergency-pill:hover {
-  background: var(--accent-dark);
+  background: var(--caramel-dark);
   color: #FFFFFF;
-  border-color: var(--accent-dark);
-  box-shadow: 0 4px 16px rgba(201, 90, 52, 0.35);
-  transform: translateY(-1px);
+  border-color: var(--tan-light);
+  box-shadow: 0 6px 18px rgba(152, 117, 88, 0.35);
+  transform: translate3d(0, -1px, 0);
 }
 
 .footer-hours {

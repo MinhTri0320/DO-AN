@@ -310,7 +310,7 @@ export function initMedicalRecordPage() {
               </div>
 
               <div style="background:var(--cream-soft); padding:10px 14px; border-radius:10px; font-size:13px; line-height:1.45; color:var(--brown);">
-                <strong style="color:var(--accent);">Chẩn đoán xác định:</strong> ${escapeHTML(r.confirmedDiagnosis || r.preliminaryDiagnosis || "Đang theo dõi lâm sàng")}
+                <strong style="color:var(--accent-dark);">Chẩn đoán xác định:</strong> ${escapeHTML(r.confirmedDiagnosis || r.preliminaryDiagnosis || "Đang theo dõi lâm sàng")}
               </div>
             </div>
 
@@ -621,7 +621,7 @@ export function initMedicalRecordPage() {
         <div class="print-cert-head">
           <h1>HỆ THỐNG PHÒNG KHÁM THÚ Y PAWNCARE ĐÀ NẴNG</h1>
           <p>123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng • Hotline: 0900 123 456 • Website: pawncare.vn</p>
-          <h2 style="font-size:18px; color:#C95A34; margin-top:12px;">PHIẾU KHÁM BỆNH &amp; KẾT QUẢ CHẨN ĐOÁN Y KHOA</h2>
+          <h2 style="font-size:18px; color:#4E2A14; margin-top:12px;">PHIẾU KHÁM BỆNH &amp; KẾT QUẢ CHẨN ĐOÁN Y KHOA</h2>
         </div>
 
         <div class="print-cert-meta">
@@ -641,7 +641,7 @@ export function initMedicalRecordPage() {
         <div style="margin-bottom:16px;">
           <p><strong>1. Lý do thăm khám:</strong> ${escapeHTML(target.reason)}</p>
           <p><strong>2. Triệu chứng lâm sàng:</strong> ${(target.symptoms || []).join(", ")}</p>
-          <p style="margin-top:6px;"><strong>3. Chẩn đoán xác định:</strong> <span style="font-weight:700; color:#C95A34;">${escapeHTML(target.confirmedDiagnosis || target.title)}</span></p>
+          <p style="margin-top:6px;"><strong>3. Chẩn đoán xác định:</strong> <span style="font-weight:700; color:#4E2A14;">${escapeHTML(target.confirmedDiagnosis || target.title)}</span></p>
         </div>
 
         <div style="margin-bottom:16px;">

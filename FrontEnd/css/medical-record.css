@@ -1,8 +1,8 @@
 /* ============================================================
    medical-record.css
    Style riêng cho tính năng: Medical Record (Hồ sơ y tế / Bệnh án)
-   Chuẩn bảng màu Pawmily: Kem ấm (#FCF6EE), Nâu espresso (#331D12),
-   Terracotta (#C95A34), Xanh thảo mộc (#508D69), Viền biscuit (#DCC9B6)
+   Chuẩn bảng màu Pawmily: Kem ấm (#FCF6EE), Nâu espresso (#4E2A14),
+   Caramel (#987558), Xanh thảo mộc (#508D69), Viền biscuit (#DCC9B6)
    ============================================================ */
 
 /* ===== PET SWITCHER STRIP ===== */
@@ -49,19 +49,19 @@
   border: 2px solid transparent;
   border-radius: 16px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: transform 0.26s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
   white-space: nowrap;
 }
 
 .pet-switch-btn:hover {
   background: #f0e6dc;
-  transform: translateY(-1px);
+  transform: translate3d(0, -1px, 0);
 }
 
 .pet-switch-btn.active {
-  background: #FFF8F3;
-  border-color: var(--accent);
-  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.15);
+  background: var(--cream-latte);
+  border-color: var(--caramel-dark);
+  box-shadow: 0 4px 14px rgba(78, 42, 20, 0.14);
 }
 
 .pet-switch-avatar {
@@ -227,7 +227,7 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--brown-medium);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.26s var(--ease-pawmily), background 0.22s ease, color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
   box-sizing: border-box;
 }
 
@@ -237,9 +237,9 @@
 }
 
 .medical-nav-tab-item.active {
-  background: var(--brown);
+  background: var(--accent-gradient);
   color: #fff;
-  box-shadow: 0 6px 16px rgba(51, 29, 18, 0.25);
+  box-shadow: 0 6px 16px rgba(78, 42, 20, 0.25);
 }
 
 /* ===== STATS BANNER ===== */
@@ -333,8 +333,8 @@
 .med-search-input:focus {
   outline: none;
   background: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(201, 90, 52, 0.12);
+  border-color: var(--caramel-dark);
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
 }
 
 .med-filter-group {
@@ -358,7 +358,7 @@
 
 .med-filter-select:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--caramel-dark);
 }
 
 /* ===== MEDICAL RECORDS CARDS ===== */
@@ -374,13 +374,13 @@
   border-radius: var(--radius-card);
   padding: 24px;
   box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
-  transition: all 0.25s ease;
+  transition: transform 0.28s var(--ease-pawmily), border-color 0.22s ease, box-shadow 0.28s var(--ease-pawmily);
 }
 
 .medical-record-card:hover {
-  border-color: rgba(201, 90, 52, 0.4);
-  box-shadow: 0 8px 24px rgba(91, 58, 41, 0.08);
-  transform: translateY(-2px);
+  border-color: var(--caramel);
+  box-shadow: var(--shadow-card);
+  transform: translate3d(0, -2px, 0);
 }
 
 .med-card-header {
@@ -404,11 +404,11 @@
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 13px;
-  color: var(--accent);
-  background: #FFF0EB;
+  color: var(--espresso);
+  background: var(--accent-soft);
   padding: 4px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(201, 90, 52, 0.2);
+  border: 1px solid var(--accent-border);
 }
 
 .med-category-tag {
@@ -452,8 +452,9 @@
 }
 
 .med-status-pill.status-followup {
-  background: #EDE7F6;
-  color: #5E35B1;
+  background: var(--cream-latte);
+  color: var(--espresso);
+  border: 1px solid var(--accent-border);
 }
 
 .med-card-body {
@@ -486,9 +487,9 @@
 }
 
 .symptom-tag {
-  background: #FFF6EE;
-  color: #9C4221;
-  border: 1px solid rgba(201, 90, 52, 0.2);
+  background: #FDF5E9;
+  color: #6B4423;
+  border: 1px solid #E6CFAF;
   font-size: 12px;
   padding: 3px 10px;
   border-radius: 12px;
@@ -548,9 +549,10 @@
   align-items: center;
   justify-content: space-between;
   font-size: 12px;
-  color: #5E35B1;
+  color: var(--espresso);
   font-weight: 600;
-  background: #F3E5F5;
+  background: var(--cream-latte);
+  border: 1px solid var(--accent-border);
   padding: 6px 12px;
   border-radius: 8px;
 }
@@ -592,18 +594,20 @@
   font-weight: 700;
   cursor: pointer;
   border: 1.5px solid transparent;
-  transition: all 0.2s ease;
+  transition: transform 0.22s var(--ease-pawmily), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s var(--ease-pawmily);
   text-decoration: none;
 }
 
 .btn-med-diagnosis {
-  background: var(--accent);
+  background: var(--accent-gradient);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(78, 42, 20, 0.22);
 }
 
 .btn-med-diagnosis:hover {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
+  background: var(--accent-gradient-hover);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 6px 16px rgba(78, 42, 20, 0.3);
 }
 
 .btn-med-print {
@@ -678,7 +682,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
-  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalPop 0.34s var(--ease-pawmily);
 }
 
 .modal-card.modal-large {
@@ -687,11 +691,11 @@
 
 @keyframes modalPop {
   from {
-    transform: scale(0.96) translateY(10px);
+    transform: translate3d(0, 12px, 0) scale(0.96);
     opacity: 0;
   }
   to {
-    transform: scale(1) translateY(0);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 1;
   }
 }
@@ -804,9 +808,9 @@
 .modal-card .form input:focus,
 .modal-card .form select:focus,
 .modal-card .form textarea:focus {
-  border-color: var(--accent-dark);
+  border-color: var(--caramel-dark);
   background: #fff;
-  box-shadow: 0 0 0 3.5px rgba(201, 90, 52, 0.12);
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
 }
 
 .profile-actions {
@@ -870,7 +874,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .med-form-grid-3 {
+  .form-grid-3 {
     grid-template-columns: 1fr;
   }
 }
@@ -884,7 +888,7 @@
     flex-direction: column;
   }
 
-  .med-form-grid-2 {
+  .form-grid-2 {
     grid-template-columns: 1fr;
   }
 

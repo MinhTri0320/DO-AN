@@ -23,7 +23,7 @@
   padding: 16px;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+  transition: opacity 0.28s var(--ease-pawmily), visibility 0.28s ease;
 }
 
 .auth-modal-overlay.active {
@@ -33,7 +33,7 @@
 
 /* ===== CONTAINER THẺ AUTH (CARD CHUNG CHO MODAL & LOGIN/REGISTER PAGE) ===== */
 .auth-page {
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 112px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,13 +50,28 @@
   border: 1.5px solid var(--line);
   border-radius: 26px;
   padding: 32px 28px 28px;
-  box-shadow: 0 24px 50px -10px rgba(91, 58, 41, 0.18), 0 10px 20px -5px rgba(91, 58, 41, 0.08);
+  box-shadow: 0 24px 50px -10px rgba(78, 42, 20, 0.2), 0 10px 20px -5px rgba(78, 42, 20, 0.08);
   box-sizing: border-box;
-  animation: authCardEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   max-height: calc(100vh - 36px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
+}
+
+.auth-card {
+  animation: authCardEnter 0.42s var(--ease-pawmily) both;
+}
+
+/* Modal dialog chạy transition mỗi lần mở lại */
+.auth-modal-overlay .auth-modal-dialog {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0) scale(0.975);
+  transition: transform 0.34s var(--ease-pawmily), opacity 0.28s var(--ease-pawmily);
+}
+
+.auth-modal-overlay.active .auth-modal-dialog {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 .auth-card::-webkit-scrollbar,
@@ -73,11 +88,22 @@
 @keyframes authCardEnter {
   from {
     opacity: 0;
-    transform: translateY(16px) scale(0.97);
+    transform: translate3d(0, 18px, 0) scale(0.975);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes authPanelFade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -97,13 +123,14 @@
   justify-content: center;
   cursor: pointer;
   padding: 0;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s var(--ease-pawmily);
   z-index: 10;
 }
 
 .auth-modal-close:hover {
   background: var(--accent-soft);
-  color: var(--accent-dark);
+  color: var(--espresso);
+  transform: rotate(90deg);
 }
 
 .auth-modal-close svg {
@@ -124,7 +151,7 @@
 .auth-mascot-badge svg {
   width: 64px;
   height: 64px;
-  filter: drop-shadow(0 4px 10px rgba(91, 58, 41, 0.12));
+  filter: drop-shadow(0 4px 10px rgba(78, 42, 20, 0.14));
 }
 
 /* ===== 2. TIÊU ĐỀ & PHỤ ĐỀ ===== */
@@ -173,7 +200,7 @@
   color: var(--ink-soft);
   background: transparent;
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: background-color 0.25s var(--ease-pawmily), color 0.22s ease, box-shadow 0.25s ease, transform 0.22s var(--ease-pawmily);
   user-select: none;
   text-decoration: none;
 }
@@ -185,14 +212,14 @@
 }
 
 .auth-tab-btn:hover:not(.active) {
-  background: rgba(201, 90, 52, 0.08);
-  color: var(--accent-dark);
+  background: rgba(152, 117, 88, 0.12);
+  color: var(--espresso);
 }
 
 .auth-tab-btn.active {
   background: var(--accent-gradient);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.32);
+  box-shadow: 0 6px 16px -4px rgba(78, 42, 20, 0.34);
 }
 
 /* ===== 4. NỘI DUNG TỪNG FORM (LOGIN / REGISTER) ===== */
@@ -202,6 +229,7 @@
 
 .auth-form-panel.active {
   display: block;
+  animation: authPanelFade 0.28s var(--ease-pawmily);
 }
 
 /* ===== 5. TRƯỜNG NHẬP LIỆU (FIELD & INPUT) ===== */
@@ -242,23 +270,23 @@
   border: 1.5px solid var(--line);
   border-radius: 12px;
   padding: 11.5px 14px 11.5px 42px;
-  font-family: var(--font-body, "Nunito Sans", sans-serif);
+  font-family: var(--font-body);
   font-size: 14px;
   color: #332117;
   outline: none;
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
 }
 
 .auth-input:hover {
-  border-color: var(--tan);
+  border-color: var(--caramel);
   background: #FFFFFF;
 }
 
 .auth-input:focus {
-  border-color: var(--accent-dark);
+  border-color: var(--caramel-dark);
   background: #FFFFFF;
-  box-shadow: 0 0 0 3.5px rgba(201, 90, 52, 0.12);
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
 }
 
 .auth-input::placeholder {
@@ -290,7 +318,7 @@
 }
 
 .auth-input-wrap:focus-within .auth-input-icon {
-  color: var(--accent-dark);
+  color: var(--espresso);
 }
 
 .auth-input-icon.phone-icon {
@@ -315,12 +343,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7b8898;
-  transition: color 0.15s ease;
+  color: #8C7769;
+  transition: color 0.18s ease;
 }
 
 .auth-eye-btn:hover {
-  color: var(--accent-dark);
+  color: var(--espresso);
 }
 
 .auth-eye-btn svg {
@@ -351,7 +379,7 @@
   padding: 7px 12px;
   margin-top: 6px;
   font-size: 12px;
-  color: var(--accent-dark);
+  color: var(--brown-medium);
   font-weight: 600;
 }
 
@@ -390,18 +418,18 @@
   color: var(--ink);
   outline: none;
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
 }
 
 .auth-input-sm:hover {
-  border-color: var(--tan);
+  border-color: var(--caramel);
   background: #FFFFFF;
 }
 
 .auth-input-sm:focus {
-  border-color: var(--accent-dark);
+  border-color: var(--caramel-dark);
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(201, 90, 52, 0.12);
+  box-shadow: 0 0 0 3px rgba(152, 117, 88, 0.2);
 }
 
 .auth-input-sm::placeholder {
@@ -453,27 +481,29 @@
 .auth-checkbox-wrap input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--accent-dark);
+  accent-color: var(--espresso);
   cursor: pointer;
   border-radius: 4px;
 }
 
 .auth-forgot-link {
-  color: var(--accent-dark);
+  color: var(--caramel-dark);
   font-family: var(--font-heading);
   font-weight: 700;
   text-decoration: none;
   font-size: 13px;
-  transition: color 0.15s ease;
+  transition: color 0.18s ease;
 }
 
 .auth-forgot-link:hover {
   text-decoration: underline;
-  color: var(--brown);
+  color: var(--espresso);
 }
 
 /* ===== 6. NÚT SUBMIT CHÍNH (ĐĂNG KÝ THÀNH VIÊN / ĐĂNG NHẬP NGAY) ===== */
 .auth-submit-btn {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   background: var(--accent-gradient);
   color: #ffffff;
@@ -487,18 +517,32 @@
   border: none;
   cursor: pointer;
   margin-top: 10px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s var(--ease-pawmily), box-shadow 0.25s var(--ease-pawmily), background-color 0.22s ease;
   box-shadow: var(--shadow-cta);
+}
+
+.auth-submit-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 25%, rgba(255, 255, 255, 0.16) 50%, transparent 75%);
+  transform: translateX(-110%);
+  transition: transform 0.65s var(--ease-pawmily);
+  pointer-events: none;
+}
+
+.auth-submit-btn:hover::after {
+  transform: translateX(110%);
 }
 
 .auth-submit-btn:hover {
   background: var(--accent-gradient-hover);
-  transform: translateY(-1.5px);
-  box-shadow: 0 12px 28px -4px rgba(201, 90, 52, 0.42);
+  transform: translate3d(0, -1.5px, 0);
+  box-shadow: 0 12px 26px -4px rgba(78, 42, 20, 0.42);
 }
 
 .auth-submit-btn:active {
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0) scale(0.985);
 }
 
 .auth-submit-btn:disabled {

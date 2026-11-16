@@ -172,7 +172,7 @@ export function initPetMedicalHistoryPage() {
           ? "background:#E8F5E9; color:#2E5C38;"
           : r.status === "Đang điều trị"
             ? "background:#FFF3E0; color:#E65100;"
-            : "background:#EDE7F6; color:#5E35B1;";
+            : "background:var(--cream-latte); color:var(--espresso); border:1px solid var(--accent-border);";
 
         const symptomsText = Array.isArray(r.symptoms) ? r.symptoms.join(", ") : (r.symptoms || "Không có");
         const prescriptionSummary = Array.isArray(r.prescription) && r.prescription.length > 0
@@ -214,7 +214,7 @@ export function initPetMedicalHistoryPage() {
                 </div>
                 <div class="timeline-details-row">
                   <span class="timeline-details-label">🎯 Chẩn đoán xác định:</span>
-                  <span class="timeline-details-val" style="color:var(--accent);">${escapeHTML(r.confirmedDiagnosis || r.title)}</span>
+                  <span class="timeline-details-val" style="color:var(--accent-dark);">${escapeHTML(r.confirmedDiagnosis || r.title)}</span>
                 </div>
                 <div class="timeline-details-row">
                   <span class="timeline-details-label">💊 Thuốc chỉ định:</span>
@@ -228,7 +228,7 @@ export function initPetMedicalHistoryPage() {
 
               ${
                 r.doctorAdvice
-                  ? `<div style="background:#FFF9F5; border-left:3px solid var(--accent); padding:10px 14px; border-radius:0 10px 10px 0; font-size:13px; color:var(--brown); margin-bottom:14px;">
+                  ? `<div style="background:var(--cream-latte); border-left:3px solid var(--caramel-dark); padding:10px 14px; border-radius:0 10px 10px 0; font-size:13px; color:var(--brown); margin-bottom:14px;">
                       <strong>Lời dặn bác sĩ:</strong> "${escapeHTML(r.doctorAdvice)}"
                     </div>`
                   : ""

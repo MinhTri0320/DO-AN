@@ -1,8 +1,8 @@
 /* ============================================================
    diagnosis.css
    Style riêng cho tính năng: Diagnosis (Kết quả chẩn đoán bệnh)
-   Chuẩn bảng màu Pawmily.vn: Kem ấm (#FCF6EE), Nâu espresso (#331D12),
-   Terracotta (#C95A34), Xanh thảo mộc (#508D69), Viền biscuit (#DCC9B6)
+   Chuẩn bảng màu Pawmily.vn: Kem ấm (#FCF6EE), Nâu espresso (#4E2A14),
+   Caramel (#987558), Xanh thảo mộc (#508D69), Viền biscuit (#DCC9B6)
    ============================================================ */
 
 /* ===== 3 TABS LIÊN KẾT 3 CHỨC NĂNG ===== */
@@ -31,7 +31,7 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--brown-medium);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.26s var(--ease-pawmily), background 0.22s ease, color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
   box-sizing: border-box;
 }
 
@@ -41,9 +41,9 @@
 }
 
 .medical-nav-tab-item.active {
-  background: var(--brown);
+  background: var(--accent-gradient);
   color: #fff;
-  box-shadow: 0 6px 16px rgba(51, 29, 18, 0.25);
+  box-shadow: 0 6px 16px rgba(78, 42, 20, 0.25);
 }
 
 /* ===== PET SWITCHER STRIP ===== */
@@ -90,19 +90,19 @@
   border: 2px solid transparent;
   border-radius: 16px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: transform 0.26s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
   white-space: nowrap;
 }
 
 .pet-switch-btn:hover {
   background: #f0e6dc;
-  transform: translateY(-1px);
+  transform: translate3d(0, -1px, 0);
 }
 
 .pet-switch-btn.active {
-  background: #FFF8F3;
-  border-color: var(--accent);
-  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.15);
+  background: var(--cream-latte);
+  border-color: var(--caramel-dark);
+  box-shadow: 0 4px 14px rgba(78, 42, 20, 0.14);
 }
 
 .pet-switch-avatar {
@@ -175,13 +175,13 @@
   outline: none;
   cursor: pointer;
   min-width: 280px;
-  transition: all 0.2s ease;
+  transition: border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
 }
 
 .diag-select:focus {
-  border-color: var(--accent);
+  border-color: var(--caramel-dark);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(201, 90, 52, 0.15);
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
 }
 
 .btn-print-diag {
@@ -197,13 +197,13 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.22s var(--ease-pawmily), background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .btn-print-diag:hover {
   background: var(--cream-soft);
   border-color: var(--brown);
-  transform: translateY(-1px);
+  transform: translate3d(0, -1px, 0);
 }
 
 /* ===== DIAGNOSIS CLINICAL SHEET (PHIẾU KẾT QUẢ CHẨN ĐOÁN CHUẨN Y KHOA) ===== */
@@ -284,7 +284,7 @@
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 800;
-  color: var(--accent);
+  color: var(--espresso);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
@@ -383,7 +383,7 @@
   font-family: var(--font-heading);
   font-size: 18px;
   font-weight: 800;
-  color: var(--accent);
+  color: var(--caramel-dark);
 }
 
 /* Symptoms Chips */
@@ -395,9 +395,9 @@
 }
 
 .diag-symptom-tag {
-  background: #FFF0EB;
-  color: var(--accent);
-  border: 1px solid rgba(201, 90, 52, 0.3);
+  background: var(--accent-soft);
+  color: var(--espresso);
+  border: 1px solid var(--accent-border);
   padding: 6px 14px;
   border-radius: var(--radius-pill);
   font-size: 13px;
@@ -435,15 +435,15 @@
 }
 
 .diag-card-confirmed {
-  background: #FFF8F5;
-  border-color: rgba(201, 90, 52, 0.35);
+  background: var(--cream-latte);
+  border-color: var(--caramel);
 }
 
 .diag-card-confirmed h4 {
   font-family: var(--font-heading);
   font-size: 13.5px;
   font-weight: 800;
-  color: var(--accent);
+  color: var(--espresso);
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -559,14 +559,14 @@
 .diag-rx-duration {
   font-family: var(--font-heading);
   font-weight: 700;
-  color: var(--accent);
+  color: var(--caramel-dark);
   font-size: 12px;
 }
 
 /* Doctor Advice Note */
 .diag-advice-banner {
-  background: #FFF8F3;
-  border-left: 4px solid var(--accent);
+  background: var(--cream-latte);
+  border-left: 4px solid var(--caramel-dark);
   border-radius: 0 12px 12px 0;
   padding: 16px 20px;
   margin-bottom: 28px;
@@ -576,7 +576,7 @@
   display: block;
   font-family: var(--font-heading);
   font-size: 13.5px;
-  color: var(--accent);
+  color: var(--espresso);
   margin-bottom: 4px;
 }
 

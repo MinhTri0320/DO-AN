@@ -92,7 +92,7 @@ export function initCampaignsPage() {
     grid.innerHTML = CAMPAIGNS.map(
       (c) => `
       <article class="campaign-card">
-        <div class="campaign-banner" style="background:var(--card)">${c.icon}</div>
+        <div class="campaign-banner">${c.icon}</div>
         <div class="campaign-body">
           <span class="campaign-date">${c.date}</span>
           <h3>${escapeHTML(c.title)}</h3>

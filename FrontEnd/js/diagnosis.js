@@ -198,7 +198,7 @@ export function initDiagnosisPage() {
           </div>
           <div class="diag-patient-item">
             <span class="diag-patient-label">Chuyên khoa thăm khám</span>
-            <span class="diag-patient-val" style="color:var(--accent);">${escapeHTML(record.category || "Khám tổng quát")}</span>
+            <span class="diag-patient-val" style="color:var(--caramel-dark);">${escapeHTML(record.category || "Khám tổng quát")}</span>
           </div>
         </div>
 
@@ -265,7 +265,7 @@ export function initDiagnosisPage() {
               <span>✅</span>
               <span>Chẩn Đoán Xác Định (Confirmed Diagnosis)</span>
             </h4>
-            <p style="font-size:15px; color:var(--accent); font-weight:800;">
+            <p style="font-size:15px; color:var(--espresso); font-weight:800;">
               ${escapeHTML(record.confirmedDiagnosis || record.title || "Đang chờ kết luận")}
             </p>
           </div>
@@ -349,7 +349,7 @@ export function initDiagnosisPage() {
           <p>${escapeHTML(record.doctorAdvice || "Tiếp tục theo dõi ăn uống và vận động của bé. Nếu có dấu hiệu sốt cao, bỏ ăn hoặc nôn mửa, xin vui lòng liên hệ ngay với bệnh viện.")}</p>
           ${
             record.nextAppointment
-              ? `<p style="margin-top:8px; font-weight:700; color:var(--accent);">
+              ? `<p style="margin-top:8px; font-weight:700; color:var(--espresso);">
                   📅 Hẹn tái khám định kỳ vào ngày: ${escapeHTML(record.nextAppointment)}
                 </p>`
               : ""

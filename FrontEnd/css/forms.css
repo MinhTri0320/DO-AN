@@ -34,21 +34,21 @@
   background: var(--surface);
   color: var(--ink);
   resize: vertical;
-  transition: all 0.2s ease;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
 }
 
 .form input:hover,
 .form textarea:hover,
 .form select:hover {
-  border-color: var(--tan);
+  border-color: var(--caramel);
 }
 
 .form input:focus,
 .form textarea:focus,
 .form select:focus {
   outline: none;
-  border-color: var(--accent-dark);
-  box-shadow: 0 0 0 3.5px rgba(201, 90, 52, 0.12);
+  border-color: var(--caramel-dark);
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
 }
 
 .field-error {
