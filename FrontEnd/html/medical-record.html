@@ -425,6 +425,35 @@
             </label>
           </div>
 
+          <!-- ===== KHỐI HIỂN THỊ TIỀN SỬ & LỊCH SỬ BỆNH ÁN KHI THÊM / SỬA BỆNH ÁN ===== -->
+          <div class="modal-pet-history-box" id="modalPetHistoryBox">
+            <div class="modal-history-head" id="modalHistoryToggleBtn" role="button" tabindex="0" title="Nhấn để thu gọn hoặc mở rộng lịch sử">
+              <div class="modal-history-title-wrap">
+                <span class="modal-history-icon">📜</span>
+                <div>
+                  <strong class="modal-history-title">Lịch sử bệnh án trước đây của <span id="modalHistoryPetName">bé cưng</span></strong>
+                  <p class="modal-history-subtitle">Tra cứu các đợt khám, chẩn đoán xác định và đơn thuốc trước đó</p>
+                </div>
+              </div>
+              <div class="modal-history-head-right">
+                <span class="modal-history-count-badge" id="modalHistoryCountBadge">0 đợt khám</span>
+                <span class="modal-history-toggle-arrow" id="modalHistoryToggleArrow">▼</span>
+              </div>
+            </div>
+
+            <div class="modal-history-content" id="modalHistoryContent">
+              <!-- Thông tin nhanh sức khỏe nền & dị ứng -->
+              <div class="modal-history-pet-metrics" id="modalHistoryPetMetrics">
+                <!-- JS nạp: Nhóm máu, dị ứng, bệnh mãn tính -->
+              </div>
+
+              <!-- Danh sách lịch sử các đợt khám trước -->
+              <div class="modal-history-records-list" id="modalHistoryRecordsList">
+                <!-- JS nạp các thẻ đợt khám trước đây -->
+              </div>
+            </div>
+          </div>
+
           <div class="section-subtitle-bar">
             <span>🩺</span>
             <span>Lý do khám &amp; Triệu chứng lâm sàng</span>

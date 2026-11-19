@@ -94,6 +94,13 @@ const medicalRecordSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Virtual id tương thích client
+medicalRecordSchema.virtual("id").get(function () {
+  return this.recordCode || (this._id ? this._id.toString() : "");
+});
+medicalRecordSchema.set("toJSON", { virtuals: true });
+medicalRecordSchema.set("toObject", { virtuals: true });
+
 // Indexes
 medicalRecordSchema.index({ petId: 1, dateISO: -1 });
 medicalRecordSchema.index({ category: 1, status: 1 });

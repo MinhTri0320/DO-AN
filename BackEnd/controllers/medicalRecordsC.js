@@ -1,6 +1,18 @@
 const MedicalRecord = require("../models/medicalRecord");
 const PetHealthProfile = require("../models/petHealthProfile");
 
+// Hàm chuẩn hóa hồ sơ bệnh án trả về, luôn có trường id
+const formatRecord = (record) => {
+  if (!record) return null;
+  const raw = typeof record.toObject === "function" ? record.toObject() : record;
+  const id = raw.recordCode || (raw._id ? String(raw._id) : "");
+  return {
+    ...raw,
+    id,
+    recordCode: raw.recordCode || id,
+  };
+};
+
 // 1. Lấy danh sách bệnh án (có thể lọc theo petId)
 const getMedicalRecords = async (req, res) => {
   try {
@@ -13,7 +25,7 @@ const getMedicalRecords = async (req, res) => {
     const records = await MedicalRecord.find(filter).sort({ createdAt: -1 }).lean();
     return res.status(200).json({
       success: true,
-      records: records,
+      records: records.map(formatRecord),
     });
   } catch (error) {
     console.error("Lỗi lấy danh sách bệnh án:", error);
@@ -34,7 +46,7 @@ const getMedicalRecordById = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy hồ sơ bệnh án." });
     }
 
-    return res.status(200).json({ success: true, record });
+    return res.status(200).json({ success: true, record: formatRecord(record) });
   } catch (error) {
     console.error("Lỗi lấy chi tiết bệnh án:", error);
     return res.status(500).json({ message: "Lỗi máy chủ." });
@@ -98,7 +110,7 @@ const createMedicalRecord = async (req, res) => {
     );
 
     console.log(`✓ Đã lưu bệnh án [${recordCode}] thành công vào MongoDB!`);
-    return res.status(201).json({ success: true, record: newRecord });
+    return res.status(201).json({ success: true, record: formatRecord(newRecord) });
   } catch (error) {
     console.error("Lỗi tạo bệnh án:", error);
     return res.status(500).json({ message: "Không thể lưu hồ sơ bệnh án." });
@@ -123,7 +135,7 @@ const updateMedicalRecord = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy bệnh án để cập nhật." });
     }
 
-    return res.status(200).json({ success: true, record: updated });
+    return res.status(200).json({ success: true, record: formatRecord(updated) });
   } catch (error) {
     console.error("Lỗi cập nhật bệnh án:", error);
     return res.status(500).json({ message: "Không thể cập nhật bệnh án." });

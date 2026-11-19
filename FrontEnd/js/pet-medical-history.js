@@ -6,7 +6,8 @@
 
 import { escapeHTML } from "./storage.js";
 import { getPetsList, fetchPetsFromDatabase } from "./pet-profile.js";
-import { getStoredMedicalRecords, updateSidebarInfo } from "./medical-data.js";
+import { getStoredMedicalRecords, setStoredMedicalRecords, updateSidebarInfo } from "./medical-data.js";
+import { apiGetMedicalRecords } from "./api.js";
 
 export function initPetMedicalHistoryPage() {
   const pageContainer = document.getElementById("petMedicalHistoryPage");
@@ -300,6 +301,35 @@ export function initPetMedicalHistoryPage() {
     if (dbPets && Array.isArray(dbPets) && dbPets.length > 0) {
       renderPetSwitcher(dbPets);
       renderHistoryForCurrentPet(dbPets);
+    }
+  });
+
+  // Đồng bộ hồ sơ bệnh án từ MongoDB
+  apiGetMedicalRecords().then((dbRecords) => {
+    if (dbRecords && Array.isArray(dbRecords) && dbRecords.length > 0) {
+      const normalizedDbRecords = dbRecords.map((r) => ({
+        ...r,
+        id: r.id || r.recordCode || (r._id ? String(r._id) : ""),
+        recordCode: r.recordCode || r.id || (r._id ? String(r._id) : ""),
+      }));
+
+      const dbKeySet = new Set();
+      normalizedDbRecords.forEach((r) => {
+        if (r.id) dbKeySet.add(r.id);
+        if (r.recordCode) dbKeySet.add(r.recordCode);
+      });
+
+      const local = getStoredMedicalRecords();
+      const merged = [...normalizedDbRecords];
+      local.forEach((loc) => {
+        const key = loc.id || loc.recordCode || "";
+        if (key && !dbKeySet.has(key)) {
+          merged.push(loc);
+        }
+      });
+      setStoredMedicalRecords(merged);
+      const currentPets = getPetsList();
+      renderHistoryForCurrentPet(currentPets);
     }
   });
 }

@@ -400,11 +400,11 @@ export async function apiGetMedicalRecordById(recordId) {
  */
 export async function apiSaveMedicalRecord(record) {
   try {
-    const isUpdate = Boolean(record.id && !record.id.startsWith("local_"));
+    const isUpdate = Boolean(record.isEditing);
     console.log(`[API] Đang lưu hồ sơ y tế tới MongoDB/BackEnd...`, { isUpdate, record });
 
     let resData = null;
-    if (isUpdate) {
+    if (isUpdate && record.id) {
       try {
         resData = await request(`/medical-records/${encodeURIComponent(record.id)}`, {
           method: "PUT",

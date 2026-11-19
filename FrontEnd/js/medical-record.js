@@ -58,13 +58,37 @@ export function initMedicalRecordPage() {
 
       const dbRecords = await apiGetMedicalRecords(currentPetId);
       if (dbRecords && Array.isArray(dbRecords) && dbRecords.length > 0) {
+        // Chuẩn hóa DB records: đảm bảo có trường `id` nhất quán với recordCode
+        const normalizedDbRecords = dbRecords.map((r) => ({
+          ...r,
+          id: r.id || r.recordCode || (r._id ? String(r._id) : ""),
+          recordCode: r.recordCode || r.id || (r._id ? String(r._id) : ""),
+        }));
+
+        // Tạo Set chứa tất cả key đã biết của DB records để tra cứu nhanh
+        const dbKeySet = new Set();
+        normalizedDbRecords.forEach((r) => {
+          if (r.id) dbKeySet.add(r.id);
+          if (r.recordCode) dbKeySet.add(r.recordCode);
+          if (r._id) dbKeySet.add(String(r._id));
+        });
+
+        // Lấy tất cả records local, tách theo pet hiện tại và các pet khác
         const local = getStoredMedicalRecords();
-        const merged = [...dbRecords];
-        local.forEach((loc) => {
-          if (!merged.some((m) => m.id === loc.id)) {
-            merged.push(loc);
+        const localOtherPets = local.filter((r) => r.petId !== currentPetId);
+        const localCurrentPet = local.filter((r) => r.petId === currentPetId);
+
+        // Merge: Lấy DB records làm gốc, chỉ thêm local records chưa có trên DB
+        const mergedCurrentPet = [...normalizedDbRecords];
+        localCurrentPet.forEach((loc) => {
+          const locKey = loc.id || loc.recordCode || "";
+          if (locKey && !dbKeySet.has(locKey)) {
+            mergedCurrentPet.push(loc);
           }
         });
+
+        // Ghép lại: records pet hiện tại (đã merge) + records các pet khác
+        const merged = [...mergedCurrentPet, ...localOtherPets];
         setStoredMedicalRecords(merged);
       }
 
@@ -393,27 +417,148 @@ export function initMedicalRecordPage() {
   const recordForm = document.getElementById("medicalRecordForm");
   const modalRecordTitle = document.getElementById("modalRecordTitle");
 
+  // Hiển thị lịch sử các đợt khám & bệnh án trước đây của pet trong modal
+  function renderModalPetHistory(selectedPetId, excludeRecordId = null) {
+    const petNameEl = document.getElementById("modalHistoryPetName");
+    const countBadgeEl = document.getElementById("modalHistoryCountBadge");
+    const metricsEl = document.getElementById("modalHistoryPetMetrics");
+    const recordsListEl = document.getElementById("modalHistoryRecordsList");
+
+    if (!recordsListEl) return;
+
+    const pet = pets.find((p) => p.id === selectedPetId) || { name: "Bé cưng", species: "Thú cưng" };
+    if (petNameEl) petNameEl.textContent = pet.name || "bé cưng";
+
+    // 1. Chỉ số sức khỏe nền
+    if (metricsEl) {
+      const profiles = getStoredHealthProfiles();
+      const h = profiles[selectedPetId] || {};
+      metricsEl.innerHTML = `
+        <span class="modal-hist-metric-tag">🩸 Nhóm máu: <strong>${escapeHTML(h.bloodType || (pet.species === "Mèo" ? "Nhóm A" : "DEA 1.1 (+)"))}</strong></span>
+        <span class="modal-hist-metric-tag" style="color:#C95A34;">⚠️ Dị ứng: <strong>${escapeHTML(h.allergies || "Chưa ghi nhận dị ứng")}</strong></span>
+        <span class="modal-hist-metric-tag">💉 Tiêm phòng: <strong>${escapeHTML(h.vaccinationStatus || "Đã tiêm phòng đủ")}</strong></span>
+        <span class="modal-hist-metric-tag">🩺 Tình trạng: <strong>${escapeHTML(h.overallStatus || "Khỏe mạnh")}</strong></span>
+      `;
+    }
+
+    // 2. Lịch sử các đợt khám trước
+    const allRecords = getStoredMedicalRecords();
+    const prevRecords = allRecords
+      .filter((r) => r.petId === selectedPetId && (!excludeRecordId || r.id !== excludeRecordId))
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    if (countBadgeEl) {
+      countBadgeEl.textContent = `${prevRecords.length} đợt khám`;
+    }
+
+    if (prevRecords.length === 0) {
+      recordsListEl.innerHTML = `
+        <div class="modal-hist-empty">
+          <div style="font-size:24px; margin-bottom:6px;">🌱</div>
+          <strong>Chưa có tiền sử bệnh án trước đây</strong>
+          <p style="margin:4px 0 0; font-size:12px; color:var(--ink-faint);">Đây là đợt khám đầu tiên được ghi nhận của ${escapeHTML(pet.name)}.</p>
+        </div>
+      `;
+      return;
+    }
+
+    recordsListEl.innerHTML = prevRecords
+      .map((r) => {
+        let statusStyle = "background:#E8F5E9; color:#2E5C38;";
+        if (r.status === "Đang điều trị") statusStyle = "background:#FFF3E0; color:#E65100;";
+        else if (r.status === "Cần tái khám") statusStyle = "background:var(--cream-latte); color:var(--espresso); border:1px solid var(--accent-border);";
+
+        const rxCount = (r.prescription || []).length;
+        const rxText = rxCount > 0 ? `${rxCount} loại thuốc kê toa` : "Không kê đơn thuốc";
+        const symptomsText = Array.isArray(r.symptoms) ? r.symptoms.join(", ") : (r.symptoms || "Bình thường");
+
+        return `
+          <div class="modal-hist-item">
+            <div class="modal-hist-item-header">
+              <div class="modal-hist-item-meta">
+                <span class="modal-hist-code">${escapeHTML(r.id || r.recordCode)}</span>
+                <span class="modal-hist-date">📅 ${escapeHTML(r.date)}</span>
+                <span class="modal-hist-category">${escapeHTML(r.category || "Tổng quát")}</span>
+              </div>
+              <span class="med-status-pill" style="font-size:11px; padding:3px 10px; ${statusStyle}">● ${escapeHTML(r.status)}</span>
+            </div>
+
+            <div class="modal-hist-item-title">${escapeHTML(r.title || "Khám sức khỏe")}</div>
+            <div class="modal-hist-item-diag">
+              <strong>Chẩn đoán:</strong> ${escapeHTML(r.confirmedDiagnosis || r.preliminaryDiagnosis || "Khỏe mạnh")}
+            </div>
+
+            <div class="modal-hist-item-details">
+              <div>👨‍⚕️ <strong>Bác sĩ:</strong> ${escapeHTML(r.veterinarian || "PawnCare Vet")}</div>
+              <div>🌡️ <strong>Thể trạng:</strong> ${r.vitalSigns?.temperature || "--"}°C • ${r.vitalSigns?.weight || "--"} kg</div>
+              <div style="grid-column: span 2;">🔬 <strong>Triệu chứng:</strong> ${escapeHTML(symptomsText)}</div>
+              <div style="grid-column: span 2;">💊 <strong>Đơn thuốc:</strong> ${escapeHTML(rxText)}</div>
+            </div>
+
+            <div class="modal-hist-item-footer">
+              <span>Chi phí: <strong style="color:#2E5C38;">${escapeHTML(r.totalCost || "0đ")}</strong></span>
+              <a href="./diagnosis.html?petId=${r.petId}&recordId=${r.id || r.recordCode}" target="_blank" style="color:var(--brown); text-decoration:underline; font-weight:600;">
+                🔬 Xem chi tiết chẩn đoán →
+              </a>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  // Toggle thu gọn/mở rộng lịch sử trong modal
+  const historyToggleBtn = document.getElementById("modalHistoryToggleBtn");
+  const historyBox = document.getElementById("modalPetHistoryBox");
+  if (historyToggleBtn && historyBox) {
+    const toggleHistory = () => {
+      historyBox.classList.toggle("collapsed");
+    };
+    historyToggleBtn.addEventListener("click", toggleHistory);
+    historyToggleBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleHistory();
+      }
+    });
+  }
+
+  // Khi thay đổi thú cưng trong select của modal, cập nhật ngay lịch sử tương ứng
+  recordForm?.elements?.modalPetSelect?.addEventListener("change", (e) => {
+    renderModalPetHistory(e.target.value, editingRecordId);
+  });
+
   function openRecordModal(recordId = null) {
     editingRecordId = recordId;
     if (!recordModal || !recordForm) return;
 
     recordForm.reset();
 
+    let targetPetId = currentPetId;
+    if (recordId) {
+      const records = getStoredMedicalRecords();
+      const target = records.find((r) => (r.id || r.recordCode) === recordId);
+      if (target?.petId) targetPetId = target.petId;
+    }
+
     const petSelect = recordForm.elements.modalPetSelect;
     if (petSelect) {
       petSelect.innerHTML = pets
-        .map((p) => `<option value="${p.id}" ${p.id === currentPetId ? "selected" : ""}>${escapeHTML(p.name)} (${escapeHTML(p.species)})</option>`)
+        .map((p) => `<option value="${p.id}" ${p.id === targetPetId ? "selected" : ""}>${escapeHTML(p.name)} (${escapeHTML(p.species)})</option>`)
         .join("");
     }
+
+    // Hiển thị lịch sử các đợt khám của bé cưng
+    renderModalPetHistory(targetPetId, recordId);
 
     if (recordId) {
       if (modalRecordTitle) {
         modalRecordTitle.innerHTML = `<span>✏️</span> <span>Chỉnh Sửa Hồ Sơ Bệnh Án</span>`;
       }
       const records = getStoredMedicalRecords();
-      const target = records.find((r) => r.id === recordId);
+      const target = records.find((r) => (r.id || r.recordCode) === recordId);
       if (target) {
-        if (recordForm.elements.modalRecordId) recordForm.elements.modalRecordId.value = target.id;
+        if (recordForm.elements.modalRecordId) recordForm.elements.modalRecordId.value = target.id || target.recordCode;
         if (recordForm.elements.modalDate) recordForm.elements.modalDate.value = target.date || "";
         if (recordForm.elements.modalCategory) recordForm.elements.modalCategory.value = target.category || "Khám tổng quát";
         if (recordForm.elements.modalStatus) recordForm.elements.modalStatus.value = target.status || "Đang điều trị";
@@ -439,7 +584,7 @@ export function initMedicalRecordPage() {
       if (recordForm.elements.modalDoctor) recordForm.elements.modalDoctor.value = "BS. CKI. Nguyễn Văn Hùng";
       if (recordForm.elements.modalTemp) recordForm.elements.modalTemp.value = "38.5";
       if (recordForm.elements.modalWeight) {
-        const p = pets.find((pt) => pt.id === currentPetId);
+        const p = pets.find((pt) => pt.id === targetPetId);
         recordForm.elements.modalWeight.value = p?.weight || "5.0";
       }
     }
@@ -468,6 +613,7 @@ export function initMedicalRecordPage() {
 
       const recordData = {
         id: recordId,
+        recordCode: recordId,
         petId: pId,
         petName: pet.name || "Bé cưng",
         petSpecies: pet.species || "Chó",
@@ -503,10 +649,11 @@ export function initMedicalRecordPage() {
         nextAppointment: recordForm.elements.modalNextAppointment.value || "",
         totalCost: recordForm.elements.modalCost.value || "250.000đ",
         createdAt: Date.now(),
+        isEditing: Boolean(editingRecordId),
       };
 
       const records = getStoredMedicalRecords();
-      const idx = records.findIndex((r) => r.id === recordId);
+      const idx = records.findIndex((r) => (r.id || r.recordCode) === recordId);
       if (idx >= 0) {
         records[idx] = { ...records[idx], ...recordData };
       } else {
@@ -518,10 +665,11 @@ export function initMedicalRecordPage() {
         await apiSaveMedicalRecord(recordData);
       } catch (err) {}
 
+      const wasEditing = !!editingRecordId;
       closeRecordModal();
       currentPetId = pId;
       renderAll();
-      showToast(editingRecordId ? "Cập nhật bệnh án thành công!" : "Đã tạo đợt khám & bệnh án mới thành công!");
+      showToast(wasEditing ? "Cập nhật bệnh án thành công!" : "Đã tạo đợt khám & bệnh án mới thành công!");
     });
   }
 

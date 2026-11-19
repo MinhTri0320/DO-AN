@@ -361,14 +361,50 @@ export const DEFAULT_MEDICAL_RECORDS = [
 export function getStoredMedicalRecords() {
   const records = getData(STORAGE_KEYS.MEDICAL_RECORDS, null);
   if (records && Array.isArray(records) && records.length > 0) {
-    return records;
+    const seen = new Set();
+    const deduped = [];
+    for (const r of records) {
+      if (!r) continue;
+      const id = r.id || r.recordCode || (r._id ? String(r._id) : "");
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        deduped.push({
+          ...r,
+          id,
+          recordCode: r.recordCode || id,
+        });
+      }
+    }
+    // Tự động dọn sạch bản ghi trùng lặp trong localStorage nếu có
+    if (deduped.length !== records.length) {
+      setData(STORAGE_KEYS.MEDICAL_RECORDS, deduped);
+    }
+    return deduped;
   }
   setData(STORAGE_KEYS.MEDICAL_RECORDS, DEFAULT_MEDICAL_RECORDS);
   return DEFAULT_MEDICAL_RECORDS;
 }
 
 export function setStoredMedicalRecords(records) {
-  setData(STORAGE_KEYS.MEDICAL_RECORDS, records);
+  if (!Array.isArray(records)) {
+    setData(STORAGE_KEYS.MEDICAL_RECORDS, records);
+    return;
+  }
+  const seen = new Set();
+  const deduped = [];
+  for (const r of records) {
+    if (!r) continue;
+    const id = r.id || r.recordCode || (r._id ? String(r._id) : "");
+    if (id && !seen.has(id)) {
+      seen.add(id);
+      deduped.push({
+        ...r,
+        id,
+        recordCode: r.recordCode || id,
+      });
+    }
+  }
+  setData(STORAGE_KEYS.MEDICAL_RECORDS, deduped);
 }
 
 export function getStoredHealthProfiles() {
