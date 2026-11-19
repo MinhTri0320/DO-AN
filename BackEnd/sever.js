@@ -13,11 +13,15 @@ const appointmentsR = require("./routes/appointmentsR");
 const customerProfileR = require("./routes/customerProfileR");
 const petProfileR = require("./routes/petProfileR");
 const medicalRecordsR = require("./routes/medicalRecordsR");
+const prescriptionsR = require("./routes/prescriptionsR");
+const reExaminationsR = require("./routes/reExaminationsR");
 
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
 const MedicalRecord = require("./models/medicalRecord");
 const PetHealthProfile = require("./models/petHealthProfile");
+const Prescription = require("./models/prescription");
+const ReExamination = require("./models/reExamination");
 
 const app = express();
 
@@ -37,6 +41,8 @@ app.use("/api", appointmentsR);
 app.use("/api", customerProfileR);
 app.use("/api", petProfileR);
 app.use("/api", medicalRecordsR);
+app.use("/api", prescriptionsR);
+app.use("/api", reExaminationsR);
 
 
 // Kiểm tra server
@@ -65,6 +71,8 @@ async function startServer() {
         await Appointment.init();
         await MedicalRecord.init();
         await PetHealthProfile.init();
+        await Prescription.init();
+        await ReExamination.init();
 
         startCampaignReminderScheduler();
 

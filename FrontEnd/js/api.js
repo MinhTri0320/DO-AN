@@ -494,3 +494,198 @@ export async function apiSaveDiagnosis(diagnosisData) {
     return null;
   }
 }
+
+/* ============================================================
+   6. SPRINT 3: PRESCRIPTIONS & RE-EXAMINATION HISTORY APIS
+   ============================================================ */
+
+/**
+ * Lấy danh sách đơn thuốc từ MongoDB/BackEnd
+ * Gửi tới: GET http://localhost:3000/api/prescriptions?petId=...&status=...
+ */
+export async function apiGetPrescriptions(petId = null, options = {}) {
+  try {
+    const params = new URLSearchParams();
+    if (petId) params.append("petId", petId);
+    if (options.status) params.append("status", options.status);
+    if (options.recordCode) params.append("recordCode", options.recordCode);
+    if (options.search) params.append("search", options.search);
+
+    const query = params.toString() ? `?${params.toString()}` : "";
+    console.log(`[API] Đang tải danh sách đơn thuốc: ${API_BASE_URL}/prescriptions${query}...`);
+    const data = await request(`/prescriptions${query}`, { method: "GET" });
+    return data.prescriptions || data.data || (Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.warn("[API] Lỗi khi tải danh sách đơn thuốc:", err.message);
+    return [];
+  }
+}
+
+/**
+ * Lấy chi tiết đơn thuốc theo ID hoặc mã đơn
+ * Gửi tới: GET http://localhost:3000/api/prescriptions/:id
+ */
+export async function apiGetPrescriptionById(prescriptionId) {
+  try {
+    console.log(`[API] Đang tải chi tiết đơn thuốc: ${API_BASE_URL}/prescriptions/${prescriptionId}...`);
+    const data = await request(`/prescriptions/${encodeURIComponent(prescriptionId)}`, { method: "GET" });
+    return data.prescription || data.data || data;
+  } catch (err) {
+    console.warn("[API] Không thể tải chi tiết đơn thuốc:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lưu hoặc cập nhật đơn thuốc
+ * Nếu có ID/mã: PUT /api/prescriptions/:id, nếu mới: POST /api/prescriptions
+ */
+export async function apiSavePrescription(prescription) {
+  try {
+    const id = prescription.id || prescription._id || prescription.prescriptionCode;
+    const isUpdate = Boolean(id && !String(id).startsWith("local_"));
+    console.log(`[API] Đang lưu đơn thuốc...`, { isUpdate, prescription });
+
+    let resData = null;
+    if (isUpdate) {
+      try {
+        resData = await request(`/prescriptions/${encodeURIComponent(id)}`, {
+          method: "PUT",
+          body: JSON.stringify(prescription),
+        });
+      } catch (e) {
+        resData = await request("/prescriptions", {
+          method: "POST",
+          body: JSON.stringify(prescription),
+        });
+      }
+    } else {
+      resData = await request("/prescriptions", {
+        method: "POST",
+        body: JSON.stringify(prescription),
+      });
+    }
+
+    return resData?.prescription || resData?.data || resData;
+  } catch (err) {
+    console.warn("[API] Lỗi khi lưu đơn thuốc:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Xóa đơn thuốc (xóa mềm)
+ * Gửi tới: DELETE http://localhost:3000/api/prescriptions/:id
+ */
+export async function apiDeletePrescription(prescriptionId) {
+  try {
+    console.log(`[API] Đang xóa đơn thuốc: ${API_BASE_URL}/prescriptions/${prescriptionId}...`);
+    return await request(`/prescriptions/${encodeURIComponent(prescriptionId)}`, { method: "DELETE" });
+  } catch (err) {
+    console.warn("[API] Lỗi khi xóa đơn thuốc:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lấy danh sách lịch sử các lần tái khám của thú cưng
+ * Gửi tới: GET http://localhost:3000/api/re-examinations?petId=...
+ */
+export async function apiGetReExaminations(petId = null, options = {}) {
+  try {
+    const params = new URLSearchParams();
+    if (petId) params.append("petId", petId);
+    if (options.recordCode) params.append("recordCode", options.recordCode);
+    if (options.recoveryStatus) params.append("recoveryStatus", options.recoveryStatus);
+    if (options.search) params.append("search", options.search);
+
+    const query = params.toString() ? `?${params.toString()}` : "";
+    console.log(`[API] Đang tải lịch sử tái khám: ${API_BASE_URL}/re-examinations${query}...`);
+    const data = await request(`/re-examinations${query}`, { method: "GET" });
+    return data.reExaminations || data.data || (Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.warn("[API] Lỗi khi tải lịch sử tái khám:", err.message);
+    return [];
+  }
+}
+
+/**
+ * Lấy chi tiết một lần tái khám
+ * Gửi tới: GET http://localhost:3000/api/re-examinations/:id
+ */
+export async function apiGetReExaminationById(reExamId) {
+  try {
+    console.log(`[API] Đang tải chi tiết tái khám: ${API_BASE_URL}/re-examinations/${reExamId}...`);
+    const data = await request(`/re-examinations/${encodeURIComponent(reExamId)}`, { method: "GET" });
+    return data.reExamination || data.data || data;
+  } catch (err) {
+    console.warn("[API] Không thể tải chi tiết tái khám:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lưu hoặc cập nhật kết quả tái khám
+ * Nếu có ID/mã: PUT /api/re-examinations/:id, nếu mới: POST /api/re-examinations
+ */
+export async function apiSaveReExamination(reExamData) {
+  try {
+    const id = reExamData.id || reExamData._id || reExamData.reExamCode;
+    const isUpdate = Boolean(id && !String(id).startsWith("local_"));
+    console.log(`[API] Đang lưu thông tin tái khám...`, { isUpdate, reExamData });
+
+    let resData = null;
+    if (isUpdate) {
+      try {
+        resData = await request(`/re-examinations/${encodeURIComponent(id)}`, {
+          method: "PUT",
+          body: JSON.stringify(reExamData),
+        });
+      } catch (e) {
+        resData = await request("/re-examinations", {
+          method: "POST",
+          body: JSON.stringify(reExamData),
+        });
+      }
+    } else {
+      resData = await request("/re-examinations", {
+        method: "POST",
+        body: JSON.stringify(reExamData),
+      });
+    }
+
+    return resData?.reExamination || resData?.data || resData;
+  } catch (err) {
+    console.warn("[API] Lỗi khi lưu thông tin tái khám:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Xóa một bản ghi tái khám (xóa mềm)
+ * Gửi tới: DELETE http://localhost:3000/api/re-examinations/:id
+ */
+export async function apiDeleteReExamination(reExamId) {
+  try {
+    console.log(`[API] Đang xóa lịch sử tái khám: ${API_BASE_URL}/re-examinations/${reExamId}...`);
+    return await request(`/re-examinations/${encodeURIComponent(reExamId)}`, { method: "DELETE" });
+  } catch (err) {
+    console.warn("[API] Lỗi khi xóa thông tin tái khám:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lấy toàn bộ tiến trình lịch sử tái khám theo petId (dùng cho timeline / biểu đồ hồi phục)
+ * Gửi tới: GET http://localhost:3000/api/pets/:petId/re-examinations
+ */
+export async function apiGetPetReExaminations(petId) {
+  try {
+    console.log(`[API] Đang tải toàn bộ tiến trình tái khám của bé ${petId}...`);
+    const data = await request(`/pets/${encodeURIComponent(petId)}/re-examinations`, { method: "GET" });
+    return data;
+  } catch (err) {
+    console.warn("[API] Lỗi khi tải tiến trình tái khám của thú cưng:", err.message);
+    return { success: false, reExaminations: [] };
+  }
+}
