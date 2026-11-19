@@ -56,7 +56,6 @@ const diagnosisSchema = new mongoose.Schema(
     recordId: {
       type: String,
       trim: true,
-      index: true,
       default: "", // Mã đợt khám / bệnh án liên kết (nếu có)
     },
     petId: {

@@ -64,7 +64,6 @@ const reExaminationSchema = new mongoose.Schema(
         "Tái phát / Chuyển biến xấu",
       ],
       default: "Tiến triển tốt",
-      index: true,
     },
     vitalSigns: { type: vitalSignsSchema, default: () => ({}) },
     examinationNotes: { type: String, trim: true },                    // Thông tin & triệu chứng khi tái khám
