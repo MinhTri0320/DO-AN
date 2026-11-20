@@ -1,4 +1,5 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const dns = require("dns");
 try {
   dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -263,6 +264,107 @@ const sampleDiagnoses = [
       "Lắp đặt đài phun nước tự động kích thích mèo uống nước nhiều hơn. Tăng tỷ lệ thức ăn ướt. Giữ khay cát luôn sạch sẽ, đặt nơi yên tĩnh.",
     nextAppointment: "05/10/2026",
     totalCost: "420.000đ",
+    isDeleted: false,
+  },
+
+  // 4. Chẩn đoán cho bé Huy (Sprint 3 - Demo theo màn hình)
+  {
+    diagnosisCode: "DIAG-2026-693",
+    recordId: "MED-2026-693",
+    petId: "6afb3d4929cc539c893f82d3",
+    petName: "Huy",
+    petSpecies: "Chó",
+    petBreed: "Poodle",
+    date: "17/11/2026",
+    dateISO: "2026-11-17",
+    category: "Tiêm chủng",
+    status: "Đang điều trị",
+    veterinarian: "BS. Trần Minh Trí",
+    clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+    reason: "Cắn Người",
+    symptoms: ["Vi-rút dại thuộc họ Rhabdoviridae"],
+    vitalSigns: {
+      temperature: 38.5,
+      weight: 6.0,
+      heartRate: 110,
+      respiratoryRate: 24,
+      mucousMembranes: "Hồng hào",
+      hydration: "Bình thường",
+    },
+    preliminaryDiagnosis: "Chẩn đoán lâm sàng",
+    confirmedDiagnosis: "Bệnh Dại lâu ngày",
+    diagnosticSummary:
+      "Nghi ngờ phơi nhiễm vi-rút dại, theo dõi sát biểu hiện thần kinh và thể trạng lâm sàng.",
+    severity: "Nguy kịch",
+    testResults: [
+      {
+        name: "Xét nghiệm sinh học phân tử PCR virus Dại",
+        sample: "Dịch phết nước bọt",
+        result: "Dương tính yếu (+), theo dõi tiến triển",
+        status: "Bất thường",
+        testedAt: "17/11/2026 09:30",
+        notes: "Cách ly theo dõi 14 ngày",
+      },
+    ],
+    prescription: [
+      {
+        name: "Thuốc bổ & Kháng viêm dịu nhẹ",
+        active: "Vitamin tổng hợp",
+        dosage: "1 viên/ngày",
+        duration: "5 ngày",
+        notes: "Uống sau ăn",
+      },
+    ],
+    treatmentPlan:
+      "Cách ly theo dõi, hỗ trợ dinh dưỡng nâng cao thể trạng, kiểm soát phản xạ thần kinh.",
+    doctorAdvice: "Theo dõi thường xuyên",
+    nextAppointment: "18/11/2026",
+    totalCost: "350.000đ",
+    isDeleted: false,
+  },
+
+  // 5. Chẩn đoán cho bé Thịnh
+  {
+    diagnosisCode: "DIAG-2026-702",
+    recordId: "MED-2026-702",
+    petId: "6afb3068c2cd9645011c3ecc",
+    petName: "Thịnh",
+    petSpecies: "Chó",
+    petBreed: "Poodle",
+    date: "16/11/2026",
+    dateISO: "2026-11-16",
+    category: "Khám tổng quát",
+    status: "Đã hoàn thành",
+    veterinarian: "BS. CKI. Nguyễn Văn Hùng",
+    clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+    reason: "Khám định kỳ & kiểm tra răng miệng",
+    symptoms: ["Hơi thở có mùi nhẹ, nhiều vôi răng nhẹ"],
+    vitalSigns: {
+      temperature: 38.4,
+      weight: 6.6,
+      heartRate: 112,
+      respiratoryRate: 22,
+      mucousMembranes: "Hồng tươi",
+      hydration: "Bình thường",
+    },
+    preliminaryDiagnosis: "Vôi răng độ 1",
+    confirmedDiagnosis: "Viêm nướu nhẹ do mảng bám vôi răng",
+    diagnosticSummary: "Thể trạng chung rất tốt, chỉ cần lấy cao răng và vệ sinh răng miệng định kỳ.",
+    severity: "Nhẹ",
+    testResults: [],
+    prescription: [
+      {
+        name: "Gel xịt thơm miệng diệt khuẩn Orozyme",
+        active: "Enzyme tự nhiên",
+        dosage: "Xịt 1 lần/ngày vào nướu",
+        duration: "14 ngày",
+        notes: "Không cho uống nước trong 30 phút sau xịt",
+      },
+    ],
+    treatmentPlan: "Vệ sinh răng miệng, kết hợp dùng gel enzyme.",
+    doctorAdvice: "Đánh răng cho bé 2-3 lần/tuần bằng kem đánh răng thú cưng chuyên dụng.",
+    nextAppointment: "16/12/2026",
+    totalCost: "250.000đ",
     isDeleted: false,
   },
 ];
