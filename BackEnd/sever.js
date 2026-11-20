@@ -11,8 +11,19 @@ const notificationsR = require("./routes/notificationsR");
 const campaignsR = require("./routes/campaignsR");
 const appointmentsR = require("./routes/appointmentsR");
 const customerProfileR = require("./routes/customerProfileR");
+const petProfileR = require("./routes/petProfileR");
+const medicalRecordsR = require("./routes/medicalRecordsR");
+const diagnosisR = require("./routes/diagnosisR");
+const prescriptionsR = require("./routes/prescriptionsR");
+const reExaminationsR = require("./routes/reExaminationsR");
+
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
+const MedicalRecord = require("./models/medicalRecord");
+const PetHealthProfile = require("./models/petHealthProfile");
+const Diagnosis = require("./models/diagnosis");
+const Prescription = require("./models/prescription");
+const ReExamination = require("./models/reExamination");
 
 const app = express();
 
@@ -21,15 +32,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Route đăng ký
+
+// Routes
 app.use("/api", registerR);
 app.use("/api", loginR);
 app.use("/api", formsR);
 app.use("/api", notificationsR);
 app.use("/api", campaignsR);
 app.use("/api", appointmentsR);
-
 app.use("/api", customerProfileR);
+app.use("/api", petProfileR);
+app.use("/api", medicalRecordsR);
+app.use("/api", diagnosisR);
+app.use("/api", prescriptionsR);
+app.use("/api", reExaminationsR);
+
 
 // Kiểm tra server
 app.get("/", (req, res) => {
@@ -37,23 +54,41 @@ app.get("/", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-    res.json({ status: "ok", database: require("mongoose").connection.readyState === 1 ? "connected" : "disconnected" });
+    res.json({
+        status: "ok",
+        database:
+            require("mongoose").connection.readyState === 1
+                ? "connected"
+                : "disconnected"
+    });
 });
 
+
 const port = Number(process.env.PORT) || 3000;
+
 
 async function startServer() {
     try {
         await connectDB();
+
         await Appointment.init();
+        await MedicalRecord.init();
+        await PetHealthProfile.init();
+        await Diagnosis.init();
+        await Prescription.init();
+        await ReExamination.init();
+
         startCampaignReminderScheduler();
+
         app.listen(port, () => {
             console.log(`SERVER DANG CHAY TAI http://localhost:${port}`);
         });
+
     } catch (error) {
         console.error("Không thể khởi động backend:", error.message);
         process.exitCode = 1;
     }
 }
+
 
 startServer();

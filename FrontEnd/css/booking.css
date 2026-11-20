@@ -54,24 +54,25 @@
   border: 1.5px solid var(--line);
   color: var(--ink-soft);
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: transform 0.26s var(--ease-pawmily), border-color 0.22s ease, background-color 0.22s ease, color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
   box-shadow: var(--shadow-sm);
 }
 
 .booking-tab-btn:hover {
-  border-color: var(--accent-dark);
-  color: var(--accent-dark);
+  border-color: var(--caramel);
+  color: var(--espresso);
+  transform: translate3d(0, -1px, 0);
 }
 
 .booking-tab-btn.active {
   background: var(--accent-gradient);
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 8px 20px -6px rgba(201, 90, 52, 0.35);
+  box-shadow: 0 8px 20px -6px rgba(78, 42, 20, 0.3);
 }
 
 .booking-tab-badge {
-  background: var(--accent);
+  background: var(--espresso);
   color: #fff;
   font-size: 11px;
   padding: 2px 8px;
@@ -158,7 +159,7 @@
   padding: 18px;
   background: var(--cream);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.28s var(--ease-pawmily), border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.28s var(--ease-pawmily);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -171,8 +172,8 @@
 }
 
 .booking-service-item:hover {
-  transform: translateY(-2px);
-  border-color: var(--tan);
+  transform: translate3d(0, -2px, 0);
+  border-color: var(--caramel);
   background: #fff;
   box-shadow: var(--shadow-sm);
 }
@@ -181,7 +182,7 @@
 .booking-service-item:has(input:checked) {
   background: var(--accent-soft);
   border-color: var(--accent-dark);
-  box-shadow: 0 8px 20px -6px rgba(201, 90, 52, 0.28);
+  box-shadow: 0 8px 20px -6px rgba(78, 42, 20, 0.24);
 }
 
 .service-item-top {
@@ -242,7 +243,7 @@
   padding: 14px;
   background: var(--cream);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.26s var(--ease-pawmily), border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -256,14 +257,15 @@
 
 .booking-pet-item:hover {
   background: #fff;
-  border-color: var(--tan);
+  border-color: var(--caramel);
+  transform: translate3d(0, -1.5px, 0);
 }
 
 .booking-pet-item.selected,
 .booking-pet-item:has(input:checked) {
   background: var(--accent-soft);
   border-color: var(--accent-dark);
-  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.22);
+  box-shadow: 0 6px 16px -4px rgba(78, 42, 20, 0.2);
 }
 
 .booking-pet-thumb {
@@ -307,7 +309,7 @@
 
 .booking-pet-new-btn:hover {
   background: var(--accent-soft);
-  border-color: var(--accent);
+  border-color: var(--caramel-dark);
 }
 
 /* Guest Pet Profile State (Khi người dùng CHƯA đăng nhập) */
@@ -322,7 +324,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(135deg, #FFF2EE 0%, #FCF6EE 100%);
+  background: linear-gradient(135deg, #FAF3EB 0%, #FDFBF7 100%);
   border: 1.5px dashed var(--accent-border);
   border-radius: 16px;
   padding: 16px 20px;
@@ -364,14 +366,14 @@
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(201, 90, 52, 0.25);
+  transition: transform 0.24s var(--ease-pawmily), box-shadow 0.24s var(--ease-pawmily), background-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(78, 42, 20, 0.25);
 }
 
 .btn-guest-login:hover {
   background: var(--accent-gradient-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(201, 90, 52, 0.35);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 8px 18px rgba(78, 42, 20, 0.34);
   color: #fff;
 }
 
@@ -426,6 +428,7 @@
 .booking-step-card input[type="text"],
 .booking-step-card input[type="tel"],
 .booking-step-card input[type="date"],
+.booking-step-card input[type="time"],
 .booking-step-card input[type="email"],
 .booking-step-card textarea {
   width: 100%;
@@ -438,7 +441,7 @@
   border: 1.5px solid var(--line);
   border-radius: 14px;
   padding: 13px 18px 13px 48px;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   box-shadow: 0 1px 3px rgba(51, 29, 18, 0.04);
 }
 
@@ -450,19 +453,19 @@
 
 .booking-step-card input:hover,
 .booking-step-card textarea:hover {
-  border-color: var(--tan);
+  border-color: var(--caramel);
 }
 
 .booking-step-card input:focus,
 .booking-step-card textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--caramel-dark);
   background: #FFFFFF;
-  box-shadow: 0 0 0 3.5px rgba(224, 122, 95, 0.16);
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
 }
 
 .booking-step-card .input-icon-wrap:focus-within > svg {
-  color: var(--accent);
+  color: var(--espresso);
 }
 
 /* Step 3: Date & Time Slots */
@@ -511,7 +514,7 @@
   font-size: 14px;
   color: var(--brown);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.24s var(--ease-pawmily), border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.24s var(--ease-pawmily);
   user-select: none;
 }
 
@@ -522,9 +525,9 @@
 }
 
 .time-slot-pill:hover {
-  border-color: var(--tan);
+  border-color: var(--caramel);
   background: #fff;
-  transform: translateY(-1px);
+  transform: translate3d(0, -1px, 0);
 }
 
 .time-slot-pill.selected,
@@ -532,13 +535,13 @@
   background: var(--accent-gradient);
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 6px 16px -2px rgba(201, 90, 52, 0.35);
+  box-shadow: 0 6px 16px -2px rgba(78, 42, 20, 0.3);
 }
 
 /* Custom Time Picker Component */
 .custom-time-picker-card {
   margin-top: 24px;
-  background: linear-gradient(135deg, #FFF2EE 0%, #FCF6EE 100%);
+  background: linear-gradient(135deg, #FAF3EB 0%, #FDFBF7 100%);
   border: 1.5px dashed var(--accent-border);
   border-radius: 16px;
   padding: 18px 20px;
@@ -590,10 +593,10 @@
 }
 
 #customTimeInput.custom-time-active {
-  border-color: var(--accent);
+  border-color: var(--caramel-dark);
   background: var(--accent-soft);
-  color: var(--accent-dark);
-  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.2);
+  color: var(--espresso);
+  box-shadow: 0 0 0 3px rgba(152, 117, 88, 0.2);
 }
 
 .custom-time-hint {
@@ -680,7 +683,7 @@
 /* ===== RIGHT COLUMN: STICKY BOOKING SUMMARY ===== */
 .booking-summary-card {
   position: sticky;
-  top: 96px;
+  top: 128px;
   background: var(--surface);
   border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
@@ -716,6 +719,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
   font-size: 14px;
 }
 
@@ -724,6 +728,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .summary-row .value {
@@ -732,6 +738,71 @@
   color: var(--brown);
   text-align: right;
   max-width: 60%;
+  word-break: break-word;
+}
+
+/* Promo Voucher Box inside Sticky Summary */
+.booking-promo-wrap {
+  margin: 4px 0;
+  background: var(--cream-soft);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px dashed var(--accent-border);
+}
+
+.booking-promo-label {
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--brown);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.booking-promo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-promo-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--espresso);
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.booking-promo-input:hover {
+  border-color: var(--caramel);
+}
+
+.booking-promo-input:focus {
+  outline: none;
+  border-color: var(--caramel-dark);
+  box-shadow: 0 0 0 3px rgba(152, 117, 88, 0.2);
+}
+
+.booking-promo-btn {
+  padding: 0 14px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.booking-promo-status {
+  font-size: 12px;
+  margin: 8px 0 0 0;
+  color: var(--sage-green);
+  font-weight: 700;
 }
 
 .summary-fee-box {
@@ -781,11 +852,38 @@
   justify-content: center;
   padding: 20px;
   background: rgba(42, 27, 20, 0.62);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: bookingOverlayFadeIn 0.24s ease-out;
+}
+
+@keyframes bookingOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bookingModalPop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
 .modal-overlay[hidden] {
   display: none !important;
+}
+
+.modal-overlay:not([hidden]) .booking-success-card,
+.modal-overlay:not([hidden]) .modal-card {
+  animation: bookingModalPop 0.34s var(--ease-pawmily);
 }
 
 .time-slot-pill.booked {
@@ -904,19 +1002,20 @@
   font-size: 13px;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.22s var(--ease-pawmily), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.22s ease;
 }
 
 .appt-filter-btn:hover {
-  background: var(--cream);
-  color: var(--brown);
+  background: var(--cream-latte);
+  border-color: var(--caramel);
+  color: var(--espresso);
 }
 
 .appt-filter-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent-gradient);
+  border-color: transparent;
   color: #fff;
-  box-shadow: 0 4px 10px rgba(224, 122, 95, 0.25);
+  box-shadow: 0 4px 12px rgba(78, 42, 20, 0.25);
 }
 
 .appointment-cards-list {
@@ -935,12 +1034,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  transition: all 0.25s ease;
+  transition: transform 0.28s var(--ease-pawmily), border-color 0.22s ease, box-shadow 0.28s var(--ease-pawmily);
 }
 
 .appointment-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--tan);
+  transform: translate3d(0, -2px, 0);
+  border-color: var(--caramel);
   box-shadow: var(--shadow-card);
 }
 

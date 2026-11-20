@@ -1,91 +1,269 @@
 /* ============================================================
-   header.css
-   Header/navbar dùng chung cho mọi trang.
+   header.css - Pawmily.vn 100% Authentic Caramel-Taupe Header
+   - Row 1: Brand Logo + VI/EN Switcher + Auth Pills + Voucher + Icons
+   - Row 2: Horizontal Scrollable Pill Navigation Carousel
    ============================================================ */
 
 #header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(252, 246, 238, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #A38266 0%, #987558 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 20px rgba(61, 35, 20, 0.12);
   transition: all 0.25s ease;
 }
 
+/* Container cho các trang dùng cấu trúc 1 hàng (.header-inner) */
 .header-inner {
-  max-width: 1240px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 12px 28px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 18px;
 }
 
-/* logo: mascot tròn + wordmark serif, phỏng theo bố cục Pawmily */
+/* Container 2 tầng chuẩn 100% Pawmily cho trang chủ */
+.header-pawmily-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 10px 28px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-right-cluster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+/* ===== LOGO PAWMILY STYLE ===== */
 .logo {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
   text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
 }
 
 .logo-badge {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #FFF2EE 0%, #F5EFEB 100%);
-  color: var(--accent-dark);
+  background: #FFFFFF;
+  color: #4A2C18;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1.5px solid var(--accent-border);
-  box-shadow: 0 2px 8px rgba(201, 90, 52, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 10px rgba(51, 29, 18, 0.15);
 }
 
 .logo-badge svg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 
 .logo-text {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--brown);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #3B2112;
   white-space: nowrap;
 }
 
-/* nav menu — ngang, dạng chữ thanh lịch */
-#menu {
-  flex: 1;
-  display: flex;
-  gap: 16px;
+/* ===== LANGUAGE SWITCHER PILL (VI | EN) ===== */
+.lang-switch-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.lang-btn.active {
+  background: #FFFFFF;
+  color: #4A2C18;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== VOUCHER HEADER PILL (WELOVEPML20 -20%) ===== */
+.header-voucher-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.24s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease;
+  white-space: nowrap;
+}
+
+.header-voucher-pill:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translate3d(0, -1px, 0);
+  color: #FFFFFF;
+}
+
+/* ===== HEADER ICON CIRCLE BUTTONS (HEART & BAG) ===== */
+.header-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: #FFFFFF;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.header-icon-circle:hover {
+  transform: scale(1.08);
+}
+
+.header-icon-circle.white-circle {
+  background: #FFFFFF;
+  color: #4A2C18;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.header-dot-badge {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid #987558;
+}
+
+/* ===== HORIZONTAL PILL NAVIGATION ROW (ROW 2) ===== */
+.header-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.nav-scroll-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.nav-scroll-arrow:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.06);
+}
+
+#menu {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 2px 4px;
   white-space: nowrap;
+}
+
+#menu::-webkit-scrollbar {
+  display: none;
 }
 
 #menu .link {
   font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 14.5px;
-  color: var(--ink-soft);
-  padding: 6px 2px;
-  border-bottom: 2.5px solid transparent;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  font-size: 13px;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 7px 16px;
+  border-radius: 999px;
+  transition: transform 0.24s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.24s ease;
   position: relative;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 #menu .link:hover,
 #menu .link.active {
-  color: var(--accent-dark);
-  border-bottom-color: var(--accent-dark);
+  background: rgba(255, 255, 255, 0.36);
+  border-color: rgba(255, 255, 255, 0.58);
+  color: #FFFFFF;
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 4px 12px rgba(59, 33, 18, 0.16);
+}
+
+/* Hotline trên các trang con */
+.btn-hotline {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+}
+
+.btn-hotline:hover {
+  background: rgba(255, 255, 255, 0.35) !important;
 }
 
 /* nút hamburger — ẩn ở desktop */
@@ -105,17 +283,16 @@
 .menu-toggle span {
   display: block;
   height: 2px;
-  background: var(--ink);
+  background: #FFFFFF;
   border-radius: 2px;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-/* khối khi CHƯA đăng nhập: 2 nút pill kiểu Pawmily
-   (1 pill viền mỏng thanh lịch cho Đăng nhập, 1 pill cam rực rỡ cho Đăng ký) */
+/* ===== AUTH BUTTONS (ĐĂNG NHẬP ESPRESSO ĐẬM / ĐĂNG KÝ TAN MỜ) ===== */
 .auth {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -124,11 +301,13 @@
   align-items: center;
   gap: 6px;
   padding: 8px 18px;
-  border-radius: var(--radius-pill);
+  border-radius: 999px;
+  font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 14px;
-  transition: all 0.2s ease;
+  font-size: 13px;
+  transition: transform 0.24s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.24s var(--ease-pawmily);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .pill-btn svg {
@@ -137,42 +316,40 @@
 }
 
 .btn-login {
-  background: #ffffff;
-  color: var(--brown-medium);
-  border: 1.5px solid var(--tan-light);
-  box-shadow: 0 2px 6px rgba(91, 58, 41, 0.05);
+  background: #4A2C18;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 3px 10px rgba(42, 24, 12, 0.22);
 }
 
 .btn-login:hover {
-  background: var(--cream-soft);
-  border-color: var(--brown-medium);
-  color: var(--brown);
-  transform: translateY(-1px);
+  background: #381F0F;
+  color: #FFFFFF;
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 6px 14px rgba(42, 24, 12, 0.3);
 }
 
 .btn-signup {
-  background: var(--accent-gradient);
-  color: #ffffff;
-  border: 1.5px solid transparent;
-  box-shadow: 0 4px 14px rgba(201, 90, 52, 0.28);
+  background: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .btn-signup:hover {
-  background: var(--accent-gradient-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(201, 90, 52, 0.38);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.34);
+  color: #FFFFFF;
+  transform: translate3d(0, -1px, 0);
 }
 
 /* trạng thái đã đăng nhập: chuông thông báo + avatar */
 .auth-user {
-  gap: 18px;
+  gap: 14px;
 }
 
 .icon-btn {
   position: relative;
   display: inline-flex;
-  color: var(--brown);
+  color: #FFFFFF;
 }
 
 .badge {
@@ -200,28 +377,43 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: none;
-  background: var(--brown);
+  border: 2px solid #FFFFFF;
+  background: #4A2C18;
   color: #fff;
   font-family: var(--font-display);
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdown {
   position: absolute;
   right: 0;
   top: 48px;
-  width: 200px;
+  width: 220px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-card);
   padding: 12px;
+  z-index: 200;
+  animation: dropdownFadeIn 0.22s var(--ease-pawmily);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
 .dropdown-name {
   font-weight: 700;
+  color: var(--brown);
   padding: 6px 10px 10px;
   border-bottom: 1px solid var(--line);
   margin-bottom: 6px;
@@ -233,12 +425,21 @@
   border-radius: 8px;
   font-weight: 600;
   color: var(--ink);
+  text-decoration: none;
 }
 
 .dropdown-link:hover {
-  background: var(--card);
+  background: var(--cream-soft);
 }
 
 #logoutBtn {
   color: var(--danger);
+}
+
+@media (max-width: 920px) {
+  .header-voucher-pill,
+  .lang-switch-pill,
+  .nav-scroll-arrow {
+    display: none;
+  }
 }

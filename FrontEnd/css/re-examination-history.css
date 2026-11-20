@@ -1,0 +1,815 @@
+/* ============================================================
+   re-examination-history.css
+   Style riêng cho tính năng: Re-examination History (Lịch sử tái khám)
+   Chuẩn bảng màu Pawmily.vn: Kem ấm (#FCF6EE), Nâu espresso (#4E2A14),
+   Caramel (#987558), Xanh thảo mộc (#508D69), Viền bánh quy (#DCC9B6)
+   ============================================================ */
+
+/* ===== 5 TABS LIÊN KẾT 5 CHỨC NĂNG ===== */
+.medical-feature-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  padding: 8px;
+  border-radius: 18px;
+  border: 1.5px solid var(--line);
+  margin-bottom: 26px;
+  box-shadow: 0 4px 14px rgba(91, 58, 41, 0.04);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.medical-nav-tab-item {
+  flex: 1;
+  min-width: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  text-decoration: none;
+  border-radius: 12px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brown-medium);
+  transition: transform 0.26s var(--ease-pawmily), background 0.22s ease, color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.medical-nav-tab-item:hover {
+  background: var(--cream-soft);
+  color: var(--brown);
+}
+
+.medical-nav-tab-item.active {
+  background: var(--accent-gradient);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(78, 42, 20, 0.25);
+}
+
+/* ===== PET SWITCHER STRIP ===== */
+.pet-switch-strip {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 18px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
+}
+
+.pet-switch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.pet-switch-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--brown);
+}
+
+.pet-switch-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.pet-switch-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: var(--cream-soft);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.26s var(--ease-pawmily), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
+  white-space: nowrap;
+}
+
+.pet-switch-btn:hover {
+  background: #f0e6dc;
+  transform: translate3d(0, -1px, 0);
+}
+
+.pet-switch-btn.active {
+  background: var(--cream-latte);
+  border-color: var(--caramel-dark);
+  box-shadow: 0 4px 14px rgba(78, 42, 20, 0.14);
+}
+
+.pet-switch-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pet-switch-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.pet-switch-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--brown);
+}
+
+.pet-switch-meta {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* ===== RE-EXAM STATS GRID ===== */
+.reexam-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.reexam-stat-card {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 14px rgba(91, 58, 41, 0.04);
+  transition: transform 0.24s var(--ease-pawmily), border-color 0.2s ease;
+}
+
+.reexam-stat-card:hover {
+  transform: translate3d(0, -2px, 0);
+  border-color: var(--caramel);
+}
+
+.reexam-stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--cream-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.reexam-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.reexam-stat-info strong {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--brown);
+  line-height: 1.2;
+}
+
+.reexam-stat-info span {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+/* ===== CONTROLS BAR ===== */
+.reexam-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
+}
+
+.reexam-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.reexam-search-wrap svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 17px;
+  height: 17px;
+  color: var(--ink-faint);
+}
+
+.reexam-search-input {
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: var(--cream-soft);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--brown);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reexam-search-input:focus {
+  border-color: var(--caramel-dark);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(152, 117, 88, 0.2);
+}
+
+.reexam-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reexam-filter-select {
+  padding: 10px 16px;
+  background: var(--cream-soft);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--brown);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.reexam-filter-select:focus {
+  border-color: var(--caramel-dark);
+}
+
+.btn-add-reexam {
+  padding: 10px 20px;
+  font-size: 13.5px;
+}
+
+/* ===== RE-EXAMINATION CARDS LIST ===== */
+.reexam-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reexam-card {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(91, 58, 41, 0.05);
+  transition: transform 0.26s var(--ease-pawmily), border-color 0.22s ease, box-shadow 0.26s var(--ease-pawmily);
+  position: relative;
+}
+
+.reexam-card:hover {
+  transform: translate3d(0, -2px, 0);
+  border-color: var(--caramel);
+  box-shadow: var(--shadow-card);
+}
+
+.reexam-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 18px;
+}
+
+.reexam-head-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reexam-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--espresso);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+}
+
+.reexam-record-link {
+  font-size: 12.5px;
+  color: var(--caramel-dark);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.reexam-record-link:hover {
+  color: var(--espresso);
+}
+
+.reexam-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.reexam-status-pill.completed {
+  background: #E8F5E9;
+  color: #2E5C38;
+}
+
+.reexam-status-pill.upcoming {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+/* Card Body */
+.reexam-card-body h3 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--brown);
+  margin: 0 0 6px;
+}
+
+.reexam-vet-line {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reexam-vet-line strong {
+  color: var(--brown-medium);
+}
+
+/* Recovery Progress Section */
+.reexam-progress-wrap {
+  background: linear-gradient(135deg, #FAF4ED 0%, #F5ECE0 100%);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.reexam-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.reexam-progress-title {
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brown);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reexam-progress-badge {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--espresso);
+}
+
+.reexam-progress-bar-bg {
+  width: 100%;
+  height: 9px;
+  background: rgba(152, 117, 88, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.reexam-progress-bar-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 999px;
+  transition: width 0.6s var(--ease-pawmily);
+}
+
+.reexam-progress-status-desc {
+  font-size: 12.5px;
+  color: var(--brown-medium);
+  font-weight: 600;
+}
+
+/* Comparison Box (Trước vs Sau) */
+.reexam-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.reexam-compare-col {
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+}
+
+.reexam-compare-col.col-before {
+  background: #FFFDF8;
+  border-color: #F0DEB8;
+}
+
+.reexam-compare-col.col-after {
+  background: var(--cream-latte);
+  border-color: var(--caramel);
+}
+
+.reexam-compare-head {
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.col-before .reexam-compare-head {
+  color: #B25E00;
+}
+
+.col-after .reexam-compare-head {
+  color: var(--espresso);
+}
+
+.reexam-compare-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(220, 201, 182, 0.6);
+}
+
+.reexam-compare-item:last-child {
+  border-bottom: none;
+}
+
+.reexam-compare-label {
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.reexam-compare-val {
+  color: var(--brown);
+  font-weight: 700;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* Clinical Details Text Rows */
+.reexam-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.reexam-detail-box {
+  background: var(--cream-soft);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.reexam-detail-box strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brown);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.reexam-detail-box p {
+  color: var(--brown-medium);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Card Footer */
+.reexam-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cream-soft);
+}
+
+.reexam-next-note {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.reexam-next-note strong {
+  color: var(--espresso);
+}
+
+.reexam-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-reexam-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.22s var(--ease-pawmily), background 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-reexam-print {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--brown);
+}
+
+.btn-reexam-print:hover {
+  background: var(--cream-soft);
+  border-color: var(--brown-medium);
+}
+
+.btn-reexam-edit {
+  background: var(--cream-soft);
+  color: var(--brown);
+}
+
+.btn-reexam-edit:hover {
+  background: #e8ded4;
+}
+
+.btn-reexam-delete {
+  background: transparent;
+  color: #c92a2a;
+  padding: 8px 12px;
+}
+
+.btn-reexam-delete:hover {
+  background: #ffe3e3;
+}
+
+/* ===== MODAL & FORM ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(35, 22, 14, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  animation: modalFadeIn 0.25s ease;
+}
+
+.modal-overlay[hidden] {
+  display: none !important;
+}
+
+.modal-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-card);
+  padding: 34px 30px;
+  position: relative;
+  box-shadow: 0 18px 48px rgba(51, 29, 18, 0.22);
+  border: 1.5px solid var(--line);
+  max-width: 620px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  animation: modalPop 0.34s var(--ease-pawmily);
+}
+
+.modal-card.modal-large {
+  max-width: 780px;
+}
+
+.modal-card h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--brown);
+  margin: 0 0 20px 0;
+  padding-right: 40px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream-soft);
+  color: var(--brown);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: var(--brown);
+  color: #fff;
+}
+
+.section-subtitle-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--brown);
+  margin: 22px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.section-subtitle-bar:first-of-type {
+  margin-top: 0;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.modal-card .form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brown-medium);
+  margin-bottom: 12px;
+}
+
+.modal-card .form input,
+.modal-card .form select,
+.modal-card .form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #FFFFFF;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--brown);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.modal-card .form input:hover,
+.modal-card .form select:hover,
+.modal-card .form textarea:hover {
+  border-color: var(--tan);
+}
+
+.modal-card .form input:focus,
+.modal-card .form select:focus,
+.modal-card .form textarea:focus {
+  border-color: var(--caramel-dark);
+  background: #fff;
+  box-shadow: 0 0 0 3.5px rgba(152, 117, 88, 0.2);
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+/* Print View Sheet */
+.print-cert-sheet {
+  background: #fff;
+  border: 2px solid var(--brown);
+  border-radius: 12px;
+  padding: 26px;
+  font-family: var(--font-body);
+  color: #222;
+}
+
+.print-cert-head {
+  text-align: center;
+  border-bottom: 2px solid var(--brown);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.print-cert-head h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--brown);
+  margin-bottom: 4px;
+}
+
+/* Responsive */
+@media (max-width: 920px) {
+  .reexam-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .reexam-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reexam-compare-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .reexam-card-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

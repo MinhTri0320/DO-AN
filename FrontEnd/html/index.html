@@ -22,115 +22,252 @@
     <title>PawnCare - Chăm Sóc Toàn Diện Cho Thú Cưng Tại Đà Nẵng</title>
   </head>
   <body>
-    <!-- ===== HEADER / NAVBAR ===== -->
+    <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
     <header id="header">
-      <div class="header-inner">
-        <a href="./index.html" class="logo">
-          <span class="logo-badge">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <ellipse cx="12" cy="16" rx="6" ry="5" />
-              <ellipse cx="5" cy="9" rx="2.2" ry="3" />
-              <ellipse cx="10" cy="6" rx="2.2" ry="3" />
-              <ellipse cx="14" cy="6" rx="2.2" ry="3" />
-              <ellipse cx="19" cy="9" rx="2.2" ry="3" />
-            </svg>
-          </span>
-          <span class="logo-text">PawnCare</span>
-        </a>
-
-        <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-
-        <nav id="menu">
-          <a href="./index.html" class="link active">Trang chủ</a>
-          <a href="#services" class="link">Dịch vụ</a>
-          <a href="./booking.html" class="link">Đặt lịch</a>
-          <a href="#about" class="link">Giới thiệu</a>
-          <a href="./forum.html" class="link">Diễn đàn</a>
-          <a href="./campaigns.html" class="link">Chiến dịch</a>
-          <a href="#contact" class="link">Liên hệ</a>
-        </nav>
-
-        <!-- Hotline badge -->
-        <a href="tel:0900123456" class="btn-hotline d-none-mobile" title="Gọi cấp cứu hoặc tư vấn">
-          <span>📞</span>
-          <span>0900 123 456</span>
-        </a>
-
-        <!-- Hiển thị khi CHƯA đăng nhập -->
-        <div class="auth" id="authGuest">
-          <a href="./login.html" class="pill-btn btn-login">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Đăng nhập</span>
+      <div class="header-pawmily-container">
+        <!-- ROW 1: Logo + Utility Pills -->
+        <div class="header-top-row">
+          <a href="./index.html" class="logo">
+            <span class="logo-badge">
+              <!-- Cute Dog & Cat Duo Logo Badge -->
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+                <!-- Cute Puppy Left -->
+                <circle cx="23" cy="36" r="13" fill="#B5835A" />
+                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+                <!-- Cute Kitty Right -->
+                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+                <!-- Small Paw above -->
+                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+              </svg>
+            </span>
+            <span class="logo-text">PAWNCARE</span>
           </a>
-          <a href="./register.html" class="pill-btn btn-signup">
-            <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            <span>Đăng ký</span>
-          </a>
+
+          <!-- Right Cluster: Language, Auth, Voucher, Icons -->
+          <div class="header-right-cluster">
+            <!-- Language Switcher VI | EN -->
+            <div class="lang-switch-pill" role="group" aria-label="Chọn ngôn ngữ">
+              <button type="button" class="lang-btn active" data-lang="vi">VI</button>
+              <button type="button" class="lang-btn" data-lang="en">EN</button>
+            </div>
+
+            <!-- Hiển thị khi CHƯA đăng nhập -->
+            <div class="auth" id="authGuest">
+              <a href="./login.html" class="pill-btn btn-login">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Đăng nhập</span>
+              </a>
+              <a href="./register.html" class="pill-btn btn-signup">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/>
+                  <path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Đăng ký</span>
+              </a>
+            </div>
+
+            <!-- Hiển thị khi ĐÃ đăng nhập (header.js điều khiển) -->
+            <div class="auth auth-user" id="authUser" hidden>
+              <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                  <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                  <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span class="badge" id="notifBadge" hidden>0</span>
+              </a>
+
+              <div class="user-menu">
+                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+                  <span id="userInitial">U</span>
+                </button>
+                <div class="dropdown" id="userDropdown" hidden>
+                  <p class="dropdown-name" id="userName">—</p>
+                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+                  <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Promo Code Pill -->
+            <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
+              <span class="sparkle-icon">✨</span>
+              <span>WELOVEPML20 (-20%)</span>
+            </button>
+
+            <!-- Wishlist Heart Button -->
+            <a href="./pet-profile.html" class="header-icon-circle" title="Danh sách bé cưng yêu thích" aria-label="Yêu thích">
+              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                <path d="M12 20.5s-7.5-4.6-9.3-8.8C1.2 8.2 3.4 4.5 7 4.5c2.1 0 3.8 1.2 5 2.8 1.2-1.6 2.9-2.8 5-2.8 3.6 0 5.8 3.7 4.3 7.2-1.8 4.2-9.3 8.8-9.3 8.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </a>
+
+            <!-- White Circle Bag / Booking Button with Notification Dot -->
+            <a href="./booking.html" class="header-icon-circle white-circle" title="Đặt lịch &amp; Giỏ dịch vụ" aria-label="Giỏ dịch vụ">
+              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                <path d="M6 7h12l1 13H5L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              <span class="header-dot-badge"></span>
+            </a>
+
+            <!-- Mobile Hamburger -->
+            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+          </div>
         </div>
 
-        <!-- Hiển thị khi ĐÃ đăng nhập (script.js / header.js điều khiển) -->
-        <div class="auth auth-user" id="authUser" hidden>
-          <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
-              <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-            <span class="badge" id="notifBadge" hidden>0</span>
-          </a>
+        <!-- ROW 2: Horizontal Scrollable Pill Navigation -->
+        <div class="header-nav-row">
+          <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
 
-          <div class="user-menu">
-            <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
-              <span id="userInitial">U</span>
-            </button>
-            <div class="dropdown" id="userDropdown" hidden>
-              <p class="dropdown-name" id="userName">—</p>
-              <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
-              <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
-              <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
-              <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
-            </div>
-          </div>
+          <nav id="menu">
+            <a href="./index.html" class="link active">Trang chủ</a>
+            <a href="#super-promo" class="link">Ưu Đãi Siêu Hot</a>
+            <a href="#services" class="link">Dịch vụ &amp; Bảng giá</a>
+            <a href="./booking.html" class="link">Đặt Lịch 📅</a>
+            <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
+            <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
+            <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
+            <a href="#estimator-section" class="link">Dự Tính Chi Phí</a>
+            <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
+            <a href="#about" class="link">Về PawnCare</a>
+            <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
+            <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
+            <a href="#reviews-section" class="link">Đánh giá</a>
+          </nav>
+
+          <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
         </div>
       </div>
     </header>
 
-    <!-- ===== HERO SECTION ===== -->
-    <section id="content">
-      <div class="hero-text">
-        <span class="hero-tagline">🐾 Nơi Chăm Sóc Toàn Diện Thú Cưng Tại Đà Nẵng</span>
-        <h1>Chăm Sóc Trọn Vẹn Yêu Thương Cho <span class="highlight">Boss Cưng</span></h1>
-        <p>
-          Hệ sinh thái chăm sóc thú cưng chuẩn mực 5 sao tại Đà Nẵng — Đội ngũ bác sĩ thú y tận tâm,
-          Spa làm đẹp chuyên sâu, Khách sạn nghỉ dưỡng và Đồ dùng chính hãng.
-        </p>
-        <div class="hero-actions">
-          <a href="./booking.html" class="btn-cta">Đặt lịch ngay ➔</a>
-          <a href="#services" class="btn-cta btn-cta-outline">Khám phá dịch vụ</a>
-        </div>
-      </div>
-      <div class="hero-image">
-        <div class="hero-image-wrapper">
-          <img src="../assets/img/lobby.jpg" alt="Không gian tiếp đón tại PawnCare Đà Nẵng" />
-          
-          <!-- Floating Trust Badge 1 -->
-          <div class="floating-badge badge-top-left">
-            <span class="badge-icon">⭐</span>
-            <div>
-              <strong>4.9/5 Đánh giá</strong>
-              <span>1.500+ ba mẹ tin chọn</span>
-            </div>
+    <!-- ===== HERO SECTION (100% PAWMILY CLONE) ===== -->
+    <div class="hero-pawmily-outer">
+      <section id="content">
+        <!-- Left Column: Brand Display + Welcome + Dual Pill Buttons + 3 Mini Stats -->
+        <div class="hero-text">
+          <h1 class="hero-brand-title">PAWNCARE</h1>
+          <p>
+            Chào mừng ba mẹ đến với PawnCare - Không gian nghỉ dưỡng, tân trang nhan sắc và phòng khám chuẩn quốc tế. Nơi mỗi bé cưng đều được nâng niu, chăm bẵm bằng tình yêu vô điều kiện từ đội ngũ chuyên gia tận tâm.
+          </p>
+
+          <div class="hero-actions">
+            <a href="./booking.html" class="btn-pawmily-primary">
+              <span class="btn-icon">📅</span>
+              <span>Đặt Lịch Khám &amp; Spa<br />Ngay</span>
+            </a>
+            <a href="#estimator-section" class="btn-pawmily-secondary">
+              <span>Tính Thử Chi Phí Sinh<br />Hoạt</span>
+            </a>
           </div>
 
-          <!-- Floating Trust Badge 2 -->
-          <div class="floating-badge badge-bottom-right">
-            <span class="badge-icon">🩺</span>
-            <div>
-              <strong>Bác sĩ trực 24/7</strong>
-              <span>Cấp cứu &amp; tư vấn tận tâm</span>
+          <hr class="hero-stats-divider" />
+
+          <div class="hero-mini-stats">
+            <div class="hero-mini-stat-item">
+              <strong>24/7</strong>
+              <span>Giám sát &amp; Chăm sóc</span>
+            </div>
+            <div class="hero-mini-stat-item">
+              <strong>500+</strong>
+              <span>Thành viên đăng ký</span>
+            </div>
+            <div class="hero-mini-stat-item">
+              <strong>100%</strong>
+              <span>Sự hài lòng của khách</span>
             </div>
           </div>
+        </div>
+
+        <!-- Right Column: Reception Photo + 3 Floating Animated Badges -->
+        <div class="hero-image">
+          <div class="hero-image-wrapper">
+            <img src="../assets/img/lobby.jpg" alt="Không gian tiếp đón sang trọng tại PawnCare" />
+
+            <!-- Badge 1: Top-left White Pill -->
+            <div class="pawmily-badge-top-left">
+              <div class="pawmily-badge-circle">🐾</div>
+              <div class="pawmily-badge-text">
+                <strong>PawnCare</strong>
+                <span>Thú Y &amp; Spa</span>
+              </div>
+            </div>
+
+            <!-- Badge 2: Top-right Tilted Star Discount Pill -->
+            <div class="pawmily-badge-top-right">
+              <span class="star-icon">⭐</span>
+              <span>Giảm 20% lần đầu</span>
+            </div>
+
+            <!-- Badge 3: Bottom-center Wide Sand/Latte Pill Card -->
+            <div class="pawmily-badge-bottom-center">
+              <div class="pawmily-heart-circle">🤎</div>
+              <div class="pawmily-bottom-text">
+                <strong>Bảo vệ bé cưng như gia đình</strong>
+                <span>Dịch vụ thú y túc trực 24/7 cấp cứu &amp; thăm khám</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== SIÊU ƯU ĐÃI TẠI PAWNCARE (100% PAWMILY PERFORATED TICKET CLONE) ===== -->
+    <section id="super-promo" class="super-promo-section">
+      <div class="super-promo-card reveal-on-scroll">
+        <!-- Left Promo Info -->
+        <div class="super-promo-left">
+          <span class="super-promo-badge">🎉 SIÊU ƯU ĐÃI TẠI PAWNCARE</span>
+          <h2>Giảm ngay 20%<br />cho lần đặt lịch đầu tiên</h2>
+          <p>
+            Dành tặng riêng cho ba mẹ lần đầu đưa bé cưng đến trải nghiệm dịch vụ Spa Cắt Tỉa, Khách Sạn 5 Sao hoặc Khám Thú Y tại PawnCare. Ngoài ra còn có thêm ưu đãi khi đi theo nhóm nhiều bé:
+          </p>
+          <div class="extra-vouchers-mini">
+            <span class="mini-voucher-tag" data-code="DOUB5" title="Nhấn để sao chép mã DOUB5">
+              🐾 Mã <strong>DOUB5</strong> (-5% từ 2 bé)
+            </span>
+            <span class="mini-voucher-tag" data-code="TRIP7" title="Nhấn để sao chép mã TRIP7">
+              👑 Mã <strong>TRIP7</strong> (-7% từ 3 bé)
+            </span>
+          </div>
+        </div>
+
+        <!-- Right Perforated Dark Espresso Ticket -->
+        <div class="pawmily-ticket-card">
+          <span class="ticket-notch-left" aria-hidden="true"></span>
+          <span class="ticket-notch-right" aria-hidden="true"></span>
+
+          <div class="ticket-top-label">
+            <span>🎁</span>
+            <span>MÃ KHUYẾN MÃI 20%</span>
+          </div>
+
+          <div class="ticket-code-box" id="mainTicketCode" data-code="WELOVEPML20" role="button" tabindex="0" title="Nhấn để sao chép mã WELOVEPML20">
+            <span class="ticket-code-text">WELOVEPML20</span>
+          </div>
+
+          <span class="ticket-sub-hint" id="ticketSubHint">Chạm vào khung mã để sao chép &amp; sử dụng khi đặt lịch</span>
         </div>
       </div>
     </section>
@@ -154,7 +291,7 @@
               <img class="service-photo" src="../assets/img/vetcheck.jpg" alt="Bác sĩ khám cho cún con tại PawnCare" />
             </div>
             <h3>Khám &amp; Điều trị Thú y</h3>
-            <p>Phòng khám thú y hiện đại với trang thiết bị xét nghiệm, siêu âm chuyên biệt cùng đội ngũ bác sĩ tay nghề cao.</p>
+            <p>Phòng khám thú y hiện đại với trang thiết bị xét nghiệm sinh hóa, siêu âm màu chuyên biệt cùng đội ngũ bác sĩ tay nghề cao.</p>
             <ul class="service-checklist">
               <li><span class="check-icon">✓</span> Khám tổng quát &amp; chẩn đoán chuẩn xác</li>
               <li><span class="check-icon">✓</span> Tiêm phòng vaccine &amp; sổ giun định kỳ</li>
@@ -172,8 +309,8 @@
               <span class="service-category-tag">Thư giãn 5 sao</span>
               <img class="service-photo" src="../assets/img/grooming.jpg" alt="Nhân viên tỉa lông cho chó Poodle tại PawnCare" />
             </div>
-            <h3>Spa &amp; Cắt tỉa tạo kiểu</h3>
-            <p>Quy trình tắm dưỡng thảo dược tự nhiên, sấy phồng và tạo kiểu chuyên nghiệp theo từng giống thú cưng.</p>
+            <h3>Spa Grooming &amp; Cắt tỉa tạo kiểu</h3>
+            <p>Quy trình tắm dưỡng thảo dược tự nhiên, sấy phồng và tạo kiểu chuyên nghiệp form tròn Hàn Quốc theo từng giống thú cưng.</p>
             <ul class="service-checklist">
               <li><span class="check-icon">✓</span> Tắm massage, dưỡng lông &amp; khử mùi hôi</li>
               <li><span class="check-icon">✓</span> Cắt tỉa nghệ thuật form chuẩn thẩm mỹ</li>
@@ -185,14 +322,33 @@
             </div>
           </article>
 
-          <!-- Service 3: Phục hồi chức năng -->
+          <!-- Service 3: Khách sạn thú cưng Dog Suite / Cat Villa -->
           <article class="service-card">
             <div class="service-photo-wrap">
-              <span class="service-category-tag">Chuyên sâu</span>
+              <span class="service-category-tag">Nghỉ dưỡng 5 sao</span>
+              <img class="service-photo" src="../assets/img/hotel.jpg" alt="Không gian phòng nghỉ dưỡng khách sạn thú cưng PawnCare" />
+            </div>
+            <h3>Khách sạn thú cưng 5 sao (Dog Suite &amp; Cat Villa)</h3>
+            <p>Không gian lưu trú riêng biệt, phòng máy lạnh điều hòa 2 chiều ổn định 26°C, đệm massage, lọc khí HEPA và dạo sân cỏ 2 lần/ngày.</p>
+            <ul class="service-checklist">
+              <li><span class="check-icon">✓</span> Camera HD theo dõi 24/7 trực tiếp cho ba mẹ</li>
+              <li><span class="check-icon">✓</span> Dinh dưỡng hạt &amp; pate cao cấp theo khẩu phần</li>
+              <li><span class="check-icon">✓</span> Thời gian dạo chơi sân cỏ &amp; tương tác hàng ngày</li>
+            </ul>
+            <div class="service-footer">
+              <span class="service-price-tag">Theo ngày / tuần</span>
+              <a href="./booking.html?service=hotel" class="service-link">Đặt phòng ngay ➔</a>
+            </div>
+          </article>
+
+          <!-- Service 4: Phục hồi chức năng -->
+          <article class="service-card">
+            <div class="service-photo-wrap">
+              <span class="service-category-tag">Chuyên sâu y khoa</span>
               <img class="service-photo" src="../assets/img/rehab.jpg" alt="Vật lý trị liệu máy chạy bộ chuyên dụng" />
             </div>
             <h3>Phục hồi chức năng &amp; Trị liệu</h3>
-            <p>Máy chạy bộ chuyên dụng và bài tập vật lý trị liệu giúp hồi phục nhanh sau phẫu thuật hoặc thoái hóa khớp.</p>
+            <p>Máy chạy bộ chuyên dụng và bài tập vật lý trị liệu giúp hồi phục nhanh sau phẫu thuật hoặc thoái hóa khớp háng.</p>
             <ul class="service-checklist">
               <li><span class="check-icon">✓</span> Trị liệu vận động khớp &amp; cơ bắp</li>
               <li><span class="check-icon">✓</span> Máy chạy bộ điều chỉnh tốc độ chuyên biệt</li>
@@ -204,33 +360,14 @@
             </div>
           </article>
 
-          <!-- Service 4: Khách sạn thú cưng -->
-          <article class="service-card">
-            <div class="service-photo-wrap">
-              <span class="service-category-tag">Nghỉ dưỡng</span>
-              <img class="service-photo" src="../assets/img/hotel.jpg" alt="Không gian phòng nghỉ dưỡng khách sạn thú cưng PawnCare" />
-            </div>
-            <h3>Khách sạn thú cưng cao cấp</h3>
-            <p>Không gian lưu trú riêng biệt, phòng máy lạnh điều hòa 2 chiều, lọc khí HEPA và có sân chơi rộng rãi.</p>
-            <ul class="service-checklist">
-              <li><span class="check-icon">✓</span> Camera HD theo dõi 24/7 trực tiếp cho ba mẹ</li>
-              <li><span class="check-icon">✓</span> Dinh dưỡng hạt &amp; pate cao cấp theo khẩu phần</li>
-              <li><span class="check-icon">✓</span> Thời gian dạo chơi &amp; tương tác hàng ngày</li>
-            </ul>
-            <div class="service-footer">
-              <span class="service-price-tag">Theo ngày / tuần</span>
-              <a href="./booking.html?service=hotel" class="service-link">Đặt phòng ngay ➔</a>
-            </div>
-          </article>
-
           <!-- Service 5: Phụ kiện & Thức ăn -->
           <article class="service-card">
             <div class="service-photo-wrap">
               <span class="service-category-tag">Chính hãng 100%</span>
               <img class="service-photo" src="../assets/img/food.jpg" alt="Thức ăn hạt, pate và phụ kiện dinh dưỡng cho thú cưng tại PawnCare" />
             </div>
-            <h3>Phụ kiện &amp; Dinh dưỡng chọn lọc</h3>
-            <p>Thực phẩm hạt, pate dinh dưỡng nhập khẩu chính hãng, cùng đầy đủ phụ kiện đồ chơi an toàn cho Boss.</p>
+            <h3>Dinh dưỡng cá nhân hóa &amp; Phụ kiện</h3>
+            <p>Thực phẩm hạt, pate dinh dưỡng nhập khẩu chính hãng, cùng đầy đủ phụ kiện đồ chơi an toàn chuẩn quốc tế cho Boss.</p>
             <ul class="service-checklist">
               <li><span class="check-icon">✓</span> Thức ăn dinh dưỡng từ các thương hiệu hàng đầu</li>
               <li><span class="check-icon">✓</span> Đồ chơi tương tác, chuồng nệm &amp; dây dắt</li>
@@ -238,9 +375,120 @@
             </ul>
             <div class="service-footer">
               <span class="service-price-tag">Đa dạng mẫu mã</span>
-              <a href="./booking.html?service=vaccine" class="service-link">Đặt lịch tiêm chủng &amp; tư vấn ➔</a>
+              <a href="./booking.html?service=vaccine" class="service-link">Đặt mua &amp; tư vấn ➔</a>
             </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CÔNG CỤ TÍNH THỬ CHI PHÍ DỊCH VỤ (PAWMILY ESTIMATOR) ===== -->
+    <section id="estimator-section" class="section" style="background: var(--cream);">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-badge">💡 BẢNG GIÁ MINH BẠCH</span>
+          <h2>Tính Thử Chi Phí Chăm Sóc Cho Bé Cưng</h2>
+          <p class="section-subtitle">
+            Dự toán chi phí minh bạch trong 5 giây theo đúng chủng loại và cân nặng của bé. Cam kết 100% không phát sinh phụ phí ẩn.
+          </p>
+        </div>
+
+        <div class="estimator-card" id="pawmilyEstimator">
+          <div class="estimator-controls">
+            <!-- 1. Chọn loài -->
+            <div class="estimator-group">
+              <label>1. Chọn loại bé cưng của ba mẹ:</label>
+              <div class="estimator-pills" id="estSpeciesPills">
+                <button type="button" class="est-pill active" data-species="dog">🐶 Bé Cún</button>
+                <button type="button" class="est-pill" data-species="cat">🐱 Bé Mèo</button>
+              </div>
+            </div>
+
+            <!-- 2. Chọn cân nặng -->
+            <div class="estimator-group">
+              <label>2. Trọng lượng thực tế của bé:</label>
+              <div class="estimator-pills" id="estWeightPills">
+                <button type="button" class="est-pill active" data-weight="small">&lt; 5 kg (Mini / Nhỏ)</button>
+                <button type="button" class="est-pill" data-weight="medium">5 - 10 kg (Vừa)</button>
+                <button type="button" class="est-pill" data-weight="large">10 - 20 kg (Lớn)</button>
+                <button type="button" class="est-pill" data-weight="xlarge">&gt; 20 kg (Đại)</button>
+              </div>
+            </div>
+
+            <!-- 3. Chọn gói dịch vụ -->
+            <div class="estimator-group">
+              <label>3. Gói dịch vụ ba mẹ mong muốn:</label>
+              <select class="estimator-select" id="estServiceSelect">
+                <option value="bath" selected>🛁 Tắm Vệ Sinh Tiêu Chuẩn (Tắm thảo dược, sấy, móng, tai, vắt tuyến hôi)</option>
+                <option value="grooming">✂️ Spa &amp; Cắt Tỉa Tạo Kiểu Trọn Gói (Tắm dưỡng + Thiết kế form chuẩn)</option>
+                <option value="hotel">🏨 Khách Sạn 5 Sao Dog Suite / Cat Villa (Phòng lạnh 26°C, đệm massage, 2 lần dạo sân cỏ)</option>
+                <option value="vet">🩺 Khám Sức Khỏe Tổng Quát &amp; Tiêm Chủng (Kiểm tra lâm sàng, sổ giun, vaccine)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Kết quả chi phí -->
+          <div class="estimator-result-box">
+            <span class="estimator-result-badge">Ước Tính Chi Phí Trọn Gói</span>
+            <div class="estimator-price-original" id="estPriceOriginal">150.000đ</div>
+            <div class="estimator-price-final" id="estPriceFinal">120.000đ</div>
+            <div class="estimator-discount-tag">
+              <span>✓ Đã áp dụng mã WELOVEPML20 (-20%)</span>
+            </div>
+
+            <ul class="estimator-details-list" id="estDetailsList">
+              <li><span>✓</span> Sản phẩm tắm dưỡng thảo dược tự nhiên cao cấp</li>
+              <li><span>✓</span> Kỹ thuật viên ân cần, massage thư giãn chuyên sâu</li>
+              <li><span>✓</span> Gửi hình ảnh &amp; video tình trạng bé cho ba mẹ</li>
+            </ul>
+
+            <a href="./booking.html?service=spa&amp;promo=WELOVEPML20" class="btn-cta" id="estBtnBook" style="width: 100%; box-sizing: border-box;">
+              <span>Đặt Lịch Với Giá Này ➔</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== QUY TRÌNH CHĂM SÓC 4 BƯỚC CHUẨN 5 SAO (PAWMILY PROCESS) ===== -->
+    <section class="section section-alt">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-badge">✨ TRẢI NGHIỆM ĐẲNG CẤP</span>
+          <h2>Quy Trình 4 Bước Nâng Niu Bé Cưng Chuẩn 5 Sao</h2>
+          <p class="section-subtitle">
+            Mỗi bé cưng đến với PawnCare đều được chăm sóc theo quy trình khắt khe nhất để đảm bảo sự thoải mái và an toàn tuyệt đối.
+          </p>
+        </div>
+
+        <div class="process-grid">
+          <div class="process-step-card">
+            <span class="step-num-badge">01</span>
+            <div class="step-icon-wrap">🏥</div>
+            <h3>Tiếp Nhận &amp; Kiểm Tra Thể Trạng</h3>
+            <p>Bác sĩ và chuyên viên kiểm tra da lông, tai mắt, nhịp tim và tâm lý của bé trước khi thực hiện dịch vụ.</p>
+          </div>
+
+          <div class="process-step-card">
+            <span class="step-num-badge">02</span>
+            <div class="step-icon-wrap">📋</div>
+            <h3>Tư Vấn Liệu Trình &amp; Báo Giá</h3>
+            <p>Tư vấn kiểu cắt tỉa hoặc phòng nghỉ dưỡng phù hợp nhất với thể trạng của bé. Báo giá rõ ràng, không phụ phí ẩn.</p>
+          </div>
+
+          <div class="process-step-card">
+            <span class="step-num-badge">03</span>
+            <div class="step-icon-wrap">💖</div>
+            <h3>Chăm Sóc Ân Cần Bằng Yêu Thương</h3>
+            <p>Sử dụng mỹ phẩm thảo dược cao cấp, nước ấm ổn định nhiệt độ, không gian yên tĩnh và dắt đi dạo thư giãn.</p>
+          </div>
+
+          <div class="process-step-card">
+            <span class="step-num-badge">04</span>
+            <div class="step-icon-wrap">📹</div>
+            <h3>Gửi Video Nhật Ký &amp; Bàn Giao</h3>
+            <p>Gửi hình ảnh/video bé ăn ngon, vui chơi cho ba mẹ và bàn giao kèm hướng dẫn chăm sóc tại nhà tỉ mỉ.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -329,7 +577,7 @@
     </section>
 
     <!-- ===== ĐÁNH GIÁ KHÁCH HÀNG ===== -->
-    <section class="section section-alt">
+    <section id="reviews-section" class="section section-alt">
       <div class="section-inner">
         <div class="section-header">
           <span class="section-badge">⭐ KHÁCH HÀNG NÓI GÌ</span>
@@ -601,6 +849,97 @@
         <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
       </div>
     </footer>
+
+    <!-- ===== PEEKING MASCOTS & FLOATING WIDGET CLUSTER (100% PAWMILY CLONE) ===== -->
+    <!-- 1. Bottom-Left Peeking Cat Mascot + Speech Bubble -->
+    <div class="pawmily-peeking-left" id="peekingCatWidget" title="Chạm vào bé mèo để nghe tâm sự nhé!">
+      <div class="peeking-speech-bubble" id="peekingSpeechBubble">
+        Cát hữu cơ ở khách sạn<br />
+        🐱 mèo chuẩn 5 sao nha! 🐱<br />
+        ⭐
+      </div>
+      <div class="peeking-cat-avatar">
+        <!-- Cute Ginger Cat Peeking SVG -->
+        <svg viewBox="0 0 80 80" width="68" height="68" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Left & Right Ears -->
+          <polygon points="14,34 10,8 34,22" fill="#F29B4B" stroke="#5C3216" stroke-width="2.5" stroke-linejoin="round"/>
+          <polygon points="16,29 14,13 30,22" fill="#F7B3B8"/>
+          <polygon points="66,34 70,8 46,22" fill="#F29B4B" stroke="#5C3216" stroke-width="2.5" stroke-linejoin="round"/>
+          <polygon points="64,29 66,13 50,22" fill="#F7B3B8"/>
+          <!-- Head -->
+          <ellipse cx="40" cy="46" rx="28" ry="24" fill="#F9B867" stroke="#5C3216" stroke-width="2.5"/>
+          <!-- Forehead stripes -->
+          <path d="M40 24V32M34 25L36 31M46 25L44 31" stroke="#D47427" stroke-width="2.8" stroke-linecap="round"/>
+          <!-- Cheeks -->
+          <ellipse cx="22" cy="50" rx="4.5" ry="2.8" fill="#F58F8E" opacity="0.75"/>
+          <ellipse cx="58" cy="50" rx="4.5" ry="2.8" fill="#F58F8E" opacity="0.75"/>
+          <!-- Eyes -->
+          <circle cx="29" cy="43" r="3.8" fill="#3B2313"/>
+          <circle cx="27.8" cy="41.8" r="1.3" fill="#FFFFFF"/>
+          <circle cx="51" cy="43" r="3.8" fill="#3B2313"/>
+          <circle cx="49.8" cy="41.8" r="1.3" fill="#FFFFFF"/>
+          <!-- Cute W Mouth & Nose -->
+          <polygon points="40,49 37,46 43,46" fill="#E36D6D"/>
+          <path d="M34 52Q37 55 40 52Q43 55 46 52" stroke="#5C3216" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <!-- Little Paws Holding Screen Edge -->
+          <ellipse cx="22" cy="68" rx="7" ry="5" fill="#FFFDF9" stroke="#5C3216" stroke-width="2.2"/>
+          <ellipse cx="58" cy="68" rx="7" ry="5" fill="#FFFDF9" stroke="#5C3216" stroke-width="2.2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 2. Right-Edge Peeking Shiba/Corgi Puppy Mascot -->
+    <div class="pawmily-peeking-right" id="peekingDogWidget" title="Gâu! Chào mừng ba mẹ đến với PawnCare!">
+      <div class="peeking-dog-avatar">
+        <svg viewBox="0 0 80 80" width="66" height="66" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ears -->
+          <polygon points="18,32 12,8 34,20" fill="#E08748" stroke="#5C3216" stroke-width="2.5" stroke-linejoin="round"/>
+          <polygon points="62,32 68,8 46,20" fill="#E08748" stroke="#5C3216" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Head -->
+          <ellipse cx="40" cy="46" rx="27" ry="23" fill="#EA9B56" stroke="#5C3216" stroke-width="2.5"/>
+          <!-- White Shiba Face Mask & Eyebrows -->
+          <ellipse cx="40" cy="52" rx="19" ry="14" fill="#FFF9F2"/>
+          <ellipse cx="31" cy="35" rx="3" ry="1.8" fill="#FFF9F2"/>
+          <ellipse cx="49" cy="35" rx="3" ry="1.8" fill="#FFF9F2"/>
+          <!-- Eyes -->
+          <circle cx="30" cy="43" r="3.5" fill="#3B2313"/>
+          <circle cx="29" cy="42" r="1.2" fill="#FFFFFF"/>
+          <circle cx="50" cy="43" r="3.5" fill="#3B2313"/>
+          <circle cx="49" cy="42" r="1.2" fill="#FFFFFF"/>
+          <!-- Blush -->
+          <ellipse cx="21" cy="49" rx="4" ry="2.5" fill="#F48B8B" opacity="0.7"/>
+          <ellipse cx="59" cy="49" rx="4" ry="2.5" fill="#F48B8B" opacity="0.7"/>
+          <!-- Nose & Happy Tongue -->
+          <ellipse cx="40" cy="48" rx="3.5" ry="2.5" fill="#3B2313"/>
+          <path d="M35 53Q40 57 45 53" stroke="#5C3216" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M37 54.5C37 59 43 59 43 54.5Z" fill="#F27979" stroke="#5C3216" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 3. Bottom-Right Floating Action Cluster (Gift Button + 24/7 Support Pill + Chat Button) -->
+    <div class="pawmily-floating-cluster">
+      <!-- Top Amber-Gold Gift Circle -->
+      <a href="#super-promo" class="floating-gift-btn" title="Săn mã ưu đãi giảm 20% ngay!">
+        <span class="gift-close-x" id="closeGiftBtn" title="Ẩn nút quà tặng">×</span>
+        <span>🎁</span>
+      </a>
+
+      <!-- Bottom Chat Support Row -->
+      <div class="floating-chat-row">
+        <a href="#contact" class="floating-chat-pill">
+          <span>✨</span>
+          <span>PawnCare hỗ trợ 24/7 nhé!</span>
+          <span>🐾</span>
+        </a>
+        <a href="#contact" class="floating-chat-circle" title="Chat hoặc nhận tư vấn trực tuyến 24/7" aria-label="Hỗ trợ trực tuyến">
+          <span class="online-dot"></span>
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
 
     <script type="module" src="../js/main.js"></script>
   </body>

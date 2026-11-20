@@ -17,13 +17,13 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 16px rgba(91, 58, 41, 0.04);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s var(--ease-pawmily), border-color 0.25s ease, box-shadow 0.35s var(--ease-pawmily);
 }
 
 .campaign-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--accent);
-  box-shadow: 0 20px 40px -10px rgba(91, 58, 41, 0.12);
+  transform: translate3d(0, -6px, 0);
+  border-color: var(--caramel);
+  box-shadow: var(--shadow-hover);
 }
 
 .campaign-banner {
@@ -108,12 +108,12 @@
   position: relative;
   box-shadow: var(--shadow-hover);
   border: 1px solid var(--line);
-  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalSlideUp 0.34s var(--ease-pawmily);
 }
 
 @keyframes modalSlideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { transform: translate3d(0, 20px, 0) scale(0.97); opacity: 0; }
+  to { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
 }
 
 .modal-close {

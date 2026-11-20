@@ -29,29 +29,29 @@
   padding: 18px 22px;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(51, 29, 18, 0.04);
-  transition: all 0.25s ease;
+  transition: transform 0.28s var(--ease-pawmily), border-color 0.25s ease, box-shadow 0.28s var(--ease-pawmily), background-color 0.25s ease;
   position: relative;
 }
 
 .notif-item:hover {
-  transform: translateY(-2px);
-  border-color: var(--tan);
+  transform: translate3d(0, -2px, 0);
+  border-color: var(--caramel);
   box-shadow: var(--shadow-card);
 }
 
 .notif-item.unread {
   background: var(--accent-soft);
-  border-color: rgba(224, 122, 95, 0.4);
+  border-color: var(--caramel);
 }
 
 .notif-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--coral-warm);
   margin-top: 8px;
   flex-shrink: 0;
-  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.2);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.22);
 }
 
 .notif-item.read .notif-dot {

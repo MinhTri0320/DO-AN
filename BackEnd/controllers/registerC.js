@@ -25,10 +25,15 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Người đăng ký tài khoản đầu tiên sẽ là admin, các tài khoản sau mặc định là pet_owner
+    const userCount = await User.countDocuments();
+    const role = userCount === 0 ? "admin" : "pet_owner";
+
     const user = await User.create({
       name: name,
       phone: phone,
-      password: hashedPassword
+      password: hashedPassword,
+      role
     });
 
     res.status(201).json({
@@ -36,7 +41,8 @@ const register = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        phone: user.phone
+        phone: user.phone,
+        role: user.role
       }
     });
 

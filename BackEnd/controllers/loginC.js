@@ -7,6 +7,7 @@ const login = async (req, res) => {
       phone,
       password
     } = req.body;
+    console.log("BODY LOGIN:", req.body);
 
     if (!phone || !password) {
       return res.status(400).json({
@@ -35,7 +36,8 @@ const login = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        phone: user.phone
+        phone: user.phone,
+        role: user.role
       }
     });
 

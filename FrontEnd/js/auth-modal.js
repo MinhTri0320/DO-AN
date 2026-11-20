@@ -313,7 +313,7 @@ export function createModalHTML() {
           <div class="auth-options-row" style="margin-top: 6px; margin-bottom: 8px;">
             <label class="auth-checkbox-wrap">
               <input type="checkbox" name="agree" id="modalAgreeTerms" checked />
-              <span>Tôi đồng ý với <a href="#" class="auth-forgot-link" style="color:#4d3427; text-decoration:underline;">Điều khoản dịch vụ</a></span>
+              <span>Tôi đồng ý với <a href="#" class="auth-forgot-link" style="text-decoration:underline;">Điều khoản dịch vụ</a></span>
             </label>
           </div>
 
@@ -540,7 +540,7 @@ export function initAuthModal() {
       submitBtn.textContent = "ĐANG ĐĂNG NHẬP...";
 
       try {
-        const user = await loginUser({ phoneOrEmail, password });
+        const user = await loginUser({ phone: phoneOrEmail, password });  
 
         // Xử lý ghi nhớ đăng nhập
         if (rememberChecked) {

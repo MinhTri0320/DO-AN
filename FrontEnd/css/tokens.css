@@ -1,20 +1,21 @@
 /* ============================================================
-   tokens.css - PawnCare Design System (Pawmily.vn Authentic Palette)
+   tokens.css - PawnCare Design System (Pawmily.vn 100% Authentic Palette)
    - Font: "Be Vietnam Pro" (nội dung), "Lora" (tiêu đề serif ấm áp),
            "Quicksand" (tiêu đề bo tròn hiện đại)
-   - Bảng màu Pawmily.vn:
+   - Bảng màu chuẩn Pawmily.vn:
      + Nền chính: Ngà kem ấm áp (#FCF6EE) & Kem mềm (#F5EFEB)
-     + Tông chữ & Cà phê: Espresso đậm (#331D12), Mocha ấm (#5B3A29)
-     + Đường viền & Cát: Vàng cát (#B5997E), Viền bánh quy (#DCC9B6)
-     + Điểm nhấn sống động: Cam đất Terracotta (#C95A34), San hô (#E07A5F),
-       Nền ửng đào kem (#FFF2EE), Viền đào (#F6DBC2)
-     + Màu sắc đa dạng: Xanh thảo mộc Y khoa (#508D69, #EEF8F2), Vàng mật ong (#FB9600, #FEF8E7)
+     + Header Caramel-Taupe: (#A38266 -> #987558)
+     + Espresso Nâu đậm chủ đạo (CTA, Nút chính, Active Pill): (#4E2A14 -> #683D22)
+     + Nâu Caramel ấm (#7E5A3E / #987558) & Kem Latte (#FAF3EB / #EFE3D5)
+     + Đường viền Bánh quy: (#DCC9B6 / #DFCBB7)
+     + Màu trạng thái Y khoa & Đánh giá: Thảo mộc (#508D69), Mật ong (#FB9600)
    ============================================================ */
 
 :root {
   /* ===== 1. TÔNG NỀN (BACKGROUNDS) ===== */
   --cream: #FCF6EE;              /* Nền trang chính Pawmily (Ivory Cream ấm cúng, êm dịu) */
   --cream-soft: #F5EFEB;         /* Nền xen kẽ giữa các section (--color-brand-cream) */
+  --cream-latte: #FAF3EB;        /* Nền Latte kem ấm cho badge, tag, thẻ chọn */
   --card: #FFFFFF;               /* Nền thẻ nổi bật trên nền kem */
   --surface: #FFFFFF;            /* Nền thẻ trắng tinh tươm */
   --surface-alt: #FDFBF7;        /* Nền thẻ ấm nhẹ */
@@ -22,47 +23,57 @@
   --dark-surface: #331D12;       /* Bề mặt tối cho Banner CTA */
 
   /* ===== 2. TÔNG CHỮ & TYPOGRAPHY ===== */
-  --ink: #331D12;                /* Chữ tiêu đề & chữ đậm espresso (--color-brand-dark) */
-  --ink-soft: #5B3A29;           /* Chữ nội dung mocha ấm áp (đặc trưng Pawmily, không xám lạnh) */
+  --ink: #331D12;                /* Chữ tiêu đề & chữ đậm espresso */
+  --ink-soft: #5B3A29;           /* Chữ nội dung mocha ấm áp (đặc trưng Pawmily) */
   --ink-faint: #8C7769;          /* Chữ nhạt, placeholder, metadata, subtext */
   --ink-light: #F5EFEB;          /* Chữ sáng màu trên nền tối */
 
-  /* ===== 3. TÔNG THƯƠNG HIỆU CÀ PHÊ & CÁT (BRAND COFFEE & TAN) ===== */
-  --brown: #331D12;              /* Nâu espresso chủ đạo */
-  --brown-dark: #23130B;         /* Nâu đậm hơn khi hover/active */
-  --brown-hover: #452819;        /* Nâu khi hover */
+  /* ===== 3. TÔNG THƯƠNG HIỆU ESPRESSO, CARAMEL & CÁT ===== */
+  --brown: #4A2511;              /* Nâu espresso chủ đạo Pawmily */
+  --brown-dark: #381E0E;         /* Nâu đậm hơn khi hover/active */
+  --brown-hover: #5C331A;        /* Nâu khi hover */
   --brown-medium: #5B3A29;       /* Nâu mocha đậm ấm cúng */
   --brown-soft: #EFE3D5;         /* Nền kem latte nhạt cho hover pill */
-  --tan: #B5997E;                /* Vàng cát sang trọng (--color-brand-tan) */
+  --espresso: #4E2A14;           /* Nâu Espresso đậm dùng cho nút chính */
+  --espresso-dark: #3A1E0D;
+  --espresso-mid: #683D22;
+  --caramel: #987558;            /* Nâu Caramel-Taupe đồng bộ Header Pawmily */
+  --caramel-light: #A38266;
+  --caramel-dark: #7E5A3E;       /* Caramel rang đậm (tương phản 6.2:1 trên trắng) */
+  --caramel-soft: #F3E9DF;
+  --tan: #B5997E;                /* Vàng cát sang trọng */
   --tan-light: #DCC9B6;          /* Đường viền mỏng đặc trưng Pawmily */
   --line: #DCC9B6;               /* Đường viền chuẩn Pawmily #DCC9B6 */
 
-  /* ===== 4. ĐIỂM NHẤN SỐNG ĐỘNG (SIGNATURE WARM ACCENTS) ===== */
-  --accent: #E07A5F;             /* Cam san hô ấm áp */
-  --accent-dark: #C95A34;        /* Cam đất Terracotta chủ đạo Pawmily (CTA chính) */
-  --accent-light: #E28854;       /* Cam hoàng hôn rạng rỡ */
-  --accent-soft: #FFF2EE;        /* Nền ửng đào kem mềm mại cho badge, tag, card highlight */
-  --accent-border: #F6DBC2;      /* Viền đào kem Pawmily cho badge & chip */
-  --accent-gradient: linear-gradient(135deg, #C95A34 0%, #E28854 100%);
-  --accent-gradient-hover: linear-gradient(135deg, #B54A26 0%, #D47543 100%);
+  /* ===== 4. ĐIỂM NHẤN THỐNG NHẤT (ESPRESSO & CARAMEL PAWMILY) ===== */
+  --accent: #7E5A3E;             /* Điểm nhấn Caramel-Bronze rõ nét & đồng bộ */
+  --accent-dark: #4E2A14;        /* Espresso đậm cho nút CTA chính, badge, tab active */
+  --accent-hover: #3A1E0D;       /* Espresso sẫm khi hover CTA */
+  --accent-light: #A38266;       /* Caramel sáng cho đường viền hover / highlight */
+  --accent-soft: #FAF3EB;        /* Nền Kem Latte thanh lịch thay nền đào chói */
+  --accent-border: #DFCBB7;      /* Viền Bánh quy kem cho badge & chip */
+  --accent-gradient: linear-gradient(135deg, #4E2A14 0%, #683D22 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #3A1E0D 0%, #543018 100%);
+
+  /* Màu san hô ấm chỉ dành riêng cho nút chat nổi, badge khẩn cấp, thông báo chưa đọc */
+  --coral-warm: #E07A5F;
+  --coral-deep: #C95A34;
 
   /* ===== 5. MÀU TRẠNG THÁI & CHỦ ĐỀ ĐA DẠNG (SEMANTIC TONES) ===== */
-  /* Xanh thảo mộc y tế chuẩn Pawmily (Chuẩn y khoa, Khám chữa, Đang mở cửa) */
   --sage-green: #508D69;
   --sage-soft: #EEF8F2;
   --sage-border: #C4E6D2;
 
-  /* Vàng mật ong ấm áp (Đánh giá ⭐ 5 sao, Tích điểm thành viên) */
   --amber-gold: #FB9600;
   --amber-soft: #FEF8E7;
   --amber-border: #F8E2AC;
   --amber-text: #B47806;
   --star-gold: #FB9600;
 
-  /* Hotline & Trạng thái */
-  --hotline-bg: #FFF2EE;
-  --hotline-color: #C95A34;
-  --hotline-border: #F6DBC2;
+  /* Hotline Header & Trạng thái */
+  --hotline-bg: rgba(255, 255, 255, 0.22);
+  --hotline-color: #FFFFFF;
+  --hotline-border: rgba(255, 255, 255, 0.35);
   --success: #508D69;
   --danger: #D32F2F;
 
@@ -72,14 +83,17 @@
   --font-heading: "Quicksand", "Be Vietnam Pro", sans-serif;
   --font-display: "Lora", serif;
 
-  /* ===== 7. BO GÓC & ĐỔ BÓNG NGHỆ THUẬT ===== */
+  /* ===== 7. BO GÓC, ĐỔ BÓNG & ĐƯỜNG CONG CHUYỂN ĐỘNG MƯỢT ===== */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-card: 24px;
   --radius-xl: 32px;
   --radius-pill: 9999px;
-  --shadow-sm: 0 2px 8px rgba(91, 58, 41, 0.05);
-  --shadow-card: 0 16px 36px -12px rgba(91, 58, 41, 0.08), 0 4px 12px rgba(91, 58, 41, 0.03);
-  --shadow-hover: 0 20px 40px -10px rgba(91, 58, 41, 0.15);
-  --shadow-cta: 0 10px 24px -4px rgba(201, 90, 52, 0.32);
+  --shadow-sm: 0 2px 8px rgba(78, 42, 20, 0.06);
+  --shadow-card: 0 16px 36px -12px rgba(78, 42, 20, 0.09), 0 4px 12px rgba(78, 42, 20, 0.03);
+  --shadow-hover: 0 20px 40px -10px rgba(78, 42, 20, 0.16);
+  --shadow-cta: 0 10px 24px -6px rgba(78, 42, 20, 0.32);
+
+  --ease-pawmily: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
