@@ -22,6 +22,8 @@ import { initPetProfilePage } from "./pet-profile.js";
 import { initMedicalRecordPage } from "./medical-record.js";
 import { initPetMedicalHistoryPage } from "./pet-medical-history.js";
 import { initDiagnosisPage } from "./diagnosis.js";
+import { initReExaminationHistoryPage } from "./re-examination-history.js";
+import { initPrescriptionPage } from "./prescription.js";
 import { initBookingPage } from "./booking.js";
 import { initHomePawmilyFeatures } from "./home-pawmily.js";
 
@@ -40,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initMedicalRecordPage(); // tự bỏ qua nếu không ở medical-record.html
   initPetMedicalHistoryPage(); // tự bỏ qua nếu không ở pet-medical-history.html
   initDiagnosisPage(); // tự bỏ qua nếu không ở diagnosis.html
+  initReExaminationHistoryPage(); // tự bỏ qua nếu không ở re-examination-history.html
+  initPrescriptionPage(); // tự bỏ qua nếu không ở prescription.html
   initBookingPage(); // tự bỏ qua nếu không ở booking.html
   initHomePawmilyFeatures(); // tương tác sao chép voucher & tính thử chi phí kiểu Pawmily
 });

@@ -446,3 +446,357 @@ export function updateSidebarInfo() {
     if (sideInitial) sideInitial.textContent = (user.name || "U").trim().charAt(0).toUpperCase();
   }
 }
+
+/* ============================================================
+   4. DỮ LIỆU MẶC ĐỊNH CHO TÁI KHÁM (RE-EXAMINATION HISTORY)
+   ============================================================ */
+export const DEFAULT_RE_EXAMINATIONS = [
+  {
+    id: "RE-2026-001",
+    recordId: "MED-2026-001",
+    petId: "pet_1",
+    petName: "Bé Bơ",
+    petSpecies: "Chó",
+    petBreed: "Golden Retriever",
+    date: "25/10/2026",
+    time: "09:30",
+    originalDiagnosis: "Viêm da dị ứng tiếp xúc & Nhiễm nấm Malassezia",
+    category: "Da liễu",
+    status: "Đã hoàn thành",
+    veterinarian: "BS. CKI. Nguyễn Văn Hùng",
+    clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+    recoveryRate: 90,
+    recoveryStatus: "Phục hồi rất tốt",
+    comparison: {
+      before: {
+        temp: "38.6°C",
+        weight: "19.5 kg",
+        itchLevel: "Dữ dội (8/10)",
+        skinCondition: "Rụng lông cổ & tai, da ửng đỏ, có vảy gàu men chua",
+      },
+      after: {
+        temp: "38.3°C",
+        weight: "19.8 kg",
+        itchLevel: "Không còn ngứa (1/10)",
+        skinCondition: "Lông tơ bắt đầu mọc lại đều, da se khô bình thường",
+      },
+    },
+    findings:
+      "Soi tươi biểu bì da tái kiểm tra: Mật độ tế bào nấm Malassezia giảm 95% (-/vết). Vùng da cổ và vành tai không còn sưng đỏ hay tiết bã nhờn.",
+    treatmentAdjustment:
+      "Ngưng hoàn toàn kháng sinh Cefalexin uống. Tiếp tục duy trì tắm sữa tắm Malaseb 1 lần/tuần trong 2 tuần tiếp theo.",
+    homeCareAdvice:
+      "Duy trì khẩu phần hạt Hypoallergenic. Không cho ăn vặt đồ ăn người. Giữ nếp gấp cổ khô ráo sau khi tắm hoặc đi dạo.",
+    nextFollowup: "Không cần tái khám thêm nếu không có dấu hiệu ngứa lại",
+    createdAt: Date.now() - 5 * 86400000,
+  },
+  {
+    id: "RE-2026-002",
+    recordId: "MED-2026-002",
+    petId: "pet_1",
+    petName: "Bé Bơ",
+    petSpecies: "Chó",
+    petBreed: "Golden Retriever",
+    date: "02/09/2026",
+    time: "15:00",
+    originalDiagnosis: "Rối loạn tiêu hóa cấp do kích ứng thức ăn mới",
+    category: "Tiêu hóa",
+    status: "Đã hoàn thành",
+    veterinarian: "BS. Lê Thị Thảo",
+    clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+    recoveryRate: 100,
+    recoveryStatus: "Khỏi bệnh hoàn toàn",
+    comparison: {
+      before: {
+        temp: "38.8°C",
+        weight: "19.0 kg",
+        stool: "Phân lỏng, nôn thức ăn",
+        appetite: "Ủ rũ, bỏ bữa",
+      },
+      after: {
+        temp: "38.4°C",
+        weight: "19.4 kg",
+        stool: "Phân khuôn đẹp",
+        appetite: "Ăn khỏe, năng động",
+      },
+    },
+    findings:
+      "Nhu động ruột êm dịu, sờ nắn bụng mềm không đau. Hệ tiêu hóa đã hấp thu thức ăn tốt trở lại hoàn toàn.",
+    treatmentAdjustment:
+      "Dừng Phosphalugel. Uống nốt 2 ống men vi sinh Enterogermina còn lại để củng cố khuẩn đường ruột.",
+    homeCareAdvice:
+      "Tuân thủ nguyên tắc chuyển đổi thức ăn mới từ từ trong vòng 7 ngày để tránh kích ứng niêm mạc ruột.",
+    nextFollowup: "Lịch tiêm phòng định kỳ vào tháng 05/2027",
+    createdAt: Date.now() - 60 * 86400000,
+  },
+  {
+    id: "RE-2026-003",
+    recordId: "MED-2026-004",
+    petId: "pet_2",
+    petName: "Miu Miu",
+    petSpecies: "Mèo",
+    petBreed: "Mèo Anh lông ngắn",
+    date: "05/10/2026",
+    time: "10:00",
+    originalDiagnosis: "Hội chứng viêm đường tiết niệu dưới ở mèo (FLUTD / FIC)",
+    category: "Tiết niệu",
+    status: "Đã hoàn thành",
+    veterinarian: "BS. Lê Thị Thảo",
+    clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+    recoveryRate: 88,
+    recoveryStatus: "Đang phục hồi tích cực",
+    comparison: {
+      before: {
+        temp: "38.7°C",
+        weight: "4.2 kg",
+        urination: "Tiểu rắt, tiểu giọt, rên rỉ khi vào khay cát",
+        ultrasound: "Thành bàng quang dày 2.8mm, có cặn giả mạc",
+      },
+      after: {
+        temp: "38.5°C",
+        weight: "4.3 kg",
+        urination: "Tiểu thông suốt, lượng nước tiểu bình thường",
+        ultrasound: "Thành bàng quang mỏng còn 1.6mm, dịch trong",
+      },
+    },
+    findings:
+      "Siêu âm tái kiểm tra: Thành bàng quang giảm phù nề đáng kể, không còn phản ứng viêm cấp tính. Bé không còn cảm giác đau buốt.",
+    treatmentAdjustment:
+      "Dừng thuốc giảm đau kháng viêm Meloxicam. Tiếp tục duy trì viên Cystease thêm 7 ngày nữa.",
+    homeCareAdvice:
+      "Bổ sung đài nước tự động và duy trì khẩu phần pate ướt. Khay cát luôn dọn sạch 2 lần/ngày để giảm stress.",
+    nextFollowup: "Tái khám kiểm tra định kỳ vào 28/11/2026",
+    createdAt: Date.now() - 25 * 86400000,
+  },
+  {
+    id: "RE-2026-004",
+    recordId: "MED-2026-004",
+    petId: "pet_2",
+    petName: "Miu Miu",
+    petSpecies: "Mèo",
+    petBreed: "Mèo Anh lông ngắn",
+    date: "28/11/2026",
+    time: "14:30",
+    originalDiagnosis: "Kiểm tra định kỳ chức năng bàng quang & ngừa tái phát FLUTD",
+    category: "Tiết niệu",
+    status: "Sắp tới",
+    veterinarian: "BS. Lê Thị Thảo",
+    clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+    recoveryRate: 90,
+    recoveryStatus: "Lịch hẹn sắp diễn ra",
+    comparison: {
+      before: {
+        temp: "38.5°C",
+        weight: "4.3 kg",
+        urination: "Tiểu ổn định",
+      },
+      after: {
+        temp: "Đang chờ khám",
+        weight: "Đang chờ cân",
+        urination: "Đang theo dõi tại nhà",
+      },
+    },
+    findings: "Lịch hẹn tái khám sắp tới. Bác sĩ sẽ siêu âm bàng quang và kiểm tra nước tiểu tầm soát định kỳ.",
+    treatmentAdjustment: "Chờ bác sĩ khám và đưa ra lời khuyên phác đồ tiếp theo.",
+    homeCareAdvice: "Nhịn ăn 4 tiếng trước khi siêu âm. Giữ tâm lý bé thoải mái trước khi đến phòng khám.",
+    nextFollowup: "28/11/2026 lúc 14:30",
+    createdAt: Date.now() - 2 * 86400000,
+  },
+];
+
+export function getStoredReExaminations() {
+  const data = getData(STORAGE_KEYS.RE_EXAMINATIONS, null);
+  if (data && Array.isArray(data) && data.length > 0) {
+    return data;
+  }
+  setData(STORAGE_KEYS.RE_EXAMINATIONS, DEFAULT_RE_EXAMINATIONS);
+  return DEFAULT_RE_EXAMINATIONS;
+}
+
+export function setStoredReExaminations(records) {
+  setData(STORAGE_KEYS.RE_EXAMINATIONS, records);
+}
+
+/* ============================================================
+   5. DỮ LIỆU MẶC ĐỊNH CHO ĐƠN THUỐC (PRESCRIPTION)
+   ============================================================ */
+export const DEFAULT_PRESCRIPTIONS = [
+  // --- BÉ BƠ (pet_1) ---
+  {
+    id: "RX-2026-001",
+    petId: "pet_1",
+    recordId: "MED-2026-001",
+    diseaseTitle: "Viêm da dị ứng tiếp xúc & Nhiễm nấm Malassezia",
+    medicineName: "Cefalexin 250mg",
+    activeIngredient: "Cephalosporin thế hệ 1",
+    category: "Kháng sinh đường uống",
+    form: "Viên nang mềm",
+    dosage: "1 viên x 2 lần/ngày (Sáng & Tối)",
+    schedule: { morning: true, afternoon: false, evening: true },
+    timing: "Uống sau khi ăn no 15 phút",
+    duration: "7 ngày (15/10 - 22/10/2026)",
+    status: "Đã hoàn thành",
+    prescribedBy: "BS. CKI. Nguyễn Văn Hùng",
+    notes: "Kháng sinh điều trị bội nhiễm vi khuẩn cơ hội ngoài da. Phải uống đủ liều đúng ngày.",
+    warnings: "Không dùng nếu thú cưng có tiền sử dị ứng nhóm Penicillin/Cephalosporin.",
+  },
+  {
+    id: "RX-2026-002",
+    petId: "pet_1",
+    recordId: "MED-2026-001",
+    diseaseTitle: "Viêm da dị ứng tiếp xúc & Nhiễm nấm Malassezia",
+    medicineName: "Sữa tắm trị nấm Malaseb 250ml",
+    activeIngredient: "Chlorhexidine Gluconate 2% + Miconazole Nitrate 2%",
+    category: "Sữa tắm dược liệu đặc trị",
+    form: "Chai dung dịch 250ml",
+    dosage: "Tắm 2 lần/tuần, lưu bọt 10 phút trên da trước khi xả",
+    schedule: { morning: false, afternoon: true, evening: false },
+    timing: "Tắm vào ban ngày, sấy khô lông thật kỹ",
+    duration: "3 tuần",
+    status: "Đang sử dụng",
+    prescribedBy: "BS. CKI. Nguyễn Văn Hùng",
+    notes: "Trị nấm men Malassezia và sát trùng vi khuẩn nang lông.",
+    warnings: "Tránh để bọt xà phòng dây vào mắt và niêm mạc tai của bé.",
+  },
+  {
+    id: "RX-2026-003",
+    petId: "pet_1",
+    recordId: "MED-2026-001",
+    diseaseTitle: "Viêm da dị ứng tiếp xúc & Nhiễm nấm Malassezia",
+    medicineName: "Dung dịch nhỏ tai Otoproct 15ml",
+    activeIngredient: "Dexamethasone + Polymyxin B + Miconazole",
+    category: "Thuốc nhỏ tai kháng viêm & diệt khuẩn",
+    form: "Lọ nhỏ giọt 15ml",
+    dosage: "Nhỏ 3 giọt mỗi bên tai x 1 lần/ngày",
+    schedule: { morning: false, afternoon: false, evening: true },
+    timing: "Nhỏ vào buổi tối sau khi đã vệ sinh sạch vành tai",
+    duration: "5 ngày (15/10 - 20/10/2026)",
+    status: "Đã hoàn thành",
+    prescribedBy: "BS. CKI. Nguyễn Văn Hùng",
+    notes: "Mát-xa nhẹ gốc tai sau khi nhỏ để thuốc thấm sâu vào ống tai.",
+    warnings: "Không dùng nếu màng nhĩ bị rách.",
+  },
+  {
+    id: "RX-2026-004",
+    petId: "pet_1",
+    recordId: "MED-2026-002",
+    diseaseTitle: "Rối loạn tiêu hóa cấp do kích ứng thức ăn mới",
+    medicineName: "Men vi sinh Enterogermina",
+    activeIngredient: "Bào tử Bacillus clausii kháng đa kháng sinh 2 tỷ",
+    category: "Men vi sinh tiêu hóa",
+    form: "Hộp ống uống dạng hỗn dịch",
+    dosage: "1 ống/ngày chia làm 2 cữ (Sáng 1/2 ống, Chiều 1/2 ống)",
+    schedule: { morning: true, afternoon: true, evening: false },
+    timing: "Uống cách bữa ăn 1 giờ",
+    duration: "5 ngày (28/08 - 02/09/2026)",
+    status: "Đã hoàn thành",
+    prescribedBy: "BS. Lê Thị Thảo",
+    notes: "Phục hồi hệ vi khuẩn có lợi đường ruột sau đợt nôn và tiêu chảy.",
+    warnings: "Lắc đều ống thuốc trước khi bẻ uống.",
+  },
+  {
+    id: "RX-2026-005",
+    petId: "pet_1",
+    recordId: "MED-2026-002",
+    diseaseTitle: "Rối loạn tiêu hóa cấp do kích ứng thức ăn mới",
+    medicineName: "Thuốc tráng dạ dày Phosphalugel",
+    activeIngredient: "Aluminium phosphate dạng gel 20%",
+    category: "Bảo vệ niêm mạc dạ dày",
+    form: "Gói gel uống 20g",
+    dosage: "1 gói/ngày chia 2 lần trước ăn 30 phút",
+    schedule: { morning: true, afternoon: false, evening: true },
+    timing: "Trước bữa ăn sáng và tối 30 phút",
+    duration: "3 ngày (28/08 - 31/08/2026)",
+    status: "Đã hoàn thành",
+    prescribedBy: "BS. Lê Thị Thảo",
+    notes: "Tạo lớp màng bảo vệ niêm mạc dạ dày khỏi axit dịch vị.",
+    warnings: "Uống cách các thuốc khác tối thiểu 2 giờ.",
+  },
+  {
+    id: "RX-2026-006",
+    petId: "pet_1",
+    recordId: "MED-2026-003",
+    diseaseTitle: "Tiêm phòng định kỳ & Sổ giun chuyên sâu",
+    medicineName: "Viên tẩy giun Drontal Plus",
+    activeIngredient: "Febantel 150mg + Pyrantel embonate 144mg + Praziquantel 50mg",
+    category: "Thuốc tẩy ký sinh trùng đường ruột",
+    form: "Viên nén có mùi vị thịt bò",
+    dosage: "2 viên uống trực tiếp 1 lần duy nhất",
+    schedule: { morning: true, afternoon: false, evening: false },
+    timing: "Uống vào buổi sáng cùng một mẩu thức ăn nhỏ",
+    duration: "Định kỳ 3 tháng/lần",
+    status: "Định kỳ",
+    prescribedBy: "BS. CKI. Nguyễn Văn Hùng",
+    notes: "Tẩy sạch giun đũa, giun móc, giun tóc và sán dây ở chó.",
+    warnings: "Không sử dụng trong thời gian chó mẹ mang thai 2/3 thai kỳ đầu.",
+  },
+
+  // --- BÉ MIU MIU (pet_2) ---
+  {
+    id: "RX-2026-007",
+    petId: "pet_2",
+    recordId: "MED-2026-004",
+    diseaseTitle: "Hội chứng viêm đường tiết niệu dưới ở mèo (FLUTD)",
+    medicineName: "Siro giảm đau kháng viêm Meloxicam 0.5mg/ml",
+    activeIngredient: "Meloxicam NSAID chuyên biệt cho mèo",
+    category: "Kháng viêm & giảm đau đường tiết niệu",
+    form: "Chai siro kèm ống bơm chia vạch",
+    dosage: "0.2ml/ngày uống sau bữa ăn sáng",
+    schedule: { morning: true, afternoon: false, evening: false },
+    timing: "Trộn trực tiếp vào pate hoặc bơm khóe miệng sau ăn",
+    duration: "4 ngày (20/09 - 24/09/2026)",
+    status: "Đã hoàn thành",
+    prescribedBy: "BS. Lê Thị Thảo",
+    notes: "Làm dịu cơn đau buốt bàng quang, giúp mèo đi tiểu dễ dàng.",
+    warnings: "Không dùng cho mèo bị suy thận cấp hoặc mất nước nặng.",
+  },
+  {
+    id: "RX-2026-008",
+    petId: "pet_2",
+    recordId: "MED-2026-004",
+    diseaseTitle: "Hội chứng viêm đường tiết niệu dưới ở mèo (FLUTD)",
+    medicineName: "Viên uống bảo vệ bàng quang Cystease",
+    activeIngredient: "N-acetyl D-glucosamine + L-tryptophan + Hyaluronic Acid",
+    category: "Thực phẩm hỗ trợ niêm mạc bàng quang & an thần",
+    form: "Viên nang mềm",
+    dosage: "1 viên/ngày nghiền nhỏ trộn pate",
+    schedule: { morning: false, afternoon: false, evening: true },
+    timing: "Cho ăn cùng bữa pate buổi tối",
+    duration: "21 ngày (20/09 - 11/10/2026)",
+    status: "Đã hoàn thành",
+    prescribedBy: "BS. Lê Thị Thảo",
+    notes: "Bổ sung lớp màng Glycosaminoglycans (GAGs) bảo vệ vách bàng quang và giảm stress cho mèo.",
+    warnings: "Bảo quản nơi khô ráo dưới 25°C.",
+  },
+  {
+    id: "RX-2026-009",
+    petId: "pet_2",
+    recordId: "MED-2026-005",
+    diseaseTitle: "Tiêm nhắc vaccine & Phòng ngừa ký sinh trùng",
+    medicineName: "Thuốc nhỏ gáy Revolution Plus cho mèo",
+    activeIngredient: "Selamectin 30mg + Sarolaner 5mg",
+    category: "Phòng ngừa nội ngoại ký sinh trùng phổ rộng",
+    form: "Tuýp bẻ nhỏ gáy 0.5ml",
+    dosage: "1 tuýp nhỏ trực tiếp da sau gáy",
+    schedule: { morning: false, afternoon: true, evening: false },
+    timing: "Vạch lông sát da gáy và nhỏ hết thuốc",
+    duration: "Định kỳ 1 tháng/lần",
+    status: "Định kỳ",
+    prescribedBy: "BS. CKI. Nguyễn Văn Hùng",
+    notes: "Diệt bọ chét, ve rận, giun tim, ghẻ tai và giun móc, giun đũa.",
+    warnings: "Không tắm trong 3 ngày sau khi nhỏ. Không để mèo khác liếm thuốc.",
+  },
+];
+
+export function getStoredPrescriptions() {
+  const data = getData(STORAGE_KEYS.PRESCRIPTIONS, null);
+  if (data && Array.isArray(data) && data.length > 0) {
+    return data;
+  }
+  setData(STORAGE_KEYS.PRESCRIPTIONS, DEFAULT_PRESCRIPTIONS);
+  return DEFAULT_PRESCRIPTIONS;
+}
+
+export function setStoredPrescriptions(prescriptions) {
+  setData(STORAGE_KEYS.PRESCRIPTIONS, prescriptions);
+}
