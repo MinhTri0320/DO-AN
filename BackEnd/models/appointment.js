@@ -55,10 +55,6 @@ appointmentSchema.index(
   { unique: true, partialFilterExpression: { slotReserved: true } }
 );
 
-<<<<<<< HEAD
-module.exports = mongoose.model("Appointment", appointmentSchema, "appointments");
-module.exports = mongoose.models.Appointment || mongoose.model("Appointment", appointmentSchema, "appointments");
-=======
 /* =====================================================================
  *  HÀM DÙNG CHUNG (cho LIST và CANCEL)
  * ===================================================================== */
@@ -159,5 +155,6 @@ appointmentSchema.statics.cancelByUser = async function (
   );
 };
 
-module.exports = mongoose.model("Appointment", appointmentSchema, "appointments");
->>>>>>> 9761cedb486af4719012142af29dfcfead412ddb
+module.exports =
+  mongoose.models.Appointment ||
+  mongoose.model("Appointment", appointmentSchema, "appointments");
