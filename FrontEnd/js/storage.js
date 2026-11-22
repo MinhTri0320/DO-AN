@@ -16,6 +16,9 @@ export const STORAGE_KEYS = {
   PET_HEALTH_PROFILES: "pawncare_pet_health_profiles",
   RE_EXAMINATIONS: "pawncare_re_examinations",
   PRESCRIPTIONS: "pawncare_prescriptions",
+  HOTEL_CAGES: "pawncare_hotel_cages",
+  HOTEL_STAYS: "pawncare_hotel_stays",
+  HOTEL_CUSTOMERS: "pawncare_hotel_customers",
 };
 
 export function getData(key, fallback) {

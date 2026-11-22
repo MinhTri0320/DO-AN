@@ -26,6 +26,9 @@ import { initReExaminationHistoryPage } from "./re-examination-history.js";
 import { initPrescriptionPage } from "./prescription.js";
 import { initBookingPage } from "./booking.js";
 import { initHomePawmilyFeatures } from "./home-pawmily.js";
+import { initCageManagementPage } from "./cage-management.js";
+import { initPetCheckInPage } from "./pet-checkin.js";
+import { initPetCheckOutPage } from "./pet-checkout.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initHeader(); // luôn chạy — header có ở mọi trang
@@ -44,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initDiagnosisPage(); // tự bỏ qua nếu không ở diagnosis.html
   initReExaminationHistoryPage(); // tự bỏ qua nếu không ở re-examination-history.html
   initPrescriptionPage(); // tự bỏ qua nếu không ở prescription.html
+  initCageManagementPage(); // tự bỏ qua nếu không ở cage-management.html
+  initPetCheckInPage(); // tự bỏ qua nếu không ở pet-checkin.html
+  initPetCheckOutPage(); // tự bỏ qua nếu không ở pet-checkout.html
   initBookingPage(); // tự bỏ qua nếu không ở booking.html
   initHomePawmilyFeatures(); // tương tác sao chép voucher & tính thử chi phí kiểu Pawmily
 });

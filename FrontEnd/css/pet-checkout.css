@@ -1,0 +1,412 @@
+/* ============================================================
+   pet-checkout.css
+   Sprint 4: Task 3 - Pet Check-out & Boarding History (Pawmily Authentic Style)
+   ============================================================ */
+
+/* Tab chuyển đổi giữa "Đang Lưu Trú" và "Lịch Sử Lưu Chuồng" */
+.checkout-view-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.btn-view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.25s var(--ease-pawmily);
+}
+
+.btn-view-tab:hover {
+  background: var(--cream-latte);
+  color: var(--espresso);
+  border-color: var(--tan);
+}
+
+.btn-view-tab.active {
+  background: var(--espresso);
+  color: #ffffff;
+  border-color: var(--espresso);
+  box-shadow: 0 4px 14px rgba(78, 42, 20, 0.25);
+}
+
+.btn-view-tab .tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+}
+
+.btn-view-tab:not(.active) .tab-badge {
+  background: var(--cream-soft);
+  color: var(--ink);
+}
+
+/* LƯỚI CÁC LƯỢT ĐANG LƯU TRÚ (ACTIVE STAYS) */
+.active-stays-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stay-card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.25s var(--ease-pawmily), box-shadow 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stay-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card);
+  border-color: var(--tan);
+}
+
+.stay-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: #E65100;
+}
+
+.stay-card.completed::before {
+  background: var(--sage-green);
+}
+
+.stay-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.stay-card-code {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  letter-spacing: 0.5px;
+}
+
+.stay-pet-name {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+.stay-badge-active {
+  background: #FFF3E0;
+  color: #B25000;
+  border: 1px solid #FFE0B2;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stay-badge-completed {
+  background: var(--sage-soft);
+  color: #2E5C38;
+  border: 1px solid var(--sage-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* KHỐI THÔNG TIN CHI TIẾT TRONG CARD */
+.stay-info-box {
+  background: var(--cream-soft);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.stay-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: var(--ink-soft);
+}
+
+.stay-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.stay-info-row strong {
+  color: var(--ink);
+  text-align: right;
+}
+
+.stay-text-block {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.stay-text-block strong {
+  color: var(--ink);
+}
+
+/* NÚT THỰC HIỆN CHECK-OUT */
+.btn-proceed-checkout {
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px 18px;
+  background: var(--espresso);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(78, 42, 20, 0.22);
+  transition: all 0.25s var(--ease-pawmily);
+}
+
+.btn-proceed-checkout:hover {
+  background: var(--espresso-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(78, 42, 20, 0.32);
+}
+
+/* BẢNG LỊCH SỬ LƯU CHUỒNG (BOARDING HISTORY) */
+.history-control-panel {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.history-table-container {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 30px;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.history-table th {
+  background: var(--cream-latte);
+  color: var(--ink);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 14px 16px;
+  border-bottom: 1.5px solid var(--tan-light);
+  white-space: nowrap;
+}
+
+.history-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--cream-soft);
+  color: var(--ink-soft);
+  vertical-align: middle;
+}
+
+.history-table tr:hover td {
+  background: var(--cream-soft);
+}
+
+.history-pet-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.history-fee {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--espresso);
+  font-size: 14px;
+}
+
+.btn-view-bill {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--espresso);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-view-bill:hover {
+  background: var(--cream-latte);
+  border-color: var(--tan);
+}
+
+/* MODAL XÁC NHẬN TRẢ BÉ (CHECK-OUT MODAL) */
+.checkout-calc-card {
+  background: #FFF9F2;
+  border: 1.5px solid #FFE0B2;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #FFE0B2;
+  margin-bottom: 12px;
+}
+
+.calc-grid strong {
+  display: block;
+  font-size: 16px;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.calc-grid span {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+
+.calc-final-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.calc-final-amount {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--espresso);
+}
+
+/* HÓA ĐƠN IN PHIẾU THANH TOÁN (INVOICE SHEET) */
+.invoice-sheet {
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  background: #ffffff;
+  margin-bottom: 20px;
+}
+
+.invoice-brand {
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 1.5px dashed var(--line);
+  margin-bottom: 16px;
+}
+
+.invoice-brand h2 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--espresso);
+  margin-bottom: 4px;
+}
+
+.invoice-brand p {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.invoice-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 12.5px;
+  margin-bottom: 16px;
+}
+
+.invoice-item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.invoice-item-table th,
+.invoice-item-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--cream-soft);
+}
+
+.invoice-item-table th {
+  background: var(--cream-soft);
+  text-align: left;
+  font-weight: 700;
+}
+
+.invoice-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1.5px dashed var(--line);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--espresso);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoiceModal, #invoiceModal * {
+    visibility: visible;
+  }
+  #invoiceModal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    background: transparent;
+  }
+}
