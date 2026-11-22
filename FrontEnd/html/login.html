@@ -1,330 +1,312 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/tokens.css" />
-    <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/buttons.css" />
-    <link rel="stylesheet" href="../css/header.css" />
-    <link rel="stylesheet" href="../css/footer.css" />
-    <link rel="stylesheet" href="../css/forms.css" />
-    <link rel="stylesheet" href="../css/auth.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Đăng nhập - PawnCare</title>
-  </head>
-  <body>
-    <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
-    <header id="header">
-      <div class="header-pawmily-container">
-        <div class="header-top-row">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
-                <circle cx="23" cy="36" r="13" fill="#B5835A" />
-                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
-                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
-                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
-                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
-                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
-                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
-                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
-                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
-                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
-                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
-                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
-                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
-                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
-              </svg>
-            </span>
-            <span class="logo-text">PAWNCARE</span>
-          </a>
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link
+ href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+ rel="stylesheet"
+ />
+ <link rel="stylesheet" href="../css/tokens.css" />
+ <link rel="stylesheet" href="../css/base.css" />
+ <link rel="stylesheet" href="../css/buttons.css" />
+ <link rel="stylesheet" href="../css/header.css" />
+ <link rel="stylesheet" href="../css/footer.css" />
+ <link rel="stylesheet" href="../css/forms.css" />
+ <link rel="stylesheet" href="../css/auth.css" />
+ <link rel="stylesheet" href="../css/responsive.css" />
+ <title>Đăng nhập - PawnCare</title>
+ </head>
+ <body>
+ <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
+ <header id="header">
+ <div class="header-pawmily-container">
+ <div class="header-top-row">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+ <circle cx="23" cy="36" r="13" fill="#B5835A" />
+ <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+ <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+ <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+ <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+ <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+ <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+ <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+ <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+ <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+ <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+ <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+ <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+ <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+ </svg>
+ </span>
+ <span class="logo-text">PAWNCARE</span>
+ </a>
 
-          <div class="header-right-cluster">
-            <div class="lang-switch-pill" role="group" aria-label="Chọn ngôn ngữ">
-              <button type="button" class="lang-btn active" data-lang="vi">VI</button>
-              <button type="button" class="lang-btn" data-lang="en">EN</button>
-            </div>
+ <div class="header-right-cluster">
 
-            <div class="auth" id="authGuest">
-              <a href="./login.html" class="pill-btn btn-login">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Đăng nhập</span>
-              </a>
-              <a href="./register.html" class="pill-btn btn-signup">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <span>Đăng ký</span>
-              </a>
-            </div>
+ <div class="auth" id="authGuest">
+ <a href="./login.html" class="pill-btn btn-login">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span>Đăng nhập</span>
+ </a>
+ <a href="./register.html" class="pill-btn btn-signup">
+ <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+ <span>Đăng ký</span>
+ </a>
+ </div>
 
-            <div class="auth auth-user" id="authUser" hidden>
-              <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                  <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <span class="badge" id="notifBadge" hidden>0</span>
-              </a>
+ <div class="auth auth-user" id="authUser" hidden>
+ <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+ <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <span class="badge" id="notifBadge" hidden>0</span>
+ </a>
 
-              <div class="user-menu">
-                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
-                  <span id="userInitial">U</span>
-                </button>
-                <div class="dropdown" id="userDropdown" hidden>
-                  <p class="dropdown-name" id="userName">—</p>
-                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
-                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
-                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
-                  <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
-                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
-                </div>
-              </div>
-            </div>
+ <div class="user-menu">
+ <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+ <span id="userInitial">U</span>
+ </button>
+ <div class="dropdown" id="userDropdown" hidden>
+ <p class="dropdown-name" id="userName">—</p>
+ <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+ <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+ <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+ <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+ </div>
+ </div>
+ </div>
 
-            <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
-              <span class="sparkle-icon">✨</span>
-              <span>WELOVEPML20 (-20%)</span>
-            </button>
+ <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
+ <span class="sparkle-icon">✨</span>
+ <span>WELOVEPML20 (-20%)</span>
+ </button>
 
-            <a href="./pet-profile.html" class="header-icon-circle" title="Danh sách bé cưng yêu thích" aria-label="Yêu thích">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M12 20.5s-7.5-4.6-9.3-8.8C1.2 8.2 3.4 4.5 7 4.5c2.1 0 3.8 1.2 5 2.8 1.2-1.6 2.9-2.8 5-2.8 3.6 0 5.8 3.7 4.3 7.2-1.8 4.2-9.3 8.8-9.3 8.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </a>
+ <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </div>
 
-            <a href="./booking.html" class="header-icon-circle white-circle" title="Đặt lịch &amp; Giỏ dịch vụ" aria-label="Giỏ dịch vụ">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M6 7h12l1 13H5L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <span class="header-dot-badge"></span>
-            </a>
+ <div class="header-nav-row">
+ <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
 
-            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
-              <span></span><span></span><span></span>
-            </button>
-          </div>
-        </div>
+ <nav id="menu">
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
+ <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
+ <a href="./booking.html" class="link">Đặt Lịch 📅</a>
+ <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
+ <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
+ <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
+ <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
+ <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
+ <a href="./index.html#about" class="link">Về PawnCare</a>
+ <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
+ <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
+ <a href="./index.html#reviews-section" class="link">Đánh giá</a>
+ </nav>
 
-        <div class="header-nav-row">
-          <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
+ <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
+ </div>
+ </div>
+ </header>
 
-          <nav id="menu">
-            <a href="./index.html" class="link">Trang chủ</a>
-            <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
-            <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
-            <a href="./booking.html" class="link">Đặt Lịch 📅</a>
-            <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
-            <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
-            <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
-            <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
-            <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
-            <a href="./index.html#about" class="link">Về PawnCare</a>
-            <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
-            <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
-            <a href="./index.html#reviews-section" class="link">Đánh giá</a>
-          </nav>
+ <main class="auth-page">
+ <div class="auth-card">
+ <!-- Nút đóng X về trang chủ -->
+ <a href="./index.html" class="auth-modal-close" aria-label="Về trang chủ">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+ <line x1="18" y1="6" x2="6" y2="18"></line>
+ <line x1="6" y1="6" x2="18" y2="18"></line>
+ </svg>
+ </a>
 
-          <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
-        </div>
-      </div>
-    </header>
+ <!-- Badge Mascot 4 ô thú cưng -->
+ <div class="auth-mascot-badge">
+ <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect width="64" height="64" rx="16" fill="#F4EEE7"/>
+ <g transform="translate(6, 6)">
+ <rect width="24" height="24" rx="7" fill="#4D3427"/>
+ <path d="M4 8.5 L7 4 L10 8" fill="#4D3427" stroke="#4D3427" stroke-width="1" stroke-linejoin="round"/>
+ <path d="M20 8.5 L17 4 L14 8" fill="#4D3427" stroke="#4D3427" stroke-width="1" stroke-linejoin="round"/>
+ <circle cx="8" cy="11.5" r="1.3" fill="#F4EEE7"/>
+ <circle cx="16" cy="11.5" r="1.3" fill="#F4EEE7"/>
+ <polygon points="12,13.5 10.8,15.2 13.2,15.2" fill="#F4EEE7"/>
+ <line x1="4" y1="13.5" x2="8" y2="14" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
+ <line x1="4" y1="15.5" x2="8" y2="15" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
+ <line x1="20" y1="13.5" x2="16" y2="14" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
+ <line x1="20" y1="15.5" x2="16" y2="15" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
+ </g>
+ <g transform="translate(34, 6)">
+ <rect width="24" height="24" rx="7" fill="#D7C3B1"/>
+ <path d="M7 16 C7 13.5 9 12 12 12 C15 12 17 13.5 17 16 C17 18 15 19 12 19 C9 19 7 18 7 16 Z" fill="#FFFFFF"/>
+ <circle cx="7.2" cy="9.5" r="1.6" fill="#FFFFFF"/>
+ <circle cx="10.4" cy="7.5" r="1.7" fill="#FFFFFF"/>
+ <circle cx="13.8" cy="7.8" r="1.7" fill="#FFFFFF"/>
+ <circle cx="16.8" cy="10" r="1.6" fill="#FFFFFF"/>
+ </g>
+ <g transform="translate(6, 34)">
+ <rect width="24" height="24" rx="7" fill="#D7C3B1"/>
+ <path d="M7 16 C7 13.5 9 12 12 12 C15 12 17 13.5 17 16 C17 18 15 19 12 19 C9 19 7 18 7 16 Z" fill="#FFFFFF"/>
+ <circle cx="7.2" cy="9.5" r="1.6" fill="#FFFFFF"/>
+ <circle cx="10.4" cy="7.5" r="1.7" fill="#FFFFFF"/>
+ <circle cx="13.8" cy="7.8" r="1.7" fill="#FFFFFF"/>
+ <circle cx="16.8" cy="10" r="1.6" fill="#FFFFFF"/>
+ </g>
+ <g transform="translate(34, 34)">
+ <rect width="24" height="24" rx="7" fill="#4D3427"/>
+ <path d="M4 6 C2.5 8.5 2.5 13.5 4.5 15 C5.8 15 6 12 5.5 8 Z" fill="#3D291F"/>
+ <path d="M20 6 C21.5 8.5 21.5 13.5 19.5 15 C18.2 15 18 12 18.5 8 Z" fill="#3D291F"/>
+ <circle cx="8.5" cy="11" r="1.3" fill="#F4EEE7"/>
+ <circle cx="15.5" cy="11" r="1.3" fill="#F4EEE7"/>
+ <ellipse cx="12" cy="15" rx="3.5" ry="2.2" fill="#F4EEE7"/>
+ <ellipse cx="12" cy="14.2" rx="1.5" ry="0.9" fill="#4D3427"/>
+ </g>
+ </svg>
+ </div>
 
-    <main class="auth-page">
-      <div class="auth-card">
-        <!-- Nút đóng X về trang chủ -->
-        <a href="./index.html" class="auth-modal-close" aria-label="Về trang chủ">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </a>
+ <h1 class="auth-modal-title">Chào Mừng Trở Lại</h1>
+ <p class="auth-modal-sub">Đăng nhập để xem lịch hẹn, tích điểm & quản lý bé cưng</p>
 
-        <!-- Badge Mascot 4 ô thú cưng -->
-        <div class="auth-mascot-badge">
-          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="64" height="64" rx="16" fill="#F4EEE7"/>
-            <g transform="translate(6, 6)">
-              <rect width="24" height="24" rx="7" fill="#4D3427"/>
-              <path d="M4 8.5 L7 4 L10 8" fill="#4D3427" stroke="#4D3427" stroke-width="1" stroke-linejoin="round"/>
-              <path d="M20 8.5 L17 4 L14 8" fill="#4D3427" stroke="#4D3427" stroke-width="1" stroke-linejoin="round"/>
-              <circle cx="8" cy="11.5" r="1.3" fill="#F4EEE7"/>
-              <circle cx="16" cy="11.5" r="1.3" fill="#F4EEE7"/>
-              <polygon points="12,13.5 10.8,15.2 13.2,15.2" fill="#F4EEE7"/>
-              <line x1="4" y1="13.5" x2="8" y2="14" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
-              <line x1="4" y1="15.5" x2="8" y2="15" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
-              <line x1="20" y1="13.5" x2="16" y2="14" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
-              <line x1="20" y1="15.5" x2="16" y2="15" stroke="#F4EEE7" stroke-width="0.8" stroke-linecap="round"/>
-            </g>
-            <g transform="translate(34, 6)">
-              <rect width="24" height="24" rx="7" fill="#D7C3B1"/>
-              <path d="M7 16 C7 13.5 9 12 12 12 C15 12 17 13.5 17 16 C17 18 15 19 12 19 C9 19 7 18 7 16 Z" fill="#FFFFFF"/>
-              <circle cx="7.2" cy="9.5" r="1.6" fill="#FFFFFF"/>
-              <circle cx="10.4" cy="7.5" r="1.7" fill="#FFFFFF"/>
-              <circle cx="13.8" cy="7.8" r="1.7" fill="#FFFFFF"/>
-              <circle cx="16.8" cy="10" r="1.6" fill="#FFFFFF"/>
-            </g>
-            <g transform="translate(6, 34)">
-              <rect width="24" height="24" rx="7" fill="#D7C3B1"/>
-              <path d="M7 16 C7 13.5 9 12 12 12 C15 12 17 13.5 17 16 C17 18 15 19 12 19 C9 19 7 18 7 16 Z" fill="#FFFFFF"/>
-              <circle cx="7.2" cy="9.5" r="1.6" fill="#FFFFFF"/>
-              <circle cx="10.4" cy="7.5" r="1.7" fill="#FFFFFF"/>
-              <circle cx="13.8" cy="7.8" r="1.7" fill="#FFFFFF"/>
-              <circle cx="16.8" cy="10" r="1.6" fill="#FFFFFF"/>
-            </g>
-            <g transform="translate(34, 34)">
-              <rect width="24" height="24" rx="7" fill="#4D3427"/>
-              <path d="M4 6 C2.5 8.5 2.5 13.5 4.5 15 C5.8 15 6 12 5.5 8 Z" fill="#3D291F"/>
-              <path d="M20 6 C21.5 8.5 21.5 13.5 19.5 15 C18.2 15 18 12 18.5 8 Z" fill="#3D291F"/>
-              <circle cx="8.5" cy="11" r="1.3" fill="#F4EEE7"/>
-              <circle cx="15.5" cy="11" r="1.3" fill="#F4EEE7"/>
-              <ellipse cx="12" cy="15" rx="3.5" ry="2.2" fill="#F4EEE7"/>
-              <ellipse cx="12" cy="14.2" rx="1.5" ry="0.9" fill="#4D3427"/>
-            </g>
-          </svg>
-        </div>
+ <!-- Tab Switcher -->
+ <div class="auth-tab-switch">
+ <a href="./login.html" class="auth-tab-btn active">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+ <polyline points="10 17 15 12 10 7"></polyline>
+ <line x1="15" y1="12" x2="3" y2="12"></line>
+ </svg>
+ <span>Đăng nhập</span>
+ </a>
+ <a href="./register.html" class="auth-tab-btn">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+ <circle cx="8.5" cy="7" r="4"></circle>
+ <line x1="20" y1="8" x2="20" y2="14"></line>
+ <line x1="23" y1="11" x2="17" y2="11"></line>
+ </svg>
+ <span>Đăng ký</span>
+ </a>
+ </div>
 
-        <h1 class="auth-modal-title">Chào Mừng Trở Lại</h1>
-        <p class="auth-modal-sub">Đăng nhập để xem lịch hẹn, tích điểm & quản lý bé cưng</p>
+ <div class="auth-alert" id="loginAlert"></div>
 
-        <!-- Tab Switcher -->
-        <div class="auth-tab-switch">
-          <a href="./login.html" class="auth-tab-btn active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10 17 15 12 10 7"></polyline>
-              <line x1="15" y1="12" x2="3" y2="12"></line>
-            </svg>
-            <span>Đăng nhập</span>
-          </a>
-          <a href="./register.html" class="auth-tab-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="8.5" cy="7" r="4"></circle>
-              <line x1="20" y1="8" x2="20" y2="14"></line>
-              <line x1="23" y1="11" x2="17" y2="11"></line>
-            </svg>
-            <span>Đăng ký</span>
-          </a>
-        </div>
+ <form id="loginForm" novalidate>
+ <!-- Email hoặc Số điện thoại -->
+ <div class="auth-field" data-field="phoneOrEmail">
+ <label class="auth-label"> SỐ ĐIỆN THOẠI</label>
+ <div class="auth-input-wrap">
+ <span class="auth-input-icon">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+ <polyline points="22,6 12,13 2,6"></polyline>
+ </svg>
+ </span>
+ <input type="text" name="phoneOrEmail" class="auth-input" placeholder="Số điện thoại" required />
+ </div>
+ <span class="auth-field-error"></span>
+ </div>
 
-        <div class="auth-alert" id="loginAlert"></div>
+ <!-- Mật khẩu -->
+ <div class="auth-field" data-field="password">
+ <label class="auth-label">MẬT KHẨU</label>
+ <div class="auth-input-wrap">
+ <span class="auth-input-icon">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+ <rect x="5" y="11" width="14" height="10" rx="2"/>
+ <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+ </svg>
+ </span>
+ <input type="password" name="password" class="auth-input" placeholder="Nhập mật khẩu của bạn" required />
+ <button type="button" class="auth-eye-btn" data-toggle-password aria-label="Hiện/ẩn mật khẩu">
+ <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+ <circle cx="12" cy="12" r="3"></circle>
+ </svg>
+ <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+ <line x1="1" y1="1" x2="23" y2="23"></line>
+ </svg>
+ </button>
+ </div>
+ <span class="auth-field-error"></span>
+ </div>
 
-        <form id="loginForm" novalidate>
-          <!-- Email hoặc Số điện thoại -->
-          <div class="auth-field" data-field="phoneOrEmail">
-            <label class="auth-label"> SỐ ĐIỆN THOẠI</label>
-            <div class="auth-input-wrap">
-              <span class="auth-input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-              </span>
-              <input type="text" name="phoneOrEmail" class="auth-input" placeholder="Số điện thoại" required />
-            </div>
-            <span class="auth-field-error"></span>
-          </div>
+ <!-- Ghi nhớ đăng nhập & Quên mật khẩu -->
+ <div class="auth-options-row">
+ <label class="auth-checkbox-wrap">
+ <input type="checkbox" name="remember" id="rememberLogin" />
+ <span>Ghi nhớ đăng nhập</span>
+ </label>
+ <a href="#" class="auth-forgot-link" id="forgotPassLink">Quên mật khẩu?</a>
+ </div>
 
-          <!-- Mật khẩu -->
-          <div class="auth-field" data-field="password">
-            <label class="auth-label">MẬT KHẨU</label>
-            <div class="auth-input-wrap">
-              <span class="auth-input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <rect x="5" y="11" width="14" height="10" rx="2"/>
-                  <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
-                </svg>
-              </span>
-              <input type="password" name="password" class="auth-input" placeholder="Nhập mật khẩu của bạn" required />
-              <button type="button" class="auth-eye-btn" data-toggle-password aria-label="Hiện/ẩn mật khẩu">
-                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
-            </div>
-            <span class="auth-field-error"></span>
-          </div>
+ <button type="submit" class="auth-submit-btn">ĐĂNG NHẬP NGAY</button>
+ </form>
+ </div>
+ </main>
 
-          <!-- Ghi nhớ đăng nhập & Quên mật khẩu -->
-          <div class="auth-options-row">
-            <label class="auth-checkbox-wrap">
-              <input type="checkbox" name="remember" id="rememberLogin" />
-              <span>Ghi nhớ đăng nhập</span>
-            </label>
-            <a href="#" class="auth-forgot-link" id="forgotPassLink">Quên mật khẩu?</a>
-          </div>
+ <footer id="footer">
+ <div class="section-inner footer-inner">
+ <div class="footer-brand">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 24 24" fill="currentColor">
+ <ellipse cx="12" cy="16" rx="6" ry="5" />
+ <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+ <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+ </svg>
+ </span>
+ <span class="logo-text">PawnCare</span>
+ </a>
+ <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+ <div class="footer-address">
+ <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+ </div>
+ </div>
+ <div class="footer-column">
+ <h4>Dịch vụ</h4>
+ <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
+ <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
+ <a href="./index.html#services" class="link">Phục hồi chức năng</a>
+ <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
+ </div>
+ <div class="footer-column">
+ <h4>Điều hướng</h4>
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+ <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
+ <a href="./index.html#contact" class="link">Liên hệ đặt lịch</a>
+ </div>
+ <div class="footer-column">
+ <h4>Hỗ trợ khẩn cấp</h4>
+ <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+ <a href="tel:0900123456" class="footer-emergency-pill">
+ <span>🚨</span>
+ <span>0900 123 456</span>
+ </a>
+ <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
+ </div>
+ </div>
+ <div class="footer-copy-wrap">
+ <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+ <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+ </div>
+ </footer>
 
-          <button type="submit" class="auth-submit-btn">ĐĂNG NHẬP NGAY</button>
-        </form>
-      </div>
-    </main>
-
-    <footer id="footer">
-      <div class="section-inner footer-inner">
-        <div class="footer-brand">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <ellipse cx="12" cy="16" rx="6" ry="5" />
-                <ellipse cx="5" cy="9" rx="2.2" ry="3" />
-                <ellipse cx="10" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="14" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="19" cy="9" rx="2.2" ry="3" />
-              </svg>
-            </span>
-            <span class="logo-text">PawnCare</span>
-          </a>
-          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
-          <div class="footer-address">
-            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
-          </div>
-        </div>
-        <div class="footer-column">
-          <h4>Dịch vụ</h4>
-          <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
-          <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
-          <a href="./index.html#services" class="link">Phục hồi chức năng</a>
-          <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
-        </div>
-        <div class="footer-column">
-          <h4>Điều hướng</h4>
-          <a href="./index.html" class="link">Trang chủ</a>
-          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
-          <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
-          <a href="./index.html#contact" class="link">Liên hệ đặt lịch</a>
-        </div>
-        <div class="footer-column">
-          <h4>Hỗ trợ khẩn cấp</h4>
-          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
-          <a href="tel:0900123456" class="footer-emergency-pill">
-            <span>🚨</span>
-            <span>0900 123 456</span>
-          </a>
-          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
-        </div>
-      </div>
-      <div class="footer-copy-wrap">
-        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
-        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
-      </div>
-    </footer>
-
-    <script type="module" src="../js/main.js"></script>
-  </body>
+ <script type="module" src="../js/main.js"></script>
+ </body>
 </html>

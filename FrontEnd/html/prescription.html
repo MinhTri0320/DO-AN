@@ -1,545 +1,527 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/tokens.css" />
-    <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/buttons.css" />
-    <link rel="stylesheet" href="../css/header.css" />
-    <link rel="stylesheet" href="../css/footer.css" />
-    <link rel="stylesheet" href="../css/forms.css" />
-    <link rel="stylesheet" href="../css/profile.css" />
-    <link rel="stylesheet" href="../css/prescription.css" />
-    <link rel="stylesheet" href="../css/auth.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Đơn Thuốc Thú Cưng (Prescription) - PawnCare Đà Nẵng</title>
-  </head>
-  <body>
-    <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
-    <header id="header">
-      <div class="header-pawmily-container">
-        <div class="header-top-row">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
-                <circle cx="23" cy="36" r="13" fill="#B5835A" />
-                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
-                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
-                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
-                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
-                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
-                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
-                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
-                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
-                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
-                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
-                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
-                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
-                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
-              </svg>
-            </span>
-            <span class="logo-text">PAWNCARE</span>
-          </a>
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link
+ href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+ rel="stylesheet"
+ />
+ <link rel="stylesheet" href="../css/tokens.css" />
+ <link rel="stylesheet" href="../css/base.css" />
+ <link rel="stylesheet" href="../css/buttons.css" />
+ <link rel="stylesheet" href="../css/header.css" />
+ <link rel="stylesheet" href="../css/footer.css" />
+ <link rel="stylesheet" href="../css/forms.css" />
+ <link rel="stylesheet" href="../css/profile.css" />
+ <link rel="stylesheet" href="../css/prescription.css" />
+ <link rel="stylesheet" href="../css/auth.css" />
+ <link rel="stylesheet" href="../css/responsive.css" />
+ <title>Đơn Thuốc Thú Cưng - PawnCare Đà Nẵng</title>
+ </head>
+ <body>
+ <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
+ <header id="header">
+ <div class="header-pawmily-container">
+ <div class="header-top-row">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+ <circle cx="23" cy="36" r="13" fill="#B5835A" />
+ <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+ <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+ <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+ <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+ <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+ <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+ <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+ <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+ <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+ <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+ <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+ <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+ <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+ </svg>
+ </span>
+ <span class="logo-text">PAWNCARE</span>
+ </a>
 
-          <div class="header-right-cluster">
-            <div class="lang-switch-pill" role="group" aria-label="Chọn ngôn ngữ">
-              <button type="button" class="lang-btn active" data-lang="vi">VI</button>
-              <button type="button" class="lang-btn" data-lang="en">EN</button>
-            </div>
+ <div class="header-right-cluster">
 
-            <!-- Khối Guest (khi chưa đăng nhập) -->
-            <div class="auth" id="authGuest">
-              <a href="./login.html" class="pill-btn btn-login">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Đăng nhập</span>
-              </a>
-              <a href="./register.html" class="pill-btn btn-signup">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <span>Đăng ký</span>
-              </a>
-            </div>
+ <!-- Khối Guest (khi chưa đăng nhập) -->
+ <div class="auth" id="authGuest">
+ <a href="./login.html" class="pill-btn btn-login">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span>Đăng nhập</span>
+ </a>
+ <a href="./register.html" class="pill-btn btn-signup">
+ <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+ <span>Đăng ký</span>
+ </a>
+ </div>
 
-            <!-- Khối User (khi đã đăng nhập) -->
-            <div class="auth auth-user" id="authUser" hidden>
-              <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                  <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <span class="badge" id="notifBadge" hidden>0</span>
-              </a>
+ <!-- Khối User (khi đã đăng nhập) -->
+ <div class="auth auth-user" id="authUser" hidden>
+ <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+ <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <span class="badge" id="notifBadge" hidden>0</span>
+ </a>
 
-              <div class="user-menu">
-                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
-                  <span id="userInitial">U</span>
-                </button>
-                <div class="dropdown" id="userDropdown" hidden>
-                  <p class="dropdown-name" id="userName">—</p>
-                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
-                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
-                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
-                  <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
-                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
-                </div>
-              </div>
-            </div>
+ <div class="user-menu">
+ <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+ <span id="userInitial">U</span>
+ </button>
+ <div class="dropdown" id="userDropdown" hidden>
+ <p class="dropdown-name" id="userName">—</p>
+ <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+ <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+ <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+ <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+ </div>
+ </div>
+ </div>
 
-            <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
-              <span class="sparkle-icon">✨</span>
-              <span>WELOVEPML20 (-20%)</span>
-            </button>
+ <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
+ <span class="sparkle-icon">✨</span>
+ <span>WELOVEPML20 (-20%)</span>
+ </button>
 
-            <a href="./pet-profile.html" class="header-icon-circle" title="Danh sách bé cưng yêu thích" aria-label="Yêu thích">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M12 20.5s-7.5-4.6-9.3-8.8C1.2 8.2 3.4 4.5 7 4.5c2.1 0 3.8 1.2 5 2.8 1.2-1.6 2.9-2.8 5-2.8 3.6 0 5.8 3.7 4.3 7.2-1.8 4.2-9.3 8.8-9.3 8.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </a>
+ <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </div>
 
-            <a href="./booking.html" class="header-icon-circle white-circle" title="Đặt lịch &amp; Giỏ dịch vụ" aria-label="Giỏ dịch vụ">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M6 7h12l1 13H5L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <span class="header-dot-badge"></span>
-            </a>
+ <div class="header-nav-row">
+ <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
 
-            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
-              <span></span><span></span><span></span>
-            </button>
-          </div>
-        </div>
+ <nav id="menu">
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
+ <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
+ <a href="./booking.html" class="link">Đặt Lịch 📅</a>
+ <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
+ <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
+ <a href="./medical-record.html" class="link active">Dịch Vụ Thú Y 🩺</a>
+ <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
+ <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
+ <a href="./index.html#about" class="link">Về PawnCare</a>
+ <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
+ <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
+ <a href="./index.html#reviews-section" class="link">Đánh giá</a>
+ </nav>
 
-        <div class="header-nav-row">
-          <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
+ <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
+ </div>
+ </div>
+ </header>
 
-          <nav id="menu">
-            <a href="./index.html" class="link">Trang chủ</a>
-            <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
-            <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
-            <a href="./booking.html" class="link">Đặt Lịch 📅</a>
-            <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
-            <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
-            <a href="./medical-record.html" class="link active">Dịch Vụ Thú Y 🩺</a>
-            <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
-            <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
-            <a href="./index.html#about" class="link">Về PawnCare</a>
-            <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
-            <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
-            <a href="./index.html#reviews-section" class="link">Đánh giá</a>
-          </nav>
+ <!-- ===== MAIN CONTENT ===== -->
+ <main class="profile-page" id="prescriptionPage">
+ <div class="section-inner profile-layout">
+ <!-- Sidebar trái -->
+ <aside class="profile-sidebar">
+ <div class="profile-user-card">
+ <div class="profile-avatar-wrap">
+ <div class="profile-avatar" id="sidebarUserInitial">U</div>
+ </div>
+ <h3 id="sidebarUserName">Khách hàng</h3>
+ <p id="sidebarUserPhone">0900 123 456</p>
+ <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
+ </div>
 
-          <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
-        </div>
-      </div>
-    </header>
+ <nav class="profile-nav">
+ <a href="./customer-profile.html" class="profile-nav-link">
+ <span class="nav-icon">👤</span>
+ <span>Hồ sơ khách hàng</span>
+ </a>
+ <a href="./pet-profile.html" class="profile-nav-link">
+ <span class="nav-icon">🐾</span>
+ <span>Hồ sơ thú cưng</span>
+ </a>
+ <a href="./medical-record.html" class="profile-nav-link active">
+ <span class="nav-icon">🩺</span>
+ <span>Hồ sơ y tế &amp; Bệnh án</span>
+ </a>
+ <a href="./booking.html" class="profile-nav-link">
+ <span class="nav-icon">📅</span>
+ <span>Đặt lịch hẹn mới</span>
+ </a>
+ <a href="./booking.html#my-appts" class="profile-nav-link">
+ <span class="nav-icon">📋</span>
+ <span>Lịch hẹn đã đặt</span>
+ </a>
+ <a href="./notifications.html" class="profile-nav-link">
+ <span class="nav-icon">🔔</span>
+ <span>Hộp thư thông báo</span>
+ </a>
+ <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
+ <span class="nav-icon">🚪</span>
+ <span>Đăng xuất</span>
+ </a>
+ </nav>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="profile-page" id="prescriptionPage">
-      <div class="section-inner profile-layout">
-        <!-- Sidebar trái -->
-        <aside class="profile-sidebar">
-          <div class="profile-user-card">
-            <div class="profile-avatar-wrap">
-              <div class="profile-avatar" id="sidebarUserInitial">U</div>
-            </div>
-            <h3 id="sidebarUserName">Khách hàng</h3>
-            <p id="sidebarUserPhone">0900 123 456</p>
-            <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
-          </div>
+ <div class="profile-sidebar-help">
+ <strong>Bác sĩ Thú y Trực 24/7</strong>
+ <p>Hỗ trợ khẩn cấp y tế &amp; tư vấn sức khỏe cho thú cưng tại Đà Nẵng: <a href="tel:0900123456">0900 123 456</a>.</p>
+ </div>
+ </aside>
 
-          <nav class="profile-nav">
-            <a href="./customer-profile.html" class="profile-nav-link">
-              <span class="nav-icon">👤</span>
-              <span>Hồ sơ khách hàng</span>
-            </a>
-            <a href="./pet-profile.html" class="profile-nav-link">
-              <span class="nav-icon">🐾</span>
-              <span>Hồ sơ thú cưng</span>
-            </a>
-            <a href="./medical-record.html" class="profile-nav-link active">
-              <span class="nav-icon">🩺</span>
-              <span>Hồ sơ y tế &amp; Bệnh án</span>
-            </a>
-            <a href="./booking.html" class="profile-nav-link">
-              <span class="nav-icon">📅</span>
-              <span>Đặt lịch hẹn mới</span>
-            </a>
-            <a href="./booking.html#my-appts" class="profile-nav-link">
-              <span class="nav-icon">📋</span>
-              <span>Lịch hẹn đã đặt</span>
-            </a>
-            <a href="./notifications.html" class="profile-nav-link">
-              <span class="nav-icon">🔔</span>
-              <span>Hộp thư thông báo</span>
-            </a>
-            <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
-              <span class="nav-icon">🚪</span>
-              <span>Đăng xuất</span>
-            </a>
-          </nav>
+ <!-- Panel phải: Prescription Dashboard -->
+ <section class="profile-main">
+ <!-- Tiêu đề trang -->
+ <div class="profile-header">
+ <div class="profile-header-left">
+ <span class="section-badge">💊 QUẢN LÝ ĐƠN THUỐC &amp; DƯỢC PHẨM</span>
+ <h1>Đơn Thuốc Thú Cưng</h1>
+ <p>Cho phép quản lý thông tin đơn thuốc được kê cho thú cưng trong quá trình điều trị. Người dùng có thể xem lại các loại thuốc và thông tin liên quan đến đơn thuốc đã được lưu trong hệ thống.</p>
+ </div>
+ </div>
 
-          <div class="profile-sidebar-help">
-            <strong>Bác sĩ Thú y Trực 24/7</strong>
-            <p>Hỗ trợ khẩn cấp y tế &amp; tư vấn sức khỏe cho thú cưng tại Đà Nẵng: <a href="tel:0900123456">0900 123 456</a>.</p>
-          </div>
-        </aside>
+ <!-- THANH ĐIỀU HƯỚNG GIỮA 5 CHỨC NĂNG Y TẾ (SPRINT 3) -->
+ <div class="medical-feature-nav-tabs">
+ <a href="./medical-record.html" class="medical-nav-tab-item">
+ <span>📋</span>
+ <span>1. Hồ sơ bệnh án</span>
+ </a>
+ <a href="./pet-medical-history.html" class="medical-nav-tab-item">
+ <span>⏱️</span>
+ <span>2. Lịch sử bệnh</span>
+ </a>
+ <a href="./diagnosis.html" class="medical-nav-tab-item">
+ <span>🔬</span>
+ <span>3. Kết quả chẩn đoán</span>
+ </a>
+ <a href="./re-examination-history.html" class="medical-nav-tab-item">
+ <span>🔄</span>
+ <span>4. Lịch sử tái khám</span>
+ </a>
+ <a href="./prescription.html" class="medical-nav-tab-item active">
+ <span>💊</span>
+ <span>5. Đơn thuốc</span>
+ </a>
+ </div>
 
-        <!-- Panel phải: Prescription Dashboard -->
-        <section class="profile-main">
-          <!-- Tiêu đề trang -->
-          <div class="profile-header">
-            <div class="profile-header-left">
-              <span class="section-badge">💊 QUẢN LÝ ĐƠN THUỐC &amp; DƯỢC PHẨM</span>
-              <h1>Đơn Thuốc Thú Cưng (Prescription)</h1>
-              <p>Cho phép quản lý thông tin đơn thuốc được kê cho thú cưng trong quá trình điều trị. Người dùng có thể xem lại các loại thuốc và thông tin liên quan đến đơn thuốc đã được lưu trong hệ thống.</p>
-            </div>
-          </div>
+ <!-- 1. THANH CHỌN THÚ CƯNG (PET SWITCHER) -->
+ <div class="pet-switch-strip">
+ <div class="pet-switch-header">
+ <div class="pet-switch-title">
+ <span>🐾</span>
+ <span>Chọn thú cưng theo dõi đơn thuốc:</span>
+ </div>
+ <a href="./pet-profile.html" style="font-size:12.5px; color:var(--accent); text-decoration:underline; font-weight:700;">+ Quản lý thú cưng</a>
+ </div>
+ <div class="pet-switch-list" id="petSwitchList">
+ <!-- JS nạp danh sách thú cưng -->
+ </div>
+ </div>
 
-          <!-- THANH ĐIỀU HƯỚNG GIỮA 5 CHỨC NĂNG Y TẾ (SPRINT 3) -->
-          <div class="medical-feature-nav-tabs">
-            <a href="./medical-record.html" class="medical-nav-tab-item">
-              <span>📋</span>
-              <span>1. Hồ sơ bệnh án</span>
-            </a>
-            <a href="./pet-medical-history.html" class="medical-nav-tab-item">
-              <span>⏱️</span>
-              <span>2. Lịch sử bệnh</span>
-            </a>
-            <a href="./diagnosis.html" class="medical-nav-tab-item">
-              <span>🔬</span>
-              <span>3. Kết quả chẩn đoán</span>
-            </a>
-            <a href="./re-examination-history.html" class="medical-nav-tab-item">
-              <span>🔄</span>
-              <span>4. Lịch sử tái khám</span>
-            </a>
-            <a href="./prescription.html" class="medical-nav-tab-item active">
-              <span>💊</span>
-              <span>5. Đơn thuốc</span>
-            </a>
-          </div>
+ <!-- 2. BẢNG THỐNG KÊ DƯỢC PHẨM NHANH -->
+ <div class="rx-stats-grid">
+ <div class="rx-stat-card">
+ <div class="rx-stat-icon">💊</div>
+ <div class="rx-stat-info">
+ <strong id="statRxTotal">0</strong>
+ <span>Tổng loại thuốc đã kê</span>
+ </div>
+ </div>
+ <div class="rx-stat-card">
+ <div class="rx-stat-icon">🟢</div>
+ <div class="rx-stat-info">
+ <strong id="statRxActive" style="color:var(--sage-green);">0</strong>
+ <span>Thuốc đang sử dụng</span>
+ </div>
+ </div>
+ <div class="rx-stat-card">
+ <div class="rx-stat-icon">⏰</div>
+ <div class="rx-stat-info">
+ <strong id="statRxDosesToday" style="color:var(--espresso);">0 cữ</strong>
+ <span>Cữ thuốc hôm nay</span>
+ </div>
+ </div>
+ <div class="rx-stat-card">
+ <div class="rx-stat-icon">⚠️</div>
+ <div class="rx-stat-info">
+ <strong id="statRxAllergyNotice" style="font-size:13.5px; color:#C95A34;">Không dị ứng</strong>
+ <span>Tiền sử mẫn cảm thuốc</span>
+ </div>
+ </div>
+ </div>
 
-          <!-- 1. THANH CHỌN THÚ CƯNG (PET SWITCHER) -->
-          <div class="pet-switch-strip">
-            <div class="pet-switch-header">
-              <div class="pet-switch-title">
-                <span>🐾</span>
-                <span>Chọn thú cưng theo dõi đơn thuốc:</span>
-              </div>
-              <a href="./pet-profile.html" style="font-size:12.5px; color:var(--accent); text-decoration:underline; font-weight:700;">+ Quản lý thú cưng</a>
-            </div>
-            <div class="pet-switch-list" id="petSwitchList">
-              <!-- JS nạp danh sách thú cưng -->
-            </div>
-          </div>
+ <!-- 3. TIỆN ÍCH LỊCH NHẮC UỐNG THUỐC TRONG NGÀY (DAILY MEDICATION REMINDER) -->
+ <div class="rx-daily-schedule-card" id="rxDailyScheduleCard">
+ <div class="rx-daily-header">
+ <div class="rx-daily-title">
+ <span>⏰</span>
+ <h3>Lịch Nhắc Cho Bé Uống Thuốc Hôm Nay</h3>
+ </div>
+ <span class="rx-daily-date" id="rxDailyDateText">Hôm nay</span>
+ </div>
 
-          <!-- 2. BẢNG THỐNG KÊ DƯỢC PHẨM NHANH -->
-          <div class="rx-stats-grid">
-            <div class="rx-stat-card">
-              <div class="rx-stat-icon">💊</div>
-              <div class="rx-stat-info">
-                <strong id="statRxTotal">0</strong>
-                <span>Tổng loại thuốc đã kê</span>
-              </div>
-            </div>
-            <div class="rx-stat-card">
-              <div class="rx-stat-icon">🟢</div>
-              <div class="rx-stat-info">
-                <strong id="statRxActive" style="color:var(--sage-green);">0</strong>
-                <span>Thuốc đang sử dụng</span>
-              </div>
-            </div>
-            <div class="rx-stat-card">
-              <div class="rx-stat-icon">⏰</div>
-              <div class="rx-stat-info">
-                <strong id="statRxDosesToday" style="color:var(--espresso);">0 cữ</strong>
-                <span>Cữ thuốc hôm nay</span>
-              </div>
-            </div>
-            <div class="rx-stat-card">
-              <div class="rx-stat-icon">⚠️</div>
-              <div class="rx-stat-info">
-                <strong id="statRxAllergyNotice" style="font-size:13.5px; color:#C95A34;">Không dị ứng</strong>
-                <span>Tiền sử mẫn cảm thuốc</span>
-              </div>
-            </div>
-          </div>
+ <div class="rx-doses-grid" id="rxDosesGrid">
+ <!-- JS nạp 3 cột: Cữ Sáng, Cữ Chiều, Cữ Tối -->
+ </div>
+ </div>
 
-          <!-- 3. TIỆN ÍCH LỊCH NHẮC UỐNG THUỐC TRONG NGÀY (DAILY MEDICATION REMINDER) -->
-          <div class="rx-daily-schedule-card" id="rxDailyScheduleCard">
-            <div class="rx-daily-header">
-              <div class="rx-daily-title">
-                <span>⏰</span>
-                <h3>Lịch Nhắc Cho Bé Uống Thuốc Hôm Nay</h3>
-              </div>
-              <span class="rx-daily-date" id="rxDailyDateText">Hôm nay</span>
-            </div>
+ <!-- 4. CONTROLS VÀ TÌM KIẾM ĐƠN THUỐC -->
+ <div class="rx-controls-bar">
+ <div class="rx-search-wrap">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+ <circle cx="11" cy="11" r="8"></circle>
+ <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+ </svg>
+ <input
+ type="text"
+ id="rxSearchInput"
+ class="rx-search-input"
+ placeholder="Tìm kiếm theo tên thuốc, hoạt chất, dạng bào chế, bác sĩ kê..."
+ />
+ </div>
 
-            <div class="rx-doses-grid" id="rxDosesGrid">
-              <!-- JS nạp 3 cột: Cữ Sáng, Cữ Chiều, Cữ Tối -->
-            </div>
-          </div>
+ <div class="rx-filter-group">
+ <select id="rxStatusFilter" class="rx-filter-select">
+ <option value="all">Tất cả trạng thái</option>
+ <option value="Đang sử dụng">Đang sử dụng</option>
+ <option value="Đã hoàn thành">Đã hoàn thành</option>
+ <option value="Định kỳ">Định kỳ</option>
+ </select>
 
-          <!-- 4. CONTROLS VÀ TÌM KIẾM ĐƠN THUỐC -->
-          <div class="rx-controls-bar">
-            <div class="rx-search-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input
-                type="text"
-                id="rxSearchInput"
-                class="rx-search-input"
-                placeholder="Tìm kiếm theo tên thuốc, hoạt chất, dạng bào chế, bác sĩ kê..."
-              />
-            </div>
+ <button type="button" class="btn-cta btn-cta-outline" id="btnOpenPrintAllRx">
+ <span>🖨️</span>
+ <span>In Toàn Bộ Đơn</span>
+ </button>
 
-            <div class="rx-filter-group">
-              <select id="rxStatusFilter" class="rx-filter-select">
-                <option value="all">Tất cả trạng thái</option>
-                <option value="Đang sử dụng">Đang sử dụng</option>
-                <option value="Đã hoàn thành">Đã hoàn thành</option>
-                <option value="Định kỳ">Định kỳ</option>
-              </select>
+ <button type="button" class="btn-cta" id="btnOpenAddRxModal">
+ <span>➕</span>
+ <span>Thêm Thuốc Mới</span>
+ </button>
+ </div>
+ </div>
 
-              <button type="button" class="btn-cta btn-cta-outline" id="btnOpenPrintAllRx">
-                <span>🖨️</span>
-                <span>In Toàn Bộ Đơn</span>
-              </button>
+ <!-- 5. DANH SÁCH CÁC LOẠI THUỐC ĐƯỢC KÊ -->
+ <div class="prescription-list-container" id="prescriptionListContainer">
+ <!-- JS nạp danh sách các thẻ thuốc chuẩn Pawmily -->
+ </div>
+ </section>
+ </div>
+ </main>
 
-              <button type="button" class="btn-cta" id="btnOpenAddRxModal">
-                <span>➕</span>
-                <span>Thêm Thuốc Mới</span>
-              </button>
-            </div>
-          </div>
+ <!-- ===== MODAL: THÊM / CẬP NHẬT ĐƠN THUỐC ===== -->
+ <div class="modal-overlay" id="rxModal" hidden>
+ <div class="modal-card modal-large">
+ <button class="modal-close" id="btnRxModalClose" aria-label="Đóng">✕</button>
+ <h3 id="modalRxTitle">Thêm Đơn Thuốc Mới</h3>
 
-          <!-- 5. DANH SÁCH CÁC LOẠI THUỐC ĐƯỢC KÊ -->
-          <div class="prescription-list-container" id="prescriptionListContainer">
-            <!-- JS nạp danh sách các thẻ thuốc chuẩn Pawmily -->
-          </div>
-        </section>
-      </div>
-    </main>
+ <form id="rxForm" class="form">
+ <input type="hidden" name="modalRxId" />
 
-    <!-- ===== MODAL: THÊM / CẬP NHẬT ĐƠN THUỐC ===== -->
-    <div class="modal-overlay" id="rxModal" hidden>
-      <div class="modal-card modal-large">
-        <button class="modal-close" id="btnRxModalClose" aria-label="Đóng">✕</button>
-        <h3 id="modalRxTitle">Thêm Đơn Thuốc Mới</h3>
+ <div class="section-subtitle-bar">
+ <span>💊</span>
+ <span>1. Định danh &amp; Phân loại thuốc</span>
+ </div>
 
-        <form id="rxForm" class="form">
-          <input type="hidden" name="modalRxId" />
+ <div class="form-grid-2">
+ <label>
+ <span>Tên biệt dược / Thuốc <strong style="color:var(--danger)">*</strong></span>
+ <input type="text" name="modalRxName" placeholder="VD: Cefalexin 250mg, Enterogermina..." required />
+ </label>
 
-          <div class="section-subtitle-bar">
-            <span>💊</span>
-            <span>1. Định danh &amp; Phân loại thuốc</span>
-          </div>
+ <label>
+ <span>Hoạt chất chính <strong style="color:var(--danger)">*</strong></span>
+ <input type="text" name="modalRxActive" placeholder="VD: Cephalosporin, Bacillus clausii..." required />
+ </label>
+ </div>
 
-          <div class="form-grid-2">
-            <label>
-              <span>Tên biệt dược / Thuốc <strong style="color:var(--danger)">*</strong></span>
-              <input type="text" name="modalRxName" placeholder="VD: Cefalexin 250mg, Enterogermina..." required />
-            </label>
+ <div class="form-grid-3">
+ <label>
+ <span>Phân loại dược lý</span>
+ <select name="modalRxCategory">
+ <option value="Kháng sinh đường uống">Kháng sinh đường uống</option>
+ <option value="Kháng viêm & giảm đau">Kháng viêm &amp; giảm đau</option>
+ <option value="Men vi sinh tiêu hóa">Men vi sinh tiêu hóa</option>
+ <option value="Dược phẩm ngoài da">Dược phẩm ngoài da</option>
+ <option value="Thuốc nhỏ mắt / tai">Thuốc nhỏ mắt / tai</option>
+ <option value="Phòng ngừa ký sinh trùng">Phòng ngừa ký sinh trùng</option>
+ <option value="Dinh dưỡng & Bổ trợ">Dinh dưỡng &amp; Bổ trợ</option>
+ </select>
+ </label>
 
-            <label>
-              <span>Hoạt chất chính (Active ingredient) <strong style="color:var(--danger)">*</strong></span>
-              <input type="text" name="modalRxActive" placeholder="VD: Cephalosporin, Bacillus clausii..." required />
-            </label>
-          </div>
+ <label>
+ <span>Dạng bào chế</span>
+ <input type="text" name="modalRxForm" placeholder="VD: Viên nén, Siro, Gói bột..." />
+ </label>
 
-          <div class="form-grid-3">
-            <label>
-              <span>Phân loại dược lý</span>
-              <select name="modalRxCategory">
-                <option value="Kháng sinh đường uống">Kháng sinh đường uống</option>
-                <option value="Kháng viêm & giảm đau">Kháng viêm &amp; giảm đau</option>
-                <option value="Men vi sinh tiêu hóa">Men vi sinh tiêu hóa</option>
-                <option value="Dược phẩm ngoài da">Dược phẩm ngoài da</option>
-                <option value="Thuốc nhỏ mắt / tai">Thuốc nhỏ mắt / tai</option>
-                <option value="Phòng ngừa ký sinh trùng">Phòng ngừa ký sinh trùng</option>
-                <option value="Dinh dưỡng & Bổ trợ">Dinh dưỡng &amp; Bổ trợ</option>
-              </select>
-            </label>
+ <label>
+ <span>Trạng thái sử dụng</span>
+ <select name="modalRxStatus">
+ <option value="Đang sử dụng">Đang sử dụng</option>
+ <option value="Đã hoàn thành">Đã hoàn thành</option>
+ <option value="Định kỳ">Định kỳ</option>
+ </select>
+ </label>
+ </div>
 
-            <label>
-              <span>Dạng bào chế</span>
-              <input type="text" name="modalRxForm" placeholder="VD: Viên nén, Siro, Gói bột..." />
-            </label>
+ <div class="section-subtitle-bar">
+ <span>⏱️</span>
+ <span>2. Liều dùng &amp; Khung giờ sử dụng</span>
+ </div>
 
-            <label>
-              <span>Trạng thái sử dụng</span>
-              <select name="modalRxStatus">
-                <option value="Đang sử dụng">Đang sử dụng</option>
-                <option value="Đã hoàn thành">Đã hoàn thành</option>
-                <option value="Định kỳ">Định kỳ</option>
-              </select>
-            </label>
-          </div>
+ <div class="form-grid-2">
+ <label>
+ <span>Liều lượng &amp; Số lần uống <strong style="color:var(--danger)">*</strong></span>
+ <input type="text" name="modalRxDosage" placeholder="VD: 1 viên x 2 lần/ngày" required />
+ </label>
 
-          <div class="section-subtitle-bar">
-            <span>⏱️</span>
-            <span>2. Liều dùng &amp; Khung giờ sử dụng</span>
-          </div>
+ <label>
+ <span>Thời điểm dùng thuốc</span>
+ <input type="text" name="modalRxTiming" placeholder="VD: Sau khi ăn no 15 phút, trước ăn..." />
+ </label>
+ </div>
 
-          <div class="form-grid-2">
-            <label>
-              <span>Liều lượng &amp; Số lần uống <strong style="color:var(--danger)">*</strong></span>
-              <input type="text" name="modalRxDosage" placeholder="VD: 1 viên x 2 lần/ngày" required />
-            </label>
+ <div class="rx-schedule-checkboxes-wrap">
+ <span class="rx-schedule-label">Cữ thuốc trong ngày:</span>
+ <div class="rx-schedule-row">
+ <label class="rx-check-item">
+ <input type="checkbox" name="modalRxMorning" id="modalRxMorning" checked />
+ <span>🌅 Cữ Sáng (07:00 - 09:00)</span>
+ </label>
+ <label class="rx-check-item">
+ <input type="checkbox" name="modalRxAfternoon" id="modalRxAfternoon" />
+ <span>☀️ Cữ Chiều (12:00 - 15:00)</span>
+ </label>
+ <label class="rx-check-item">
+ <input type="checkbox" name="modalRxEvening" id="modalRxEvening" checked />
+ <span>🌙 Cữ Tối (19:00 - 21:00)</span>
+ </label>
+ </div>
+ </div>
 
-            <label>
-              <span>Thời điểm dùng thuốc</span>
-              <input type="text" name="modalRxTiming" placeholder="VD: Sau khi ăn no 15 phút, trước ăn..." />
-            </label>
-          </div>
+ <div class="form-grid-2" style="margin-top:14px;">
+ <label>
+ <span>Thời gian đợt thuốc</span>
+ <input type="text" name="modalRxDuration" placeholder="VD: 7 ngày (15/10 - 22/10/2026)" />
+ </label>
 
-          <div class="rx-schedule-checkboxes-wrap">
-            <span class="rx-schedule-label">Cữ thuốc trong ngày:</span>
-            <div class="rx-schedule-row">
-              <label class="rx-check-item">
-                <input type="checkbox" name="modalRxMorning" id="modalRxMorning" checked />
-                <span>🌅 Cữ Sáng (07:00 - 09:00)</span>
-              </label>
-              <label class="rx-check-item">
-                <input type="checkbox" name="modalRxAfternoon" id="modalRxAfternoon" />
-                <span>☀️ Cữ Chiều (12:00 - 15:00)</span>
-              </label>
-              <label class="rx-check-item">
-                <input type="checkbox" name="modalRxEvening" id="modalRxEvening" checked />
-                <span>🌙 Cữ Tối (19:00 - 21:00)</span>
-              </label>
-            </div>
-          </div>
+ <label>
+ <span>Bác sĩ kê đơn</span>
+ <input type="text" name="modalRxPrescribedBy" placeholder="VD: BS. CKI. Nguyễn Văn Hùng" />
+ </label>
+ </div>
 
-          <div class="form-grid-2" style="margin-top:14px;">
-            <label>
-              <span>Thời gian đợt thuốc</span>
-              <input type="text" name="modalRxDuration" placeholder="VD: 7 ngày (15/10 - 22/10/2026)" />
-            </label>
+ <label>
+ <span>Đợt bệnh án liên quan:</span>
+ <input type="text" name="modalRxDiseaseTitle" placeholder="VD: Viêm da dị ứng tiếp xúc & Nhiễm nấm Malassezia" />
+ </label>
 
-            <label>
-              <span>Bác sĩ kê đơn</span>
-              <input type="text" name="modalRxPrescribedBy" placeholder="VD: BS. CKI. Nguyễn Văn Hùng" />
-            </label>
-          </div>
+ <label>
+ <span>Hướng dẫn &amp; Lưu ý khi cho bé dùng:</span>
+ <textarea name="modalRxNotes" rows="2" placeholder="VD: Cho uống đủ liều đúng ngày, không tự ý ngưng khi thấy đỡ..."></textarea>
+ </label>
 
-          <label>
-            <span>Đợt bệnh án liên quan:</span>
-            <input type="text" name="modalRxDiseaseTitle" placeholder="VD: Viêm da dị ứng tiếp xúc & Nhiễm nấm Malassezia" />
-          </label>
+ <label>
+ <span>Cảnh báo chống chỉ định &amp; Tác dụng phụ:</span>
+ <textarea name="modalRxWarnings" rows="2" placeholder="VD: Không dùng cho thú cưng có tiền sử dị ứng Penicillin..."></textarea>
+ </label>
 
-          <label>
-            <span>Hướng dẫn &amp; Lưu ý khi cho bé dùng:</span>
-            <textarea name="modalRxNotes" rows="2" placeholder="VD: Cho uống đủ liều đúng ngày, không tự ý ngưng khi thấy đỡ..."></textarea>
-          </label>
+ <div class="profile-actions" style="margin-top: 24px; padding-top: 20px;">
+ <button type="submit" class="btn-cta">
+ <span>💾</span>
+ <span>Lưu Đơn Thuốc</span>
+ </button>
+ <button type="button" class="btn-cta btn-cta-outline" id="btnCancelRxModal">
+ <span>Hủy bỏ</span>
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
 
-          <label>
-            <span>Cảnh báo chống chỉ định &amp; Tác dụng phụ:</span>
-            <textarea name="modalRxWarnings" rows="2" placeholder="VD: Không dùng cho thú cưng có tiền sử dị ứng Penicillin..."></textarea>
-          </label>
+ <!-- ===== MODAL: IN ĐƠN THUỐC Y KHOA ===== -->
+ <div class="modal-overlay" id="printRxModal" hidden>
+ <div class="modal-card modal-large">
+ <button class="modal-close" id="btnPrintRxClose" aria-label="Đóng">✕</button>
+ <h3>Đơn Thuốc Y Khoa Thú Cưng</h3>
+ <div id="printRxContent" style="margin-top:16px;">
+ <!-- JS nạp nội dung bản in -->
+ </div>
+ <div class="profile-actions" style="margin-top: 24px; padding-top: 20px;">
+ <button type="button" class="btn-cta" id="btnTriggerPrintRx">
+ <span>🖨️</span>
+ <span>In Đơn Thuốc Ngay</span>
+ </button>
+ <button type="button" class="btn-cta btn-cta-outline" onclick="document.getElementById('printRxModal').hidden=true;">
+ <span>Đóng lại</span>
+ </button>
+ </div>
+ </div>
+ </div>
 
-          <div class="profile-actions" style="margin-top: 24px; padding-top: 20px;">
-            <button type="submit" class="btn-cta">
-              <span>💾</span>
-              <span>Lưu Đơn Thuốc</span>
-            </button>
-            <button type="button" class="btn-cta btn-cta-outline" id="btnCancelRxModal">
-              <span>Hủy bỏ</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+ <!-- ===== FOOTER ===== -->
+ <footer id="footer">
+ <div class="section-inner footer-inner">
+ <div class="footer-brand">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 24 24" fill="currentColor">
+ <ellipse cx="12" cy="16" rx="6" ry="5" />
+ <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+ <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+ </svg>
+ </span>
+ <span class="logo-text">PawnCare</span>
+ </a>
+ <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+ <div class="footer-address">
+ <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+ </div>
+ </div>
+ <div class="footer-column">
+ <h4>Dịch vụ</h4>
+ <a href="./booking.html?service=vet" class="link">Khám &amp; Điều trị Thú y</a>
+ <a href="./booking.html?service=spa" class="link">Spa &amp; Cắt tỉa lông</a>
+ <a href="./booking.html?service=rehab" class="link">Phục hồi chức năng</a>
+ <a href="./booking.html?service=hotel" class="link">Khách sạn thú cưng</a>
+ </div>
+ <div class="footer-column">
+ <h4>Điều hướng</h4>
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./medical-record.html" class="link">Hồ sơ bệnh án điện tử</a>
+ <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="link">Hồ sơ thú cưng</a>
+ <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+ </div>
+ <div class="footer-column">
+ <h4>Hỗ trợ khẩn cấp</h4>
+ <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+ <a href="tel:0900123456" class="footer-emergency-pill">
+ <span>🚨</span>
+ <span>0900 123 456</span>
+ </a>
+ <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
+ </div>
+ </div>
+ <div class="footer-copy-wrap">
+ <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+ <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+ </div>
+ </footer>
 
-    <!-- ===== MODAL: IN ĐƠN THUỐC Y KHOA ===== -->
-    <div class="modal-overlay" id="printRxModal" hidden>
-      <div class="modal-card modal-large">
-        <button class="modal-close" id="btnPrintRxClose" aria-label="Đóng">✕</button>
-        <h3>Đơn Thuốc Y Khoa Thú Cưng</h3>
-        <div id="printRxContent" style="margin-top:16px;">
-          <!-- JS nạp nội dung bản in -->
-        </div>
-        <div class="profile-actions" style="margin-top: 24px; padding-top: 20px;">
-          <button type="button" class="btn-cta" id="btnTriggerPrintRx">
-            <span>🖨️</span>
-            <span>In Đơn Thuốc Ngay</span>
-          </button>
-          <button type="button" class="btn-cta btn-cta-outline" onclick="document.getElementById('printRxModal').hidden=true;">
-            <span>Đóng lại</span>
-          </button>
-        </div>
-      </div>
-    </div>
+ <!-- Toast Notice -->
+ <div id="profileToast" class="toast-notice" role="alert"></div>
 
-    <!-- ===== FOOTER ===== -->
-    <footer id="footer">
-      <div class="section-inner footer-inner">
-        <div class="footer-brand">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <ellipse cx="12" cy="16" rx="6" ry="5" />
-                <ellipse cx="5" cy="9" rx="2.2" ry="3" />
-                <ellipse cx="10" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="14" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="19" cy="9" rx="2.2" ry="3" />
-              </svg>
-            </span>
-            <span class="logo-text">PawnCare</span>
-          </a>
-          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
-          <div class="footer-address">
-            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
-          </div>
-        </div>
-        <div class="footer-column">
-          <h4>Dịch vụ</h4>
-          <a href="./booking.html?service=vet" class="link">Khám &amp; Điều trị Thú y</a>
-          <a href="./booking.html?service=spa" class="link">Spa &amp; Cắt tỉa lông</a>
-          <a href="./booking.html?service=rehab" class="link">Phục hồi chức năng</a>
-          <a href="./booking.html?service=hotel" class="link">Khách sạn thú cưng</a>
-        </div>
-        <div class="footer-column">
-          <h4>Điều hướng</h4>
-          <a href="./index.html" class="link">Trang chủ</a>
-          <a href="./medical-record.html" class="link">Hồ sơ bệnh án điện tử</a>
-          <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
-          <a href="./pet-profile.html" class="link">Hồ sơ thú cưng</a>
-          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
-        </div>
-        <div class="footer-column">
-          <h4>Hỗ trợ khẩn cấp</h4>
-          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
-          <a href="tel:0900123456" class="footer-emergency-pill">
-            <span>🚨</span>
-            <span>0900 123 456</span>
-          </a>
-          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
-        </div>
-      </div>
-      <div class="footer-copy-wrap">
-        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
-        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
-      </div>
-    </footer>
-
-    <!-- Toast Notice -->
-    <div id="profileToast" class="toast-notice" role="alert"></div>
-
-    <script type="module" src="../js/main.js"></script>
-  </body>
+ <script type="module" src="../js/main.js"></script>
+ </body>
 </html>

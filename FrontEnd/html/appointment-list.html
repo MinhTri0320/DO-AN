@@ -1,538 +1,520 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/tokens.css" />
-    <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/buttons.css" />
-    <link rel="stylesheet" href="../css/header.css" />
-    <link rel="stylesheet" href="../css/footer.css" />
-    <link rel="stylesheet" href="../css/forms.css" />
-    <link rel="stylesheet" href="../css/booking.css" />
-    <link rel="stylesheet" href="../css/auth.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Danh Sách Lịch Hẹn (Appointment List) - PawnCare Đà Nẵng</title>
-  </head>
-  <body>
-    <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
-    <header id="header">
-      <div class="header-pawmily-container">
-        <div class="header-top-row">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
-                <circle cx="23" cy="36" r="13" fill="#B5835A" />
-                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
-                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
-                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
-                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
-                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
-                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
-                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
-                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
-                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
-                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
-                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
-                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
-                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
-              </svg>
-            </span>
-            <span class="logo-text">PAWNCARE</span>
-          </a>
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link
+ href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+ rel="stylesheet"
+ />
+ <link rel="stylesheet" href="../css/tokens.css" />
+ <link rel="stylesheet" href="../css/base.css" />
+ <link rel="stylesheet" href="../css/buttons.css" />
+ <link rel="stylesheet" href="../css/header.css" />
+ <link rel="stylesheet" href="../css/footer.css" />
+ <link rel="stylesheet" href="../css/forms.css" />
+ <link rel="stylesheet" href="../css/booking.css" />
+ <link rel="stylesheet" href="../css/auth.css" />
+ <link rel="stylesheet" href="../css/responsive.css" />
+ <title>Danh Sách Lịch Hẹn - PawnCare Đà Nẵng</title>
+ </head>
+ <body>
+ <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
+ <header id="header">
+ <div class="header-pawmily-container">
+ <div class="header-top-row">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+ <circle cx="23" cy="36" r="13" fill="#B5835A" />
+ <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+ <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+ <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+ <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+ <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+ <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+ <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+ <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+ <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+ <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+ <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+ <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+ <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+ </svg>
+ </span>
+ <span class="logo-text">PAWNCARE</span>
+ </a>
 
-          <div class="header-right-cluster">
-            <div class="lang-switch-pill" role="group" aria-label="Chọn ngôn ngữ">
-              <button type="button" class="lang-btn active" data-lang="vi">VI</button>
-              <button type="button" class="lang-btn" data-lang="en">EN</button>
-            </div>
+ <div class="header-right-cluster">
 
-            <div class="auth" id="authGuest">
-              <a href="./login.html" class="pill-btn btn-login">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Đăng nhập</span>
-              </a>
-              <a href="./register.html" class="pill-btn btn-signup">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <span>Đăng ký</span>
-              </a>
-            </div>
+ <div class="auth" id="authGuest">
+ <a href="./login.html" class="pill-btn btn-login">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span>Đăng nhập</span>
+ </a>
+ <a href="./register.html" class="pill-btn btn-signup">
+ <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+ <span>Đăng ký</span>
+ </a>
+ </div>
 
-            <div class="auth auth-user" id="authUser" hidden>
-              <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                  <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <span class="badge" id="notifBadge" hidden>0</span>
-              </a>
+ <div class="auth auth-user" id="authUser" hidden>
+ <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+ <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <span class="badge" id="notifBadge" hidden>0</span>
+ </a>
 
-              <div class="user-menu">
-                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
-                  <span id="userInitial">U</span>
-                </button>
-                <div class="dropdown" id="userDropdown" hidden>
-                  <p class="dropdown-name" id="userName">—</p>
-                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
-                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
-                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
-                  <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
-                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
-                </div>
-              </div>
-            </div>
+ <div class="user-menu">
+ <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+ <span id="userInitial">U</span>
+ </button>
+ <div class="dropdown" id="userDropdown" hidden>
+ <p class="dropdown-name" id="userName">—</p>
+ <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+ <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+ <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+ <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+ </div>
+ </div>
+ </div>
 
-            <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
-              <span class="sparkle-icon">✨</span>
-              <span>WELOVEPML20 (-20%)</span>
-            </button>
+ <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
+ <span class="sparkle-icon">✨</span>
+ <span>WELOVEPML20 (-20%)</span>
+ </button>
 
-            <a href="./pet-profile.html" class="header-icon-circle" title="Danh sách bé cưng yêu thích" aria-label="Yêu thích">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M12 20.5s-7.5-4.6-9.3-8.8C1.2 8.2 3.4 4.5 7 4.5c2.1 0 3.8 1.2 5 2.8 1.2-1.6 2.9-2.8 5-2.8 3.6 0 5.8 3.7 4.3 7.2-1.8 4.2-9.3 8.8-9.3 8.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </a>
+ <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </div>
 
-            <a href="./booking.html" class="header-icon-circle white-circle" title="Đặt lịch &amp; Giỏ dịch vụ" aria-label="Giỏ dịch vụ">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M6 7h12l1 13H5L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <span class="header-dot-badge"></span>
-            </a>
+ <div class="header-nav-row">
+ <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
 
-            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
-              <span></span><span></span><span></span>
-            </button>
-          </div>
-        </div>
+ <nav id="menu">
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
+ <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
+ <a href="./booking.html" class="link active">Đặt Lịch 📅</a>
+ <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
+ <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
+ <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
+ <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
+ <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
+ <a href="./index.html#about" class="link">Về PawnCare</a>
+ <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
+ <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
+ <a href="./index.html#reviews-section" class="link">Đánh giá</a>
+ </nav>
 
-        <div class="header-nav-row">
-          <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
+ <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
+ </div>
+ </div>
+ </header>
 
-          <nav id="menu">
-            <a href="./index.html" class="link">Trang chủ</a>
-            <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
-            <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
-            <a href="./booking.html" class="link active">Đặt Lịch 📅</a>
-            <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
-            <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
-            <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
-            <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
-            <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
-            <a href="./index.html#about" class="link">Về PawnCare</a>
-            <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
-            <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
-            <a href="./index.html#reviews-section" class="link">Đánh giá</a>
-          </nav>
+ <!-- ===== MAIN BOOKING PAGE ===== -->
+ <main class="booking-page">
+ <div class="section-inner">
+ <!-- Tiêu đề trang -->
+ <div class="booking-header">
+ <span class="section-badge">📋 QUẢN LÝ LỊCH HẸN</span>
+ <h1>Danh Sách Lịch Hẹn Thú Cưng</h1>
+ <p>
+ Theo dõi thời gian, dịch vụ, trạng thái xác nhận và quản lý hủy lịch hẹn của Boss cưng tại PawnCare Đà Nẵng.
+ </p>
+ </div>
 
-          <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
-        </div>
-      </div>
-    </header>
+ <!-- Chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt -->
+ <div class="booking-view-tabs" id="bookingViewTabs">
+ <button type="button" class="booking-tab-btn" id="tabNewBooking">
+ <span>📅</span>
+ <span>Đặt lịch hẹn mới</span>
+ </button>
+ <button type="button" class="booking-tab-btn active" id="tabMyAppointments">
+ <span>📋</span>
+ <span>Lịch hẹn của tôi</span>
+ <span class="booking-tab-badge" id="apptBadgeCount">0</span>
+ </button>
+ </div>
 
-    <!-- ===== MAIN BOOKING PAGE ===== -->
-    <main class="booking-page">
-      <div class="section-inner">
-        <!-- Tiêu đề trang -->
-        <div class="booking-header">
-          <span class="section-badge">📋 QUẢN LÝ LỊCH HẸN</span>
-          <h1>Danh Sách Lịch Hẹn Thú Cưng</h1>
-          <p>
-            Theo dõi thời gian, dịch vụ, trạng thái xác nhận và quản lý hủy lịch hẹn của Boss cưng tại PawnCare Đà Nẵng.
-          </p>
-        </div>
+ <!-- KHỐI 1: FORM ĐẶT LỊCH HẸN (ẨN MẶC ĐỊNH TRÊN TRANG NÀY) -->
+ <div id="viewBookingForm" hidden>
+ <form id="appointmentBookingForm" class="booking-layout">
+ <!-- Cột trái: Các bước đặt lịch -->
+ <div class="booking-steps-wrapper">
+ <!-- BƯỚC 1: CHỌN DỊCH VỤ -->
+ <div class="booking-step-card">
+ <div class="step-card-header">
+ <span class="step-number">1</span>
+ <div class="step-title">
+ <h2>Chọn dịch vụ mong muốn</h2>
+ <p>Dịch vụ chuẩn y khoa và chăm sóc 5 sao tại PawnCare</p>
+ </div>
+ </div>
 
-        <!-- Chuyển đổi: Đặt lịch mới vs Lịch hẹn đã đặt -->
-        <div class="booking-view-tabs" id="bookingViewTabs">
-          <button type="button" class="booking-tab-btn" id="tabNewBooking">
-            <span>📅</span>
-            <span>Đặt lịch hẹn mới</span>
-          </button>
-          <button type="button" class="booking-tab-btn active" id="tabMyAppointments">
-            <span>📋</span>
-            <span>Lịch hẹn của tôi</span>
-            <span class="booking-tab-badge" id="apptBadgeCount">0</span>
-          </button>
-        </div>
+ <div class="booking-services-grid" id="bookingServicesContainer">
+ <!-- JS nạp danh sách dịch vụ -->
+ </div>
+ </div>
 
-        <!-- KHỐI 1: FORM ĐẶT LỊCH HẸN (ẨN MẶC ĐỊNH TRÊN TRANG NÀY) -->
-        <div id="viewBookingForm" hidden>
-          <form id="appointmentBookingForm" class="booking-layout">
-            <!-- Cột trái: Các bước đặt lịch -->
-            <div class="booking-steps-wrapper">
-              <!-- BƯỚC 1: CHỌN DỊCH VỤ -->
-              <div class="booking-step-card">
-                <div class="step-card-header">
-                  <span class="step-number">1</span>
-                  <div class="step-title">
-                    <h2>Chọn dịch vụ mong muốn</h2>
-                    <p>Dịch vụ chuẩn y khoa và chăm sóc 5 sao tại PawnCare</p>
-                  </div>
-                </div>
+ <!-- BƯỚC 2: CHỌN BÉ CƯNG -->
+ <div class="booking-step-card">
+ <div class="step-card-header">
+ <span class="step-number">2</span>
+ <div class="step-title">
+ <h2>Chọn bé cưng tiếp nhận dịch vụ</h2>
+ <p id="petStepSubtitle">Lấy từ hồ sơ thú cưng đã đăng ký của bạn</p>
+ </div>
+ </div>
 
-                <div class="booking-services-grid" id="bookingServicesContainer">
-                  <!-- JS nạp danh sách dịch vụ -->
-                </div>
-              </div>
+ <div id="bookingPetsContainer">
+ <!-- JS nạp danh sách thú cưng từ localStorage hoặc form nhập cho khách -->
+ </div>
+ </div>
 
-              <!-- BƯỚC 2: CHỌN BÉ CƯNG -->
-              <div class="booking-step-card">
-                <div class="step-card-header">
-                  <span class="step-number">2</span>
-                  <div class="step-title">
-                    <h2>Chọn bé cưng tiếp nhận dịch vụ</h2>
-                    <p id="petStepSubtitle">Lấy từ hồ sơ thú cưng đã đăng ký của bạn</p>
-                  </div>
-                </div>
+ <!-- BƯỚC 3: NGÀY & KHUNG GIỜ -->
+ <div class="booking-step-card">
+ <div class="step-card-header">
+ <span class="step-number">3</span>
+ <div class="step-title">
+ <h2>Chọn ngày &amp; khung giờ hẹn</h2>
+ <p>Phòng khám mở cửa 08:00 – 20:30 tất cả các ngày trong tuần</p>
+ </div>
+ </div>
 
-                <div id="bookingPetsContainer">
-                  <!-- JS nạp danh sách thú cưng từ localStorage hoặc form nhập cho khách -->
-                </div>
-              </div>
+ <div class="date-picker-wrap">
+ <label for="bookingDate">
+ <span>Chọn ngày hẹn:</span>
+ </label>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
+ <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <input type="date" id="bookingDate" required />
+ </div>
+ </div>
 
-              <!-- BƯỚC 3: NGÀY & KHUNG GIỜ -->
-              <div class="booking-step-card">
-                <div class="step-card-header">
-                  <span class="step-number">3</span>
-                  <div class="step-title">
-                    <h2>Chọn ngày &amp; khung giờ hẹn</h2>
-                    <p>Phòng khám mở cửa 08:00 – 20:30 tất cả các ngày trong tuần</p>
-                  </div>
-                </div>
+ <div id="timeSlotsContainer">
+ <div class="time-slot-group-title">
+ <span>☀️</span>
+ <span>Buổi sáng (08:30 – 11:30)</span>
+ </div>
+ <div class="time-slots-grid">
+ <label class="time-slot-pill" data-time="08:30">
+ <input type="radio" name="timeOption" value="08:30" checked />
+ <span>08:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="09:30">
+ <input type="radio" name="timeOption" value="09:30" />
+ <span>09:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="10:30">
+ <input type="radio" name="timeOption" value="10:30" />
+ <span>10:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="11:30">
+ <input type="radio" name="timeOption" value="11:30" />
+ <span>11:30</span>
+ </label>
+ </div>
 
-                <div class="date-picker-wrap">
-                  <label for="bookingDate">
-                    <span>Chọn ngày hẹn:</span>
-                  </label>
-                  <div class="input-icon-wrap">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
-                      <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-                    <input type="date" id="bookingDate" required />
-                  </div>
-                </div>
+ <div class="time-slot-group-title" style="margin-top: 20px;">
+ <span>🌤️</span>
+ <span>Buổi chiều &amp; Tối (13:30 – 19:30)</span>
+ </div>
+ <div class="time-slots-grid">
+ <label class="time-slot-pill" data-time="13:30">
+ <input type="radio" name="timeOption" value="13:30" />
+ <span>13:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="14:30">
+ <input type="radio" name="timeOption" value="14:30" />
+ <span>14:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="15:30">
+ <input type="radio" name="timeOption" value="15:30" />
+ <span>15:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="16:30">
+ <input type="radio" name="timeOption" value="16:30" />
+ <span>16:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="17:30">
+ <input type="radio" name="timeOption" value="17:30" />
+ <span>17:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="18:30">
+ <input type="radio" name="timeOption" value="18:30" />
+ <span>18:30</span>
+ </label>
+ <label class="time-slot-pill" data-time="19:30">
+ <input type="radio" name="timeOption" value="19:30" />
+ <span>19:30</span>
+ </label>
+ </div>
 
-                <div id="timeSlotsContainer">
-                  <div class="time-slot-group-title">
-                    <span>☀️</span>
-                    <span>Buổi sáng (08:30 – 11:30)</span>
-                  </div>
-                  <div class="time-slots-grid">
-                    <label class="time-slot-pill" data-time="08:30">
-                      <input type="radio" name="timeOption" value="08:30" checked />
-                      <span>08:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="09:30">
-                      <input type="radio" name="timeOption" value="09:30" />
-                      <span>09:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="10:30">
-                      <input type="radio" name="timeOption" value="10:30" />
-                      <span>10:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="11:30">
-                      <input type="radio" name="timeOption" value="11:30" />
-                      <span>11:30</span>
-                    </label>
-                  </div>
+ <!-- Tự chọn giờ chính xác theo ý muốn của khách -->
+ <div class="custom-time-picker-card">
+ <div class="custom-time-header">
+ <span class="custom-time-icon">⏱️</span>
+ <div class="custom-time-title">
+ <strong>Hoặc tự chọn mốc giờ cụ thể theo lịch trình của bạn:</strong>
+ <p>Khung giờ tiếp nhận: Sáng (08:30 – 11:30) &amp; Chiều tối (13:30 – 19:30)</p>
+ </div>
+ </div>
+ <div class="custom-time-input-row">
+ <div class="input-icon-wrap" style="max-width: 240px;">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+ <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <input type="time" id="customTimeInput" min="08:30" max="19:30" step="300" />
+ </div>
+ <span class="custom-time-hint" id="customTimeHint">💡 Bạn có thể chọn mốc giờ lẻ như 09:15, 10:20, 14:15, 17:45...</span>
+ </div>
+ <p class="custom-time-error" id="customTimeError" hidden></p>
+ </div>
+ </div>
+ </div>
 
-                  <div class="time-slot-group-title" style="margin-top: 20px;">
-                    <span>🌤️</span>
-                    <span>Buổi chiều &amp; Tối (13:30 – 19:30)</span>
-                  </div>
-                  <div class="time-slots-grid">
-                    <label class="time-slot-pill" data-time="13:30">
-                      <input type="radio" name="timeOption" value="13:30" />
-                      <span>13:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="14:30">
-                      <input type="radio" name="timeOption" value="14:30" />
-                      <span>14:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="15:30">
-                      <input type="radio" name="timeOption" value="15:30" />
-                      <span>15:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="16:30">
-                      <input type="radio" name="timeOption" value="16:30" />
-                      <span>16:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="17:30">
-                      <input type="radio" name="timeOption" value="17:30" />
-                      <span>17:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="18:30">
-                      <input type="radio" name="timeOption" value="18:30" />
-                      <span>18:30</span>
-                    </label>
-                    <label class="time-slot-pill" data-time="19:30">
-                      <input type="radio" name="timeOption" value="19:30" />
-                      <span>19:30</span>
-                    </label>
-                  </div>
+ <!-- BƯỚC 4: THÔNG TIN CHỦ NUÔI & GHI CHÚ -->
+ <div class="booking-step-card">
+ <div class="step-card-header">
+ <span class="step-number">4</span>
+ <div class="step-title">
+ <h2>Thông tin liên hệ &amp; ghi chú</h2>
+ <p>PawnCare sẽ gửi tin nhắn xác nhận lịch hẹn đến số điện thoại này</p>
+ </div>
+ </div>
 
-                  <!-- Tự chọn giờ chính xác theo ý muốn của khách -->
-                  <div class="custom-time-picker-card">
-                    <div class="custom-time-header">
-                      <span class="custom-time-icon">⏱️</span>
-                      <div class="custom-time-title">
-                        <strong>Hoặc tự chọn mốc giờ cụ thể theo lịch trình của bạn:</strong>
-                        <p>Khung giờ tiếp nhận: Sáng (08:30 – 11:30) &amp; Chiều tối (13:30 – 19:30)</p>
-                      </div>
-                    </div>
-                    <div class="custom-time-input-row">
-                      <div class="input-icon-wrap" style="max-width: 240px;">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
-                          <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                        </svg>
-                        <input type="time" id="customTimeInput" min="08:30" max="19:30" step="300" />
-                      </div>
-                      <span class="custom-time-hint" id="customTimeHint">💡 Bạn có thể chọn mốc giờ lẻ như 09:15, 10:20, 14:15, 17:45...</span>
-                    </div>
-                    <p class="custom-time-error" id="customTimeError" hidden></p>
-                  </div>
-                </div>
-              </div>
+ <div class="form-grid-2" style="margin-bottom: 16px;">
+ <label>
+ <span>Họ và tên người đặt:</span>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+ <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <input type="text" id="bookingOwnerName" placeholder="Họ và tên của bạn" required />
+ </div>
+ </label>
 
-              <!-- BƯỚC 4: THÔNG TIN CHỦ NUÔI & GHI CHÚ -->
-              <div class="booking-step-card">
-                <div class="step-card-header">
-                  <span class="step-number">4</span>
-                  <div class="step-title">
-                    <h2>Thông tin liên hệ &amp; ghi chú</h2>
-                    <p>PawnCare sẽ gửi tin nhắn xác nhận lịch hẹn đến số điện thoại này</p>
-                  </div>
-                </div>
+ <label>
+ <span>Số điện thoại liên hệ:</span>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ </svg>
+ <input type="tel" id="bookingOwnerPhone" placeholder="Số điện thoại" required />
+ </div>
+ </label>
+ </div>
 
-                <div class="form-grid-2" style="margin-bottom: 16px;">
-                  <label>
-                    <span>Họ và tên người đặt:</span>
-                    <div class="input-icon-wrap">
-                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                      </svg>
-                      <input type="text" id="bookingOwnerName" placeholder="Họ và tên của bạn" required />
-                    </div>
-                  </label>
+ <label>
+ <span>Ghi chú tình trạng của bé (dị ứng, thói quen, triệu chứng nếu có):</span>
+ <div class="input-icon-wrap icon-top">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M4 5h16v11H8l-4 4V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ </svg>
+ <textarea id="bookingNotes" rows="3" placeholder="VD: Bé hơi sợ nước, cần cắt móng nhẹ nhàng; hoặc bé biếng ăn 2 ngày nay..."></textarea>
+ </div>
+ </label>
 
-                  <label>
-                    <span>Số điện thoại liên hệ:</span>
-                    <div class="input-icon-wrap">
-                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                      </svg>
-                      <input type="tel" id="bookingOwnerPhone" placeholder="Số điện thoại" required />
-                    </div>
-                  </label>
-                </div>
+ <div class="clinic-address-notice">
+ <span>📍</span>
+ <div>
+ <strong>Cơ sở tiếp nhận tại Đà Nẵng:</strong>
+ <span> 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+ </div>
+ </div>
+ </div>
+ </div>
 
-                <label>
-                  <span>Ghi chú tình trạng của bé (dị ứng, thói quen, triệu chứng nếu có):</span>
-                  <div class="input-icon-wrap icon-top">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M4 5h16v11H8l-4 4V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                    </svg>
-                    <textarea id="bookingNotes" rows="3" placeholder="VD: Bé hơi sợ nước, cần cắt móng nhẹ nhàng; hoặc bé biếng ăn 2 ngày nay..."></textarea>
-                  </div>
-                </label>
+ <!-- Cột phải: Thẻ Tóm tắt (Sticky Summary) -->
+ <aside class="booking-summary-card">
+ <div class="summary-header">
+ <span>📋</span>
+ <h3>Tóm tắt lịch hẹn</h3>
+ </div>
 
-                <div class="clinic-address-notice">
-                  <span>📍</span>
-                  <div>
-                    <strong>Cơ sở tiếp nhận tại Đà Nẵng:</strong>
-                    <span> 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+ <div class="summary-items-list">
+ <div class="summary-row">
+ <span class="label">🩺 Dịch vụ:</span>
+ <span class="value" id="sumService">Khám thú y</span>
+ </div>
+ <div class="summary-row">
+ <span class="label">🐾 Bé cưng:</span>
+ <span class="value" id="sumPet">Bé Bơ</span>
+ </div>
+ <div class="summary-row">
+ <span class="label">📅 Thời gian:</span>
+ <span class="value" id="sumDateTime">09:30 • Hôm nay</span>
+ </div>
+ <div class="summary-row">
+ <span class="label">📍 Địa điểm:</span>
+ <span class="value" id="sumLocation">PawnCare Hải Châu, ĐN</span>
+ </div>
+ </div>
 
-            <!-- Cột phải: Thẻ Tóm tắt (Sticky Summary) -->
-            <aside class="booking-summary-card">
-              <div class="summary-header">
-                <span>📋</span>
-                <h3>Tóm tắt lịch hẹn</h3>
-              </div>
+ <div class="summary-fee-box">
+ <span class="fee-label">Phí ước tính:</span>
+ <span class="fee-amount" id="sumFee">120.000đ</span>
+ </div>
 
-              <div class="summary-items-list">
-                <div class="summary-row">
-                  <span class="label">🩺 Dịch vụ:</span>
-                  <span class="value" id="sumService">Khám thú y</span>
-                </div>
-                <div class="summary-row">
-                  <span class="label">🐾 Bé cưng:</span>
-                  <span class="value" id="sumPet">Bé Bơ</span>
-                </div>
-                <div class="summary-row">
-                  <span class="label">📅 Thời gian:</span>
-                  <span class="value" id="sumDateTime">09:30 • Hôm nay</span>
-                </div>
-                <div class="summary-row">
-                  <span class="label">📍 Địa điểm:</span>
-                  <span class="value" id="sumLocation">PawnCare Hải Châu, ĐN</span>
-                </div>
-              </div>
+ <button type="submit" class="btn-cta" style="width: 100%;">
+ <span>Xác nhận đặt lịch ngay ➔</span>
+ </button>
 
-              <div class="summary-fee-box">
-                <span class="fee-label">Phí ước tính:</span>
-                <span class="fee-amount" id="sumFee">120.000đ</span>
-              </div>
+ <div class="booking-guarantees">
+ <span>✓ Miễn phí hủy hoặc dời lịch trước 2 giờ</span>
+ <span>✓ Phòng khám đạt chuẩn vô trùng y khoa</span>
+ <span>✓ Bác sĩ thú y túc trực hỗ trợ tận tâm</span>
+ </div>
+ </aside>
+ </form>
+ </div>
 
-              <button type="submit" class="btn-cta" style="width: 100%;">
-                <span>Xác nhận đặt lịch ngay ➔</span>
-              </button>
+ <!-- KHỐI 2: XEM DANH SÁCH LỊCH HẸN ĐÃ ĐẶT (MY APPOINTMENTS - HIỂN THỊ CHÍNH) -->
+ <div id="viewMyAppointments" class="my-appointments-wrapper">
+ <div class="appointments-filter-bar">
+ <div>
+ <h2>Lịch hẹn của bạn tại PawnCare Đà Nẵng</h2>
+ <div class="appointment-filter-tags" id="apptStatusFilters">
+ <button type="button" class="appt-filter-btn active" data-filter="all">Tất cả</button>
+ <button type="button" class="appt-filter-btn" data-filter="pending">Chờ xác nhận</button>
+ <button type="button" class="appt-filter-btn" data-filter="confirmed">Đã xác nhận</button>
+ <button type="button" class="appt-filter-btn" data-filter="cancelled">Đã hủy</button>
+ </div>
+ </div>
+ <button class="btn-cta btn-cta-outline" id="btnBookAnotherAppt" type="button" onclick="document.getElementById('tabNewBooking').click();">
+ <span>+ Đặt thêm lịch mới</span>
+ </button>
+ </div>
 
-              <div class="booking-guarantees">
-                <span>✓ Miễn phí hủy hoặc dời lịch trước 2 giờ</span>
-                <span>✓ Phòng khám đạt chuẩn vô trùng y khoa</span>
-                <span>✓ Bác sĩ thú y túc trực hỗ trợ tận tâm</span>
-              </div>
-            </aside>
-          </form>
-        </div>
+ <div class="appointment-cards-list" id="appointmentCardsList"></div>
 
-        <!-- KHỐI 2: XEM DANH SÁCH LỊCH HẸN ĐÃ ĐẶT (MY APPOINTMENTS - HIỂN THỊ CHÍNH) -->
-        <div id="viewMyAppointments" class="my-appointments-wrapper">
-          <div class="appointments-filter-bar">
-            <div>
-              <h2>Lịch hẹn của bạn tại PawnCare Đà Nẵng</h2>
-              <div class="appointment-filter-tags" id="apptStatusFilters">
-                <button type="button" class="appt-filter-btn active" data-filter="all">Tất cả</button>
-                <button type="button" class="appt-filter-btn" data-filter="pending">Chờ xác nhận</button>
-                <button type="button" class="appt-filter-btn" data-filter="confirmed">Đã xác nhận</button>
-                <button type="button" class="appt-filter-btn" data-filter="cancelled">Đã hủy</button>
-              </div>
-            </div>
-            <button class="btn-cta btn-cta-outline" id="btnBookAnotherAppt" type="button" onclick="document.getElementById('tabNewBooking').click();">
-              <span>+ Đặt thêm lịch mới</span>
-            </button>
-          </div>
+ <div class="empty-appointments-box" id="emptyAppointmentsBox" hidden>
+ <div class="empty-appointments-icon">📅</div>
+ <h3>Bạn chưa có lịch hẹn nào</h3>
+ <p>Hãy đặt lịch hẹn thăm khám, spa hoặc khách sạn cho bé cưng của bạn ngay hôm nay!</p>
+ <button class="btn-cta" id="btnBookFirstAppt" type="button">
+ <span>Đặt lịch hẹn ngay ➔</span>
+ </button>
+ </div>
 
-          <div class="appointment-cards-list" id="appointmentCardsList"></div>
+ <!-- Màn hình nhắc đăng nhập khi khách vãng lai cố mở tab lịch hẹn -->
+ <div class="guest-auth-prompt-box" id="guestAuthPromptBox" hidden>
+ <div class="guest-auth-icon">🔒</div>
+ <h3>Vui lòng đăng nhập tài khoản</h3>
+ <p>
+ Chức năng theo dõi và quản lý lịch hẹn yêu cầu đăng nhập để bảo mật thông tin thú cưng và đồng bộ dữ liệu của bạn.
+ </p>
+ <div class="guest-auth-actions">
+ <a href="./login.html" class="pill-btn btn-login">Đăng nhập ngay</a>
+ <a href="./register.html" class="pill-btn btn-signup">Đăng ký tài khoản</a>
+ </div>
+ </div>
+ </div>
+ </div>
+ </main>
 
-          <div class="empty-appointments-box" id="emptyAppointmentsBox" hidden>
-            <div class="empty-appointments-icon">📅</div>
-            <h3>Bạn chưa có lịch hẹn nào</h3>
-            <p>Hãy đặt lịch hẹn thăm khám, spa hoặc khách sạn cho bé cưng của bạn ngay hôm nay!</p>
-            <button class="btn-cta" id="btnBookFirstAppt" type="button">
-              <span>Đặt lịch hẹn ngay ➔</span>
-            </button>
-          </div>
+ <!-- ===== MODAL THÀNH CÔNG ===== -->
+ <div class="modal-overlay" id="bookingSuccessModal" hidden>
+ <div class="modal-card booking-success-card">
+ <button class="modal-close" id="bookingSuccessClose" aria-label="Đóng">✕</button>
+ <div class="success-badge-icon">🎉</div>
+ <h3>Đặt Lịch Hẹn Thành Công!</h3>
+ <p style="color:var(--ink-soft); font-size:14.5px; margin-bottom:12px;">
+ Yêu cầu đặt lịch của bạn đã được chuyển đến chuyên viên PawnCare Đà Nẵng.
+ </p>
 
-          <!-- Màn hình nhắc đăng nhập khi khách vãng lai cố mở tab lịch hẹn -->
-          <div class="guest-auth-prompt-box" id="guestAuthPromptBox" hidden>
-            <div class="guest-auth-icon">🔒</div>
-            <h3>Vui lòng đăng nhập tài khoản</h3>
-            <p>
-              Chức năng theo dõi và quản lý lịch hẹn yêu cầu đăng nhập để bảo mật thông tin thú cưng và đồng bộ dữ liệu của bạn.
-            </p>
-            <div class="guest-auth-actions">
-              <a href="./login.html" class="pill-btn btn-login">Đăng nhập ngay</a>
-              <a href="./register.html" class="pill-btn btn-signup">Đăng ký tài khoản</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+ <span class="booking-id-pill" id="successBookingId">Mã: PC-202610-8821</span>
 
-    <!-- ===== MODAL THÀNH CÔNG ===== -->
-    <div class="modal-overlay" id="bookingSuccessModal" hidden>
-      <div class="modal-card booking-success-card">
-        <button class="modal-close" id="bookingSuccessClose" aria-label="Đóng">✕</button>
-        <div class="success-badge-icon">🎉</div>
-        <h3>Đặt Lịch Hẹn Thành Công!</h3>
-        <p style="color:var(--ink-soft); font-size:14.5px; margin-bottom:12px;">
-          Yêu cầu đặt lịch của bạn đã được chuyển đến chuyên viên PawnCare Đà Nẵng.
-        </p>
+ <div class="booking-recap-box">
+ <div><strong>Dịch vụ:</strong> <span id="successRecapService">Khám &amp; Điều trị Thú y</span></div>
+ <div><strong>Bé cưng:</strong> <span id="successRecapPet">Bé Bơ</span></div>
+ <div><strong>Thời gian:</strong> <span id="successRecapTime">09:30 ngày 08/10/2026</span></div>
+ <div><strong>Địa điểm:</strong> <span>123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span></div>
+ </div>
 
-        <span class="booking-id-pill" id="successBookingId">Mã: PC-202610-8821</span>
+ <div style="display:flex; flex-direction:column; gap:10px;">
+ <button type="button" class="btn-cta" id="btnViewMyAppts">
+ <span>Xem lịch hẹn của tôi ➔</span>
+ </button>
+ <a href="./index.html" class="btn-cta btn-cta-outline">Về trang chủ</a>
+ </div>
+ </div>
+ </div>
 
-        <div class="booking-recap-box">
-          <div><strong>Dịch vụ:</strong> <span id="successRecapService">Khám &amp; Điều trị Thú y</span></div>
-          <div><strong>Bé cưng:</strong> <span id="successRecapPet">Bé Bơ</span></div>
-          <div><strong>Thời gian:</strong> <span id="successRecapTime">09:30 ngày 08/10/2026</span></div>
-          <div><strong>Địa điểm:</strong> <span>123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span></div>
-        </div>
+ <!-- ===== FOOTER ===== -->
+ <footer id="footer">
+ <div class="section-inner footer-inner">
+ <div class="footer-brand">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 24 24" fill="currentColor">
+ <ellipse cx="12" cy="16" rx="6" ry="5" />
+ <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+ <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+ </svg>
+ </span>
+ <span class="logo-text">PawnCare</span>
+ </a>
+ <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+ <div class="footer-address">
+ <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+ </div>
+ </div>
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <button type="button" class="btn-cta" id="btnViewMyAppts">
-            <span>Xem lịch hẹn của tôi ➔</span>
-          </button>
-          <a href="./index.html" class="btn-cta btn-cta-outline">Về trang chủ</a>
-        </div>
-      </div>
-    </div>
+ <div class="footer-column">
+ <h4>Dịch vụ</h4>
+ <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
+ <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
+ <a href="./index.html#services" class="link">Phục hồi chức năng</a>
+ <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
+ </div>
 
-    <!-- ===== FOOTER ===== -->
-    <footer id="footer">
-      <div class="section-inner footer-inner">
-        <div class="footer-brand">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <ellipse cx="12" cy="16" rx="6" ry="5" />
-                <ellipse cx="5" cy="9" rx="2.2" ry="3" />
-                <ellipse cx="10" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="14" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="19" cy="9" rx="2.2" ry="3" />
-              </svg>
-            </span>
-            <span class="logo-text">PawnCare</span>
-          </a>
-          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
-          <div class="footer-address">
-            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
-          </div>
-        </div>
+ <div class="footer-column">
+ <h4>Điều hướng</h4>
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./booking.html" class="link">Đặt lịch hẹn</a>
+ <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+ <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
+ <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
+ </div>
 
-        <div class="footer-column">
-          <h4>Dịch vụ</h4>
-          <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
-          <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
-          <a href="./index.html#services" class="link">Phục hồi chức năng</a>
-          <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
-        </div>
+ <div class="footer-column">
+ <h4>Hỗ trợ khẩn cấp</h4>
+ <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+ <a href="tel:0900123456" class="footer-emergency-pill">
+ <span>🚨</span>
+ <span>0900 123 456</span>
+ </a>
+ <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
+ </div>
+ </div>
 
-        <div class="footer-column">
-          <h4>Điều hướng</h4>
-          <a href="./index.html" class="link">Trang chủ</a>
-          <a href="./booking.html" class="link">Đặt lịch hẹn</a>
-          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
-          <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
-          <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
-        </div>
+ <div class="footer-copy-wrap">
+ <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+ <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+ </div>
+ </footer>
 
-        <div class="footer-column">
-          <h4>Hỗ trợ khẩn cấp</h4>
-          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
-          <a href="tel:0900123456" class="footer-emergency-pill">
-            <span>🚨</span>
-            <span>0900 123 456</span>
-          </a>
-          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
-        </div>
-      </div>
-
-      <div class="footer-copy-wrap">
-        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
-        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
-      </div>
-    </footer>
-
-    <script type="module" src="../js/main.js"></script>
-  </body>
+ <script type="module" src="../js/main.js"></script>
+ </body>
 </html>

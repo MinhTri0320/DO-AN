@@ -1,457 +1,439 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/tokens.css" />
-    <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/buttons.css" />
-    <link rel="stylesheet" href="../css/header.css" />
-    <link rel="stylesheet" href="../css/footer.css" />
-    <link rel="stylesheet" href="../css/forms.css" />
-    <link rel="stylesheet" href="../css/profile.css" />
-    <link rel="stylesheet" href="../css/cage-management.css" />
-    <link rel="stylesheet" href="../css/pet-checkout.css" />
-    <link rel="stylesheet" href="../css/auth.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Trả Thú Cưng &amp; Lịch Sử Lưu Chuồng (Pet Check-out) - PawnCare Đà Nẵng</title>
-  </head>
-  <body>
-    <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (PAWMILY CLONE) ===== -->
-    <header id="header">
-      <div class="header-pawmily-container">
-        <div class="header-top-row">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
-                <circle cx="23" cy="36" r="13" fill="#B5835A" />
-                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
-                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
-                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
-                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
-                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
-                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
-                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
-                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
-                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
-                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
-                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
-                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
-                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
-              </svg>
-            </span>
-            <span class="logo-text">PAWNCARE</span>
-          </a>
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link
+ href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+ rel="stylesheet"
+ />
+ <link rel="stylesheet" href="../css/tokens.css" />
+ <link rel="stylesheet" href="../css/base.css" />
+ <link rel="stylesheet" href="../css/buttons.css" />
+ <link rel="stylesheet" href="../css/header.css" />
+ <link rel="stylesheet" href="../css/footer.css" />
+ <link rel="stylesheet" href="../css/forms.css" />
+ <link rel="stylesheet" href="../css/profile.css" />
+ <link rel="stylesheet" href="../css/cage-management.css" />
+ <link rel="stylesheet" href="../css/pet-checkout.css" />
+ <link rel="stylesheet" href="../css/auth.css" />
+ <link rel="stylesheet" href="../css/responsive.css" />
+ <title>Trả Thú Cưng &amp; Lịch Sử Lưu Chuồng - PawnCare Đà Nẵng</title>
+ </head>
+ <body>
+ <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (PAWMILY CLONE) ===== -->
+ <header id="header">
+ <div class="header-pawmily-container">
+ <div class="header-top-row">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+ <circle cx="23" cy="36" r="13" fill="#B5835A" />
+ <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+ <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+ <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+ <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+ <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+ <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+ <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+ <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+ <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+ <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+ <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+ <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+ <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+ </svg>
+ </span>
+ <span class="logo-text">PAWNCARE</span>
+ </a>
 
-          <div class="header-right-cluster">
-            <div class="lang-switch-pill" role="group" aria-label="Chọn ngôn ngữ">
-              <button type="button" class="lang-btn active" data-lang="vi">VI</button>
-              <button type="button" class="lang-btn" data-lang="en">EN</button>
-            </div>
+ <div class="header-right-cluster">
 
-            <!-- Khối Guest (khi chưa đăng nhập) -->
-            <div class="auth" id="authGuest">
-              <a href="./login.html" class="pill-btn btn-login">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Đăng nhập</span>
-              </a>
-              <a href="./register.html" class="pill-btn btn-signup">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <span>Đăng ký</span>
-              </a>
-            </div>
+ <!-- Khối Guest (khi chưa đăng nhập) -->
+ <div class="auth" id="authGuest">
+ <a href="./login.html" class="pill-btn btn-login">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span>Đăng nhập</span>
+ </a>
+ <a href="./register.html" class="pill-btn btn-signup">
+ <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+ <span>Đăng ký</span>
+ </a>
+ </div>
 
-            <!-- Khối User (khi đã đăng nhập) -->
-            <div class="auth auth-user" id="authUser" hidden>
-              <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                  <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <span class="badge" id="notifBadge" hidden>0</span>
-              </a>
+ <!-- Khối User (khi đã đăng nhập) -->
+ <div class="auth auth-user" id="authUser" hidden>
+ <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+ <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <span class="badge" id="notifBadge" hidden>0</span>
+ </a>
 
-              <div class="user-menu">
-                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
-                  <span id="userInitial">U</span>
-                </button>
-                <div class="dropdown" id="userDropdown" hidden>
-                  <p class="dropdown-name" id="userName">—</p>
-                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
-                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
-                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
-                  <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
-                  <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
-                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
-                </div>
-              </div>
-            </div>
+ <div class="user-menu">
+ <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+ <span id="userInitial">U</span>
+ </button>
+ <div class="dropdown" id="userDropdown" hidden>
+ <p class="dropdown-name" id="userName">—</p>
+ <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+ <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+ <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
+ <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+ <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+ </div>
+ </div>
+ </div>
 
-            <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
-              <span class="sparkle-icon">✨</span>
-              <span>WELOVEPML20 (-20%)</span>
-            </button>
+ <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
+ <span class="sparkle-icon">✨</span>
+ <span>WELOVEPML20 (-20%)</span>
+ </button>
 
-            <a href="./pet-profile.html" class="header-icon-circle" title="Danh sách bé cưng yêu thích" aria-label="Yêu thích">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M12 20.5s-7.5-4.6-9.3-8.8C1.2 8.2 3.4 4.5 7 4.5c2.1 0 3.8 1.2 5 2.8 1.2-1.6 2.9-2.8 5-2.8 3.6 0 5.8 3.7 4.3 7.2-1.8 4.2-9.3 8.8-9.3 8.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </a>
+ <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </div>
 
-            <a href="./booking.html" class="header-icon-circle white-circle" title="Đặt lịch &amp; Giỏ dịch vụ" aria-label="Giỏ dịch vụ">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M6 7h12l1 13H5L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <span class="header-dot-badge"></span>
-            </a>
+ <div class="header-nav-row">
+ <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
 
-            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
-              <span></span><span></span><span></span>
-            </button>
-          </div>
-        </div>
+ <nav id="menu">
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
+ <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
+ <a href="./booking.html" class="link">Đặt Lịch 📅</a>
+ <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
+ <a href="./cage-management.html" class="link active">Khách Sạn 5 ⭐</a>
+ <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
+ <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
+ <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
+ <a href="./index.html#about" class="link">Về PawnCare</a>
+ <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
+ <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
+ <a href="./index.html#reviews-section" class="link">Đánh giá</a>
+ </nav>
 
-        <div class="header-nav-row">
-          <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
+ <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
+ </div>
+ </div>
+ </header>
 
-          <nav id="menu">
-            <a href="./index.html" class="link">Trang chủ</a>
-            <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
-            <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
-            <a href="./booking.html" class="link">Đặt Lịch 📅</a>
-            <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
-            <a href="./cage-management.html" class="link active">Khách Sạn 5 ⭐</a>
-            <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
-            <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
-            <a href="./pet-profile.html" class="link">Thành Viên PawnCare</a>
-            <a href="./index.html#about" class="link">Về PawnCare</a>
-            <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
-            <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
-            <a href="./index.html#reviews-section" class="link">Đánh giá</a>
-          </nav>
+ <!-- ===== MAIN CONTENT ===== -->
+ <main class="profile-page" id="petCheckOutPage">
+ <div class="section-inner profile-layout">
+ <!-- Sidebar trái -->
+ <aside class="profile-sidebar">
+ <div class="profile-user-card">
+ <div class="profile-avatar-wrap">
+ <div class="profile-avatar" id="sidebarUserInitial">U</div>
+ </div>
+ <h3 id="sidebarUserName">Khách hàng</h3>
+ <p id="sidebarUserPhone">0900 123 456</p>
+ <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
+ </div>
 
-          <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
-        </div>
-      </div>
-    </header>
+ <nav class="profile-nav">
+ <a href="./customer-profile.html" class="profile-nav-link">
+ <span class="nav-icon">👤</span>
+ <span>Hồ sơ khách hàng</span>
+ </a>
+ <a href="./pet-profile.html" class="profile-nav-link">
+ <span class="nav-icon">🐾</span>
+ <span>Hồ sơ thú cưng</span>
+ </a>
+ <a href="./medical-record.html" class="profile-nav-link">
+ <span class="nav-icon">🩺</span>
+ <span>Hồ sơ y tế &amp; Bệnh án</span>
+ </a>
+ <a href="./cage-management.html" class="profile-nav-link active">
+ <span class="nav-icon">🏨</span>
+ <span>Lưu chuồng &amp; Khách sạn</span>
+ </a>
+ <a href="./booking.html" class="profile-nav-link">
+ <span class="nav-icon">📅</span>
+ <span>Đặt lịch hẹn mới</span>
+ </a>
+ <a href="./booking.html#my-appts" class="profile-nav-link">
+ <span class="nav-icon">📋</span>
+ <span>Lịch hẹn đã đặt</span>
+ </a>
+ <a href="./notifications.html" class="profile-nav-link">
+ <span class="nav-icon">🔔</span>
+ <span>Hộp thư thông báo</span>
+ </a>
+ <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
+ <span class="nav-icon">🚪</span>
+ <span>Đăng xuất</span>
+ </a>
+ </nav>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="profile-page" id="petCheckOutPage">
-      <div class="section-inner profile-layout">
-        <!-- Sidebar trái -->
-        <aside class="profile-sidebar">
-          <div class="profile-user-card">
-            <div class="profile-avatar-wrap">
-              <div class="profile-avatar" id="sidebarUserInitial">U</div>
-            </div>
-            <h3 id="sidebarUserName">Khách hàng</h3>
-            <p id="sidebarUserPhone">0900 123 456</p>
-            <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
-          </div>
+ <div class="profile-sidebar-help">
+ <strong>Bàn Giao &amp; Thanh Toán</strong>
+ <p>Hệ thống tự động tính số ngày lưu cùng chi phí thực tế (tối thiểu 1 ngày), giải phóng phòng chuồng và lưu trữ lịch sử hoàn chỉnh.</p>
+ </div>
+ </aside>
 
-          <nav class="profile-nav">
-            <a href="./customer-profile.html" class="profile-nav-link">
-              <span class="nav-icon">👤</span>
-              <span>Hồ sơ khách hàng</span>
-            </a>
-            <a href="./pet-profile.html" class="profile-nav-link">
-              <span class="nav-icon">🐾</span>
-              <span>Hồ sơ thú cưng</span>
-            </a>
-            <a href="./medical-record.html" class="profile-nav-link">
-              <span class="nav-icon">🩺</span>
-              <span>Hồ sơ y tế &amp; Bệnh án</span>
-            </a>
-            <a href="./cage-management.html" class="profile-nav-link active">
-              <span class="nav-icon">🏨</span>
-              <span>Lưu chuồng &amp; Khách sạn</span>
-            </a>
-            <a href="./booking.html" class="profile-nav-link">
-              <span class="nav-icon">📅</span>
-              <span>Đặt lịch hẹn mới</span>
-            </a>
-            <a href="./booking.html#my-appts" class="profile-nav-link">
-              <span class="nav-icon">📋</span>
-              <span>Lịch hẹn đã đặt</span>
-            </a>
-            <a href="./notifications.html" class="profile-nav-link">
-              <span class="nav-icon">🔔</span>
-              <span>Hộp thư thông báo</span>
-            </a>
-            <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
-              <span class="nav-icon">🚪</span>
-              <span>Đăng xuất</span>
-            </a>
-          </nav>
+ <!-- Panel phải: Pet Check-out & Boarding History -->
+ <section class="profile-main">
+ <!-- Tiêu đề trang -->
+ <div class="profile-header">
+ <div class="profile-header-left">
+ <span class="section-badge">📤 HOÀN TẤT LƯU TRÚ</span>
+ <h1>Trả Thú Cưng &amp; Lịch Sử Lưu Chuồng</h1>
+ <p>Trả thú cưng khi kết thúc đợt lưu trú, ghi nhận tình trạng sức khỏe lúc trả, tự động tính tổng tiền (số ngày × giá chuồng) và giải phóng phòng chuồng về trạng thái Sẵn sàng.</p>
+ </div>
+ </div>
 
-          <div class="profile-sidebar-help">
-            <strong>Bàn Giao &amp; Thanh Toán</strong>
-            <p>Hệ thống tự động tính số ngày lưu cùng chi phí thực tế (tối thiểu 1 ngày), giải phóng phòng chuồng và lưu trữ lịch sử hoàn chỉnh.</p>
-          </div>
-        </aside>
+ <!-- THANH ĐIỀU HƯỚNG 3 CHỨC NĂNG SPRINT 4 (LƯU CHUỒNG) -->
+ <div class="hotel-feature-nav-tabs">
+ <a href="./cage-management.html" class="hotel-nav-tab-item">
+ <span>🏨</span>
+ <span>1. Danh Sách &amp; Trạng Thái Chuồng</span>
+ </a>
+ <a href="./pet-checkin.html" class="hotel-nav-tab-item">
+ <span>📥</span>
+ <span>2. Nhận Thú Cưng</span>
+ </a>
+ <a href="./pet-checkout.html" class="hotel-nav-tab-item active">
+ <span>📤</span>
+ <span>3. Trả Thú Cưng &amp; Lịch Sử</span>
+ </a>
+ </div>
 
-        <!-- Panel phải: Pet Check-out & Boarding History -->
-        <section class="profile-main">
-          <!-- Tiêu đề trang -->
-          <div class="profile-header">
-            <div class="profile-header-left">
-              <span class="section-badge">📤 HOÀN TẤT LƯU TRÚ (CHECK-OUT)</span>
-              <h1>Trả Thú Cưng &amp; Lịch Sử Lưu Chuồng (Pet Check-out)</h1>
-              <p>Trả thú cưng khi kết thúc đợt lưu trú, ghi nhận tình trạng sức khỏe lúc trả, tự động tính tổng tiền (số ngày × giá chuồng) và giải phóng phòng chuồng về trạng thái Sẵn sàng (Available).</p>
-            </div>
-          </div>
+ <!-- CHUYỂN TAB XEM: ĐANG LƯU TRÚ HOẶC LỊCH SỬ -->
+ <div class="checkout-view-tabs">
+ <button type="button" class="btn-view-tab active" id="btnTabActiveStays">
+ <span>🐾</span>
+ <span>Đang Lưu Chuồng</span>
+ <span class="tab-badge" id="badgeActiveCount">0</span>
+ </button>
+ <button type="button" class="btn-view-tab" id="btnTabHistoryStays">
+ <span>📜</span>
+ <span>Lịch Sử Lưu Chuồng</span>
+ <span class="tab-badge" id="badgeHistoryCount">0</span>
+ </button>
+ </div>
 
-          <!-- THANH ĐIỀU HƯỚNG 3 CHỨC NĂNG SPRINT 4 (LƯU CHUỒNG) -->
-          <div class="hotel-feature-nav-tabs">
-            <a href="./cage-management.html" class="hotel-nav-tab-item">
-              <span>🏨</span>
-              <span>1. Danh Sách &amp; Trạng Thái Chuồng</span>
-            </a>
-            <a href="./pet-checkin.html" class="hotel-nav-tab-item">
-              <span>📥</span>
-              <span>2. Nhận Thú Cưng (Check-in)</span>
-            </a>
-            <a href="./pet-checkout.html" class="hotel-nav-tab-item active">
-              <span>📤</span>
-              <span>3. Trả Thú Cưng &amp; Lịch Sử (Check-out)</span>
-            </a>
-          </div>
+ <!-- PHẦN 1: DANH SÁCH ĐỢT ĐANG LƯU TRÚ (ACTIVE STAYS) -->
+ <div id="sectionActiveStays">
+ <div class="active-stays-grid" id="activeStaysGrid">
+ <!-- Nạp động qua pet-checkout.js -->
+ </div>
+ </div>
 
-          <!-- CHUYỂN TAB XEM: ĐANG LƯU TRÚ HOẶC LỊCH SỬ -->
-          <div class="checkout-view-tabs">
-            <button type="button" class="btn-view-tab active" id="btnTabActiveStays">
-              <span>🐾</span>
-              <span>Đang Lưu Chuồng</span>
-              <span class="tab-badge" id="badgeActiveCount">0</span>
-            </button>
-            <button type="button" class="btn-view-tab" id="btnTabHistoryStays">
-              <span>📜</span>
-              <span>Lịch Sử Lưu Chuồng</span>
-              <span class="tab-badge" id="badgeHistoryCount">0</span>
-            </button>
-          </div>
+ <!-- PHẦN 2: LỊCH SỬ LƯU CHUỒNG (BOARDING HISTORY) -->
+ <div id="sectionHistoryStays" style="display:none;">
+ <!-- Bộ lọc lịch sử theo khách hàng / thú cưng -->
+ <div class="history-control-panel">
+ <div class="cage-select-wrapper">
+ <select id="historyCustomerFilter" class="cage-select-filter">
+ <option value="all">Tất cả khách hàng</option>
+ </select>
+ <span class="cage-select-chevron">▼</span>
+ </div>
 
-          <!-- PHẦN 1: DANH SÁCH ĐỢT ĐANG LƯU TRÚ (ACTIVE STAYS) -->
-          <div id="sectionActiveStays">
-            <div class="active-stays-grid" id="activeStaysGrid">
-              <!-- Nạp động qua pet-checkout.js -->
-            </div>
-          </div>
+ <div class="cage-select-wrapper">
+ <select id="historyPetFilter" class="cage-select-filter">
+ <option value="all">Tất cả thú cưng</option>
+ </select>
+ <span class="cage-select-chevron">▼</span>
+ </div>
 
-          <!-- PHẦN 2: LỊCH SỬ LƯU CHUỒNG (BOARDING HISTORY) -->
-          <div id="sectionHistoryStays" style="display:none;">
-            <!-- Bộ lọc lịch sử theo khách hàng / thú cưng -->
-            <div class="history-control-panel">
-              <div class="cage-select-wrapper">
-                <select id="historyCustomerFilter" class="cage-select-filter">
-                  <option value="all">Tất cả khách hàng</option>
-                </select>
-                <span class="cage-select-chevron">▼</span>
-              </div>
+ <div class="cage-search-box" style="flex:1 1 200px;">
+ <span class="cage-search-icon">🔍</span>
+ <input type="text" id="historySearchInput" placeholder="Tìm theo tên bé, chủ nuôi, mã đợt..." />
+ </div>
+ </div>
 
-              <div class="cage-select-wrapper">
-                <select id="historyPetFilter" class="cage-select-filter">
-                  <option value="all">Tất cả thú cưng</option>
-                </select>
-                <span class="cage-select-chevron">▼</span>
-              </div>
+ <!-- Bảng lịch sử -->
+ <div class="history-table-container">
+ <table class="history-table">
+ <thead>
+ <tr>
+ <th>Mã Đợt</th>
+ <th>Bé Cưng</th>
+ <th>Chủ Nuôi</th>
+ <th>Phòng Chuồng</th>
+ <th>Thời Gian Lưu</th>
+ <th>Tổng Tiền</th>
+ <th>Thao Tác</th>
+ </tr>
+ </thead>
+ <tbody id="historyTableBody">
+ <!-- Nạp động qua pet-checkout.js -->
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </section>
+ </div>
+ </main>
 
-              <div class="cage-search-box" style="flex:1 1 200px;">
-                <span class="cage-search-icon">🔍</span>
-                <input type="text" id="historySearchInput" placeholder="Tìm theo tên bé, chủ nuôi, mã đợt..." />
-              </div>
-            </div>
+ <!-- MODAL XÁC NHẬN TRẢ BÉ (CHECK-OUT CONFIRMATION MODAL) -->
+ <div class="hotel-modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
+ <div class="hotel-modal-box">
+ <div class="hotel-modal-header">
+ <h3 id="checkoutModalTitle">Xác Nhận Trả Bé &amp; Tính Phí Lưu Chuồng</h3>
+ <button type="button" class="btn-modal-close" id="btnCloseCheckoutModal" aria-label="Đóng">&times;</button>
+ </div>
 
-            <!-- Bảng lịch sử -->
-            <div class="history-table-container">
-              <table class="history-table">
-                <thead>
-                  <tr>
-                    <th>Mã Đợt</th>
-                    <th>Bé Cưng</th>
-                    <th>Chủ Nuôi</th>
-                    <th>Phòng Chuồng</th>
-                    <th>Thời Gian Lưu</th>
-                    <th>Tổng Tiền</th>
-                    <th>Thao Tác</th>
-                  </tr>
-                </thead>
-                <tbody id="historyTableBody">
-                  <!-- Nạp động qua pet-checkout.js -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+ <form id="checkoutForm">
+ <input type="hidden" id="checkoutStayId" />
 
-    <!-- MODAL XÁC NHẬN TRẢ BÉ (CHECK-OUT CONFIRMATION MODAL) -->
-    <div class="hotel-modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
-      <div class="hotel-modal-box">
-        <div class="hotel-modal-header">
-          <h3 id="checkoutModalTitle">Xác Nhận Trả Bé &amp; Tính Phí Lưu Chuồng</h3>
-          <button type="button" class="btn-modal-close" id="btnCloseCheckoutModal" aria-label="Đóng">&times;</button>
-        </div>
+ <!-- Tóm tắt đợt lưu trú -->
+ <div class="stay-info-box" style="margin-bottom:16px;">
+ <div class="stay-info-row">
+ <span>Bé cưng:</span>
+ <strong id="checkoutPetName">—</strong>
+ </div>
+ <div class="stay-info-row">
+ <span>Khách hàng:</span>
+ <strong id="checkoutCustomer">—</strong>
+ </div>
+ <div class="stay-info-row">
+ <span>Phòng chuồng:</span>
+ <strong id="checkoutCage">—</strong>
+ </div>
+ <div class="stay-info-row">
+ <span>Ngày nhận:</span>
+ <strong id="checkoutDateIn">—</strong>
+ </div>
+ </div>
 
-        <form id="checkoutForm">
-          <input type="hidden" id="checkoutStayId" />
+ <div class="hotel-form-group">
+ <label for="checkoutDateOutActual">Ngày Trả Thực Tế <span class="required">*</span></label>
+ <input type="date" id="checkoutDateOutActual" required />
+ <small style="color:var(--ink-faint); font-size:11.5px; display:block; margin-top:4px;">
+ * Hệ thống tự động tính số ngày = ngày trả trừ ngày nhận (tối thiểu 1 ngày).
+ </small>
+ </div>
 
-          <!-- Tóm tắt đợt lưu trú -->
-          <div class="stay-info-box" style="margin-bottom:16px;">
-            <div class="stay-info-row">
-              <span>Bé cưng:</span>
-              <strong id="checkoutPetName">—</strong>
-            </div>
-            <div class="stay-info-row">
-              <span>Khách hàng:</span>
-              <strong id="checkoutCustomer">—</strong>
-            </div>
-            <div class="stay-info-row">
-              <span>Phòng chuồng:</span>
-              <strong id="checkoutCage">—</strong>
-            </div>
-            <div class="stay-info-row">
-              <span>Ngày nhận (Check-in):</span>
-              <strong id="checkoutDateIn">—</strong>
-            </div>
-          </div>
+ <!-- BẢNG TỰ ĐỘNG TÍNH TOÁN CHI PHÍ -->
+ <div class="checkout-calc-card">
+ <div class="calc-grid">
+ <div>
+ <strong id="calcRatePerDay">0đ</strong>
+ <span>Giá chuồng / ngày</span>
+ </div>
+ <div>
+ <strong id="calcDays" style="color:var(--espresso);">1 ngày</strong>
+ <span>Số ngày thực tế</span>
+ </div>
+ <div>
+ <strong style="color:var(--sage-green);">0đ</strong>
+ <span>Phụ phí phát sinh</span>
+ </div>
+ </div>
 
-          <div class="hotel-form-group">
-            <label for="checkoutDateOutActual">Ngày Trả Thực Tế (Actual Check-out) <span class="required">*</span></label>
-            <input type="date" id="checkoutDateOutActual" required />
-            <small style="color:var(--ink-faint); font-size:11.5px; display:block; margin-top:4px;">
-              * Hệ thống tự động tính số ngày = ngày trả trừ ngày nhận (tối thiểu 1 ngày).
-            </small>
-          </div>
+ <div class="calc-final-row">
+ <span style="font-size:13px; font-weight:700; color:var(--ink);">TỔNG CỘNG THANH TOÁN:</span>
+ <span class="calc-final-amount" id="calcTotalAmount">0đ</span>
+ </div>
+ </div>
 
-          <!-- BẢNG TỰ ĐỘNG TÍNH TOÁN CHI PHÍ -->
-          <div class="checkout-calc-card">
-            <div class="calc-grid">
-              <div>
-                <strong id="calcRatePerDay">0đ</strong>
-                <span>Giá chuồng / ngày</span>
-              </div>
-              <div>
-                <strong id="calcDays" style="color:var(--espresso);">1 ngày</strong>
-                <span>Số ngày thực tế</span>
-              </div>
-              <div>
-                <strong style="color:var(--sage-green);">0đ</strong>
-                <span>Phụ phí phát sinh</span>
-              </div>
-            </div>
+ <div class="hotel-form-group">
+ <label for="checkoutHealthNote">Tình Trạng Sức Khỏe Lúc Trả <span class="required">*</span></label>
+ <textarea id="checkoutHealthNote" rows="3" required placeholder="Ghi nhận thể trạng lúc đón bé: bé lanh lợi, tăng/giảm cân, tư trang đã bàn giao đầy đủ..."></textarea>
+ </div>
 
-            <div class="calc-final-row">
-              <span style="font-size:13px; font-weight:700; color:var(--ink);">TỔNG CỘNG THANH TOÁN:</span>
-              <span class="calc-final-amount" id="calcTotalAmount">0đ</span>
-            </div>
-          </div>
+ <div class="hotel-modal-actions">
+ <button type="button" class="btn-modal-secondary" id="btnCancelCheckoutModal">Đóng</button>
+ <button type="submit" class="btn-modal-primary" style="background:var(--sage-green);">
+ <span>✓</span>
+ <span>Xác Nhận Trả Bé &amp; Xuất Hóa Đơn</span>
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
 
-          <div class="hotel-form-group">
-            <label for="checkoutHealthNote">Tình Trạng Sức Khỏe Lúc Trả (Health Note Khi Trả) <span class="required">*</span></label>
-            <textarea id="checkoutHealthNote" rows="3" required placeholder="Ghi nhận thể trạng lúc đón bé: bé lanh lợi, tăng/giảm cân, tư trang đã bàn giao đầy đủ..."></textarea>
-          </div>
+ <!-- MODAL HÓA ĐƠN / PHIẾU THANH TOÁN (INVOICE MODAL) -->
+ <div class="hotel-modal-overlay" id="invoiceModal" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
+ <div class="hotel-modal-box" style="max-width: 620px;">
+ <div class="hotel-modal-header">
+ <h3 id="invoiceTitle">Phiếu Thanh Toán Dịch Vụ Lưu Chuồng</h3>
+ <button type="button" class="btn-modal-close" id="btnCloseInvoiceModal" aria-label="Đóng">&times;</button>
+ </div>
 
-          <div class="hotel-modal-actions">
-            <button type="button" class="btn-modal-secondary" id="btnCancelCheckoutModal">Đóng</button>
-            <button type="submit" class="btn-modal-primary" style="background:var(--sage-green);">
-              <span>✓</span>
-              <span>Xác Nhận Trả Bé &amp; Xuất Hóa Đơn</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+ <div id="invoiceSheetContainer">
+ <!-- Render template hóa đơn qua pet-checkout.js -->
+ </div>
 
-    <!-- MODAL HÓA ĐƠN / PHIẾU THANH TOÁN (INVOICE MODAL) -->
-    <div class="hotel-modal-overlay" id="invoiceModal" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
-      <div class="hotel-modal-box" style="max-width: 620px;">
-        <div class="hotel-modal-header">
-          <h3 id="invoiceTitle">Phiếu Thanh Toán Dịch Vụ Lưu Chuồng</h3>
-          <button type="button" class="btn-modal-close" id="btnCloseInvoiceModal" aria-label="Đóng">&times;</button>
-        </div>
+ <div class="hotel-modal-actions">
+ <button type="button" class="btn-modal-secondary" id="btnPrintInvoice">
+ <span>🖨️</span>
+ <span>In Phiếu Thanh Toán</span>
+ </button>
+ <button type="button" class="btn-modal-primary" onclick="document.getElementById('invoiceModal').classList.remove('open')">
+ <span>Hoàn Tất</span>
+ </button>
+ </div>
+ </div>
+ </div>
 
-        <div id="invoiceSheetContainer">
-          <!-- Render template hóa đơn qua pet-checkout.js -->
-        </div>
+ <!-- ===== FOOTER 4 CỘT CHUẨN PAWMILY ===== -->
+ <footer id="footer">
+ <div class="section-inner footer-grid">
+ <div class="footer-col brand-col">
+ <div class="footer-logo">
+ <span class="logo-text">PAWNCARE</span>
+ </div>
+ <p class="brand-tagline">
+ Hệ thống bệnh viện thú y &amp; khách sạn nghỉ dưỡng thú cưng 5 sao chuẩn quốc tế hàng đầu tại Đà Nẵng.
+ </p>
+ <div class="socials">
+ <a href="#" aria-label="Facebook">FB</a>
+ <a href="#" aria-label="Instagram">IG</a>
+ <a href="#" aria-label="YouTube">YT</a>
+ <a href="#" aria-label="TikTok">TT</a>
+ </div>
+ </div>
 
-        <div class="hotel-modal-actions">
-          <button type="button" class="btn-modal-secondary" id="btnPrintInvoice">
-            <span>🖨️</span>
-            <span>In Phiếu Thanh Toán</span>
-          </button>
-          <button type="button" class="btn-modal-primary" onclick="document.getElementById('invoiceModal').classList.remove('open')">
-            <span>Hoàn Tất</span>
-          </button>
-        </div>
-      </div>
-    </div>
+ <div class="footer-col">
+ <h4>Dịch Vụ Nổi Bật</h4>
+ <ul>
+ <li><a href="./medical-record.html">Khám &amp; Điều trị nội trú</a></li>
+ <li><a href="./cage-management.html">Khách sạn lưu chuồng 5 sao</a></li>
+ <li><a href="./booking.html?service=spa">Spa cắt tỉa tạo kiểu</a></li>
+ <li><a href="./booking.html">Tiêm phòng vắc xin &amp; Triệt sản</a></li>
+ <li><a href="./re-examination-history.html">Theo dõi lịch tái khám</a></li>
+ </ul>
+ </div>
 
-    <!-- ===== FOOTER 4 CỘT CHUẨN PAWMILY ===== -->
-    <footer id="footer">
-      <div class="section-inner footer-grid">
-        <div class="footer-col brand-col">
-          <div class="footer-logo">
-            <span class="logo-text">PAWNCARE</span>
-          </div>
-          <p class="brand-tagline">
-            Hệ thống bệnh viện thú y &amp; khách sạn nghỉ dưỡng thú cưng 5 sao chuẩn quốc tế hàng đầu tại Đà Nẵng.
-          </p>
-          <div class="socials">
-            <a href="#" aria-label="Facebook">FB</a>
-            <a href="#" aria-label="Instagram">IG</a>
-            <a href="#" aria-label="YouTube">YT</a>
-            <a href="#" aria-label="TikTok">TT</a>
-          </div>
-        </div>
+ <div class="footer-col">
+ <h4>Về PawnCare</h4>
+ <ul>
+ <li><a href="./index.html#about">Giới thiệu bệnh viện</a></li>
+ <li><a href="./forum.html">Sổ tay cẩm nang thú cưng</a></li>
+ <li><a href="./campaigns.html">Ưu đãi &amp; Chiến dịch</a></li>
+ <li><a href="./index.html#reviews-section">Đánh giá từ khách hàng</a></li>
+ </ul>
+ </div>
 
-        <div class="footer-col">
-          <h4>Dịch Vụ Nổi Bật</h4>
-          <ul>
-            <li><a href="./medical-record.html">Khám &amp; Điều trị nội trú</a></li>
-            <li><a href="./cage-management.html">Khách sạn lưu chuồng 5 sao</a></li>
-            <li><a href="./booking.html?service=spa">Spa cắt tỉa tạo kiểu</a></li>
-            <li><a href="./booking.html">Tiêm phòng vắc xin &amp; Triệt sản</a></li>
-            <li><a href="./re-examination-history.html">Theo dõi lịch tái khám</a></li>
-          </ul>
-        </div>
+ <div class="footer-col contact-col">
+ <h4>Liên Hệ Cấp Cứu 24/7</h4>
+ <p><strong>Hotline:</strong> <a href="tel:0900123456">0900 123 456</a></p>
+ <p><strong>Địa chỉ:</strong> 123 Nguyễn Văn Linh, Q. Hải Châu, TP. Đà Nẵng</p>
+ <p><strong>Giờ mở cửa:</strong> 08:00 - 21:00 (Cấp cứu trực 24/24)</p>
+ <p><strong>Email:</strong> hotro@pawncare.vn</p>
+ </div>
+ </div>
+ <div class="footer-bottom">
+ <p>&copy; 2026 PawnCare Pet Clinic &amp; Hotel. Toàn bộ bản quyền được bảo lưu.</p>
+ </div>
+ </footer>
 
-        <div class="footer-col">
-          <h4>Về PawnCare</h4>
-          <ul>
-            <li><a href="./index.html#about">Giới thiệu bệnh viện</a></li>
-            <li><a href="./forum.html">Sổ tay cẩm nang thú cưng</a></li>
-            <li><a href="./campaigns.html">Ưu đãi &amp; Chiến dịch</a></li>
-            <li><a href="./index.html#reviews-section">Đánh giá từ khách hàng</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col contact-col">
-          <h4>Liên Hệ Cấp Cứu 24/7</h4>
-          <p><strong>Hotline:</strong> <a href="tel:0900123456">0900 123 456</a></p>
-          <p><strong>Địa chỉ:</strong> 123 Nguyễn Văn Linh, Q. Hải Châu, TP. Đà Nẵng</p>
-          <p><strong>Giờ mở cửa:</strong> 08:00 - 21:00 (Cấp cứu trực 24/24)</p>
-          <p><strong>Email:</strong> hotro@pawncare.vn</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 PawnCare Pet Clinic &amp; Hotel. Toàn bộ bản quyền được bảo lưu.</p>
-      </div>
-    </footer>
-
-    <script type="module" src="../js/main.js"></script>
-  </body>
+ <script type="module" src="../js/main.js"></script>
+ </body>
 </html>

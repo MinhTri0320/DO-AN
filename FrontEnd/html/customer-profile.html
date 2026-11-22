@@ -1,418 +1,400 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/tokens.css" />
-    <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/buttons.css" />
-    <link rel="stylesheet" href="../css/header.css" />
-    <link rel="stylesheet" href="../css/footer.css" />
-    <link rel="stylesheet" href="../css/forms.css" />
-    <link rel="stylesheet" href="../css/profile.css" />
-    <link rel="stylesheet" href="../css/auth.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <title>Hồ Sơ Khách Hàng (Customer Profile) - PawnCare Đà Nẵng</title>
-  </head>
-  <body>
-    <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
-    <header id="header">
-      <div class="header-pawmily-container">
-        <div class="header-top-row">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
-                <circle cx="23" cy="36" r="13" fill="#B5835A" />
-                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
-                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
-                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
-                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
-                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
-                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
-                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
-                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
-                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
-                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
-                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
-                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
-                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
-                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
-                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
-              </svg>
-            </span>
-            <span class="logo-text">PAWNCARE</span>
-          </a>
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link
+ href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+ rel="stylesheet"
+ />
+ <link rel="stylesheet" href="../css/tokens.css" />
+ <link rel="stylesheet" href="../css/base.css" />
+ <link rel="stylesheet" href="../css/buttons.css" />
+ <link rel="stylesheet" href="../css/header.css" />
+ <link rel="stylesheet" href="../css/footer.css" />
+ <link rel="stylesheet" href="../css/forms.css" />
+ <link rel="stylesheet" href="../css/profile.css" />
+ <link rel="stylesheet" href="../css/auth.css" />
+ <link rel="stylesheet" href="../css/responsive.css" />
+ <title>Hồ Sơ Khách Hàng - PawnCare Đà Nẵng</title>
+ </head>
+ <body>
+ <!-- ===== HEADER 2-TIER CARAMEL-TAUPE (100% PAWMILY CLONE) ===== -->
+ <header id="header">
+ <div class="header-pawmily-container">
+ <div class="header-top-row">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+ <circle cx="23" cy="36" r="13" fill="#B5835A" />
+ <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+ <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+ <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+ <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+ <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+ <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+ <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+ <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+ <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+ <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+ <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+ <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+ <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+ <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+ <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+ </svg>
+ </span>
+ <span class="logo-text">PAWNCARE</span>
+ </a>
 
-          <div class="header-right-cluster">
-            <div class="lang-switch-pill" role="group" aria-label="Chọn ngôn ngữ">
-              <button type="button" class="lang-btn active" data-lang="vi">VI</button>
-              <button type="button" class="lang-btn" data-lang="en">EN</button>
-            </div>
+ <div class="header-right-cluster">
 
-            <!-- Khối Guest (khi chưa đăng nhập) -->
-            <div class="auth" id="authGuest">
-              <a href="./login.html" class="pill-btn btn-login">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Đăng nhập</span>
-              </a>
-              <a href="./register.html" class="pill-btn btn-signup">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <span>Đăng ký</span>
-              </a>
-            </div>
+ <!-- Khối Guest (khi chưa đăng nhập) -->
+ <div class="auth" id="authGuest">
+ <a href="./login.html" class="pill-btn btn-login">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span>Đăng nhập</span>
+ </a>
+ <a href="./register.html" class="pill-btn btn-signup">
+ <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+ <span>Đăng ký</span>
+ </a>
+ </div>
 
-            <!-- Khối User (khi đã đăng nhập) -->
-            <div class="auth auth-user" id="authUser" hidden>
-              <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                  <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <span class="badge" id="notifBadge" hidden>0</span>
-              </a>
+ <!-- Khối User (khi đã đăng nhập) -->
+ <div class="auth auth-user" id="authUser" hidden>
+ <a href="./notifications.html" class="icon-btn" aria-label="Thông báo">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+ <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <span class="badge" id="notifBadge" hidden>0</span>
+ </a>
 
-              <div class="user-menu">
-                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
-                  <span id="userInitial">U</span>
-                </button>
-                <div class="dropdown" id="userDropdown" hidden>
-                  <p class="dropdown-name" id="userName">—</p>
-                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
-                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
-                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
-                  <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
-                  <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
-                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
-                </div>
-              </div>
-            </div>
+ <div class="user-menu">
+ <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+ <span id="userInitial">U</span>
+ </button>
+ <div class="dropdown" id="userDropdown" hidden>
+ <p class="dropdown-name" id="userName">—</p>
+ <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+ <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+ <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
+ <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
+ <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+ </div>
+ </div>
+ </div>
 
-            <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
-              <span class="sparkle-icon">✨</span>
-              <span>WELOVEPML20 (-20%)</span>
-            </button>
+ <button type="button" class="header-voucher-pill" data-copy="WELOVEPML20" title="Nhấn để sao chép mã giảm 20%">
+ <span class="sparkle-icon">✨</span>
+ <span>WELOVEPML20 (-20%)</span>
+ </button>
 
-            <a href="./pet-profile.html" class="header-icon-circle" title="Danh sách bé cưng yêu thích" aria-label="Yêu thích">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M12 20.5s-7.5-4.6-9.3-8.8C1.2 8.2 3.4 4.5 7 4.5c2.1 0 3.8 1.2 5 2.8 1.2-1.6 2.9-2.8 5-2.8 3.6 0 5.8 3.7 4.3 7.2-1.8 4.2-9.3 8.8-9.3 8.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </a>
+ <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </div>
 
-            <a href="./booking.html" class="header-icon-circle white-circle" title="Đặt lịch &amp; Giỏ dịch vụ" aria-label="Giỏ dịch vụ">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                <path d="M6 7h12l1 13H5L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              <span class="header-dot-badge"></span>
-            </a>
+ <div class="header-nav-row">
+ <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
 
-            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
-              <span></span><span></span><span></span>
-            </button>
-          </div>
-        </div>
+ <nav id="menu">
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
+ <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
+ <a href="./booking.html" class="link">Đặt Lịch 📅</a>
+ <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
+ <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
+ <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
+ <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
+ <a href="./pet-profile.html" class="link active">Thành Viên PawnCare</a>
+ <a href="./index.html#about" class="link">Về PawnCare</a>
+ <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
+ <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
+ <a href="./index.html#reviews-section" class="link">Đánh giá</a>
+ </nav>
 
-        <div class="header-nav-row">
-          <button type="button" class="nav-scroll-arrow" id="navScrollLeft" aria-label="Cuộn sang trái">‹</button>
+ <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
+ </div>
+ </div>
+ </header>
 
-          <nav id="menu">
-            <a href="./index.html" class="link">Trang chủ</a>
-            <a href="./index.html#super-promo" class="link">Ưu Đãi Siêu Hot</a>
-            <a href="./index.html#services" class="link">Dịch vụ &amp; Bảng giá</a>
-            <a href="./booking.html" class="link">Đặt Lịch 📅</a>
-            <a href="./booking.html?service=spa" class="link">Spa Cắt Tỉa 💖</a>
-            <a href="./booking.html?service=hotel" class="link">Khách Sạn 5 ⭐</a>
-            <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
-            <a href="./index.html#estimator-section" class="link">Dự Tính Chi Phí</a>
-            <a href="./pet-profile.html" class="link active">Thành Viên PawnCare</a>
-            <a href="./index.html#about" class="link">Về PawnCare</a>
-            <a href="./forum.html" class="link">Sổ tay Chăm sóc</a>
-            <a href="./campaigns.html" class="link">Chiến Dịch 🎁</a>
-            <a href="./index.html#reviews-section" class="link">Đánh giá</a>
-          </nav>
+ <!-- ===== PROFILE CONTENT ===== -->
+ <main class="profile-page">
+ <div class="section-inner profile-layout">
+ <!-- Sidebar trái -->
+ <aside class="profile-sidebar">
+ <div class="profile-user-card">
+ <div class="profile-avatar-wrap">
+ <div class="profile-avatar" id="sidebarUserInitial">U</div>
+ </div>
+ <h3 id="sidebarUserName">Khách hàng</h3>
+ <p id="sidebarUserPhone">0900 123 456</p>
+ <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
+ </div>
 
-          <button type="button" class="nav-scroll-arrow" id="navScrollRight" aria-label="Cuộn sang phải">›</button>
-        </div>
-      </div>
-    </header>
+ <nav class="profile-nav">
+ <a href="./customer-profile.html" class="profile-nav-link active">
+ <span class="nav-icon">👤</span>
+ <span>Hồ sơ khách hàng</span>
+ </a>
+ <a href="./pet-profile.html" class="profile-nav-link">
+ <span class="nav-icon">🐾</span>
+ <span>Hồ sơ thú cưng</span>
+ </a>
+ <a href="./medical-record.html" class="profile-nav-link">
+ <span class="nav-icon">🩺</span>
+ <span>Hồ sơ y tế & Bệnh án</span>
+ </a>
+ <a href="./cage-management.html" class="profile-nav-link">
+ <span class="nav-icon">🏨</span>
+ <span>Lưu chuồng &amp; Khách sạn</span>
+ </a>
+ <a href="./booking.html" class="profile-nav-link">
+ <span class="nav-icon">📅</span>
+ <span>Đặt lịch hẹn mới</span>
+ </a>
+ <a href="./booking.html#my-appts" class="profile-nav-link">
+ <span class="nav-icon">📋</span>
+ <span>Lịch hẹn đã đặt</span>
+ </a>
+ <a href="./notifications.html" class="profile-nav-link">
+ <span class="nav-icon">🔔</span>
+ <span>Hộp thư thông báo</span>
+ </a>
+ <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
+ <span class="nav-icon">🚪</span>
+ <span>Đăng xuất</span>
+ </a>
+ </nav>
 
-    <!-- ===== PROFILE CONTENT ===== -->
-    <main class="profile-page">
-      <div class="section-inner profile-layout">
-        <!-- Sidebar trái -->
-        <aside class="profile-sidebar">
-          <div class="profile-user-card">
-            <div class="profile-avatar-wrap">
-              <div class="profile-avatar" id="sidebarUserInitial">U</div>
-            </div>
-            <h3 id="sidebarUserName">Khách hàng</h3>
-            <p id="sidebarUserPhone">0900 123 456</p>
-            <span class="member-tier-badge">🌟 Khách hàng Thân thiết</span>
-          </div>
+ <div class="profile-sidebar-help">
+ <strong>Cần trợ giúp trực tiếp?</strong>
+ <p>Liên hệ hotline chuyên viên PawnCare Đà Nẵng: <a href="tel:0900123456">0900 123 456</a> (Hỗ trợ 24/7).</p>
+ </div>
+ </aside>
 
-          <nav class="profile-nav">
-            <a href="./customer-profile.html" class="profile-nav-link active">
-              <span class="nav-icon">👤</span>
-              <span>Hồ sơ khách hàng</span>
-            </a>
-            <a href="./pet-profile.html" class="profile-nav-link">
-              <span class="nav-icon">🐾</span>
-              <span>Hồ sơ thú cưng</span>
-            </a>
-            <a href="./medical-record.html" class="profile-nav-link">
-              <span class="nav-icon">🩺</span>
-              <span>Hồ sơ y tế & Bệnh án</span>
-            </a>
-            <a href="./cage-management.html" class="profile-nav-link">
-              <span class="nav-icon">🏨</span>
-              <span>Lưu chuồng &amp; Khách sạn</span>
-            </a>
-            <a href="./booking.html" class="profile-nav-link">
-              <span class="nav-icon">📅</span>
-              <span>Đặt lịch hẹn mới</span>
-            </a>
-            <a href="./booking.html#my-appts" class="profile-nav-link">
-              <span class="nav-icon">📋</span>
-              <span>Lịch hẹn đã đặt</span>
-            </a>
-            <a href="./notifications.html" class="profile-nav-link">
-              <span class="nav-icon">🔔</span>
-              <span>Hộp thư thông báo</span>
-            </a>
-            <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
-              <span class="nav-icon">🚪</span>
-              <span>Đăng xuất</span>
-            </a>
-          </nav>
+ <!-- Panel phải: Customer Profile Form -->
+ <section class="profile-main">
+ <div class="profile-header">
+ <div class="profile-header-left">
+ <span class="section-badge">🐾 QUẢN LÝ TÀI KHOẢN</span>
+ <h1>Hồ Sơ Khách Hàng</h1>
+ <p>Quản lý thông tin hồ sơ cá nhân và thông tin liên hệ để đảm bảo dữ liệu luôn chính xác.</p>
+ </div>
+ </div>
 
-          <div class="profile-sidebar-help">
-            <strong>Cần trợ giúp trực tiếp?</strong>
-            <p>Liên hệ hotline chuyên viên PawnCare Đà Nẵng: <a href="tel:0900123456">0900 123 456</a> (Hỗ trợ 24/7).</p>
-          </div>
-        </aside>
+ <!-- Thanh thống kê nhanh -->
+ <div class="profile-stats-bar">
+ <div class="p-stat-box">
+ <div class="p-stat-icon">🐾</div>
+ <div class="p-stat-info">
+ <strong>2 bé cưng</strong>
+ <span>Thú cưng đang quản lý</span>
+ </div>
+ </div>
+ <div class="p-stat-box">
+ <div class="p-stat-icon">⭐</div>
+ <div class="p-stat-info">
+ <strong>Hạng Thân Thiết</strong>
+ <span>Tích điểm ưu đãi 10%</span>
+ </div>
+ </div>
+ <div class="p-stat-box">
+ <div class="p-stat-icon">📍</div>
+ <div class="p-stat-info">
+ <strong>TP. Đà Nẵng</strong>
+ <span>Cơ sở phục vụ chính</span>
+ </div>
+ </div>
+ </div>
 
-        <!-- Panel phải: Customer Profile Form -->
-        <section class="profile-main">
-          <div class="profile-header">
-            <div class="profile-header-left">
-              <span class="section-badge">🐾 QUẢN LÝ TÀI KHOẢN</span>
-              <h1>Hồ Sơ Khách Hàng (Customer Profile)</h1>
-              <p>Quản lý thông tin hồ sơ cá nhân và thông tin liên hệ để đảm bảo dữ liệu luôn chính xác.</p>
-            </div>
-          </div>
+ <!-- Form chỉnh sửa thông tin khách hàng -->
+ <form id="customerProfileForm" class="form">
+ <!-- PHẦN 1: THÔNG TIN CÁ NHÂN -->
+ <div class="section-subtitle-bar">
+ <span>👤</span>
+ <span>Thông tin cá nhân</span>
+ </div>
 
-          <!-- Thanh thống kê nhanh -->
-          <div class="profile-stats-bar">
-            <div class="p-stat-box">
-              <div class="p-stat-icon">🐾</div>
-              <div class="p-stat-info">
-                <strong>2 bé cưng</strong>
-                <span>Thú cưng đang quản lý</span>
-              </div>
-            </div>
-            <div class="p-stat-box">
-              <div class="p-stat-icon">⭐</div>
-              <div class="p-stat-info">
-                <strong>Hạng Thân Thiết</strong>
-                <span>Tích điểm ưu đãi 10%</span>
-              </div>
-            </div>
-            <div class="p-stat-box">
-              <div class="p-stat-icon">📍</div>
-              <div class="p-stat-info">
-                <strong>TP. Đà Nẵng</strong>
-                <span>Cơ sở phục vụ chính</span>
-              </div>
-            </div>
-          </div>
+ <div class="form-grid-2">
+ <label>
+ <span>Họ và tên <strong style="color:var(--danger)">*</strong></span>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+ <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <input type="text" name="fullName" placeholder="Nhập họ và tên" required />
+ </div>
+ </label>
 
-          <!-- Form chỉnh sửa thông tin khách hàng -->
-          <form id="customerProfileForm" class="form">
-            <!-- PHẦN 1: THÔNG TIN CÁ NHÂN -->
-            <div class="section-subtitle-bar">
-              <span>👤</span>
-              <span>Thông tin cá nhân</span>
-            </div>
+ <label>
+ <span>Ngày sinh</span>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
+ <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+ </svg>
+ <input type="date" name="dob" />
+ </div>
+ </label>
+ </div>
 
-            <div class="form-grid-2">
-              <label>
-                <span>Họ và tên <strong style="color:var(--danger)">*</strong></span>
-                <div class="input-icon-wrap">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
-                    <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                  </svg>
-                  <input type="text" name="fullName" placeholder="Nhập họ và tên" required />
-                </div>
-              </label>
+ <label>
+ <span>Giới tính</span>
+ <div class="gender-options">
+ <label class="gender-pill">
+ <input type="radio" name="gender" value="female" checked />
+ <span>👩 Nữ</span>
+ </label>
+ <label class="gender-pill">
+ <input type="radio" name="gender" value="male" />
+ <span>👨 Nam</span>
+ </label>
+ <label class="gender-pill">
+ <input type="radio" name="gender" value="other" />
+ <span>✨ Khác</span>
+ </label>
+ </div>
+ </label>
 
-              <label>
-                <span>Ngày sinh</span>
-                <div class="input-icon-wrap">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
-                    <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                  </svg>
-                  <input type="date" name="dob" />
-                </div>
-              </label>
-            </div>
+ <!-- PHẦN 2: THÔNG TIN LIÊN HỆ & ĐỊA CHỈ -->
+ <div class="section-subtitle-bar">
+ <span>📞</span>
+ <span>Thông tin liên hệ &amp; Địa chỉ giao nhận</span>
+ </div>
 
-            <label>
-              <span>Giới tính</span>
-              <div class="gender-options">
-                <label class="gender-pill">
-                  <input type="radio" name="gender" value="female" checked />
-                  <span>👩 Nữ</span>
-                </label>
-                <label class="gender-pill">
-                  <input type="radio" name="gender" value="male" />
-                  <span>👨 Nam</span>
-                </label>
-                <label class="gender-pill">
-                  <input type="radio" name="gender" value="other" />
-                  <span>✨ Khác</span>
-                </label>
-              </div>
-            </label>
+ <div class="form-grid-2">
+ <label>
+ <span>Số điện thoại liên hệ <strong style="color:var(--danger)">*</strong></span>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+ </svg>
+ <input type="tel" name="phone" placeholder="Nhập số điện thoại" required />
+ </div>
+ </label>
 
-            <!-- PHẦN 2: THÔNG TIN LIÊN HỆ & ĐỊA CHỈ -->
-            <div class="section-subtitle-bar">
-              <span>📞</span>
-              <span>Thông tin liên hệ &amp; Địa chỉ giao nhận</span>
-            </div>
+ <label>
+ <span>Địa chỉ Email</span>
+ <div class="input-icon-wrap">
+ <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+ <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+ <input type="email" name="email" placeholder="example@email.com" />
+ </div>
+ </label>
+ </div>
 
-            <div class="form-grid-2">
-              <label>
-                <span>Số điện thoại liên hệ <strong style="color:var(--danger)">*</strong></span>
-                <div class="input-icon-wrap">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2C10 20 4 14 4 6a2 2 0 0 1 1-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                  </svg>
-                  <input type="tel" name="phone" placeholder="Nhập số điện thoại" required />
-                </div>
-              </label>
+ <!-- Địa chỉ mặc định Đà Nẵng (Grid 2x2) -->
+ <div class="form-grid-2">
+ <label>
+ <span>Số nhà &amp; Tên đường</span>
+ <input type="text" name="street" placeholder="VD: 123 Nguyễn Văn Linh" value="123 Nguyễn Văn Linh" />
+ </label>
 
-              <label>
-                <span>Địa chỉ Email</span>
-                <div class="input-icon-wrap">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                    <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <input type="email" name="email" placeholder="example@email.com" />
-                </div>
-              </label>
-            </div>
+ <label>
+ <span>Phường / Xã</span>
+ <input type="text" name="ward" placeholder="VD: Phường Nam Dương" value="Phường Nam Dương" />
+ </label>
+ </div>
 
-            <!-- Địa chỉ mặc định Đà Nẵng (Grid 2x2) -->
-            <div class="form-grid-2">
-              <label>
-                <span>Số nhà &amp; Tên đường</span>
-                <input type="text" name="street" placeholder="VD: 123 Nguyễn Văn Linh" value="123 Nguyễn Văn Linh" />
-              </label>
+ <div class="form-grid-2">
+ <label>
+ <span>Quận / Huyện</span>
+ <select name="district">
+ <option value="Quận Hải Châu" selected>Quận Hải Châu</option>
+ <option value="Quận Thanh Khê">Quận Thanh Khê</option>
+ <option value="Quận Sơn Trà">Quận Sơn Trà</option>
+ <option value="Quận Ngũ Hành Sơn">Quận Ngũ Hành Sơn</option>
+ <option value="Quận Cẩm Lệ">Quận Cẩm Lệ</option>
+ <option value="Quận Liên Chiểu">Quận Liên Chiểu</option>
+ <option value="Huyện Hòa Vang">Huyện Hòa Vang</option>
+ </select>
+ </label>
 
-              <label>
-                <span>Phường / Xã</span>
-                <input type="text" name="ward" placeholder="VD: Phường Nam Dương" value="Phường Nam Dương" />
-              </label>
-            </div>
+ <label>
+ <span>Tỉnh / Thành phố (Mặc định)</span>
+ <input type="text" name="city" value="TP. Đà Nẵng" readonly style="background:var(--cream-soft); cursor:not-allowed;" />
+ </label>
+ </div>
 
-            <div class="form-grid-2">
-              <label>
-                <span>Quận / Huyện</span>
-                <select name="district">
-                  <option value="Quận Hải Châu" selected>Quận Hải Châu</option>
-                  <option value="Quận Thanh Khê">Quận Thanh Khê</option>
-                  <option value="Quận Sơn Trà">Quận Sơn Trà</option>
-                  <option value="Quận Ngũ Hành Sơn">Quận Ngũ Hành Sơn</option>
-                  <option value="Quận Cẩm Lệ">Quận Cẩm Lệ</option>
-                  <option value="Quận Liên Chiểu">Quận Liên Chiểu</option>
-                  <option value="Huyện Hòa Vang">Huyện Hòa Vang</option>
-                </select>
-              </label>
+ <div class="profile-actions">
+ <button type="submit" class="btn-cta">
+ <span>💾</span>
+ <span>Lưu thay đổi hồ sơ</span>
+ </button>
+ <button type="button" class="btn-cta btn-cta-outline" id="btnCancelCustomerEdit">
+ <span>Khôi phục ban đầu</span>
+ </button>
+ </div>
+ </form>
+ </section>
+ </div>
+ </main>
 
-              <label>
-                <span>Tỉnh / Thành phố (Mặc định)</span>
-                <input type="text" name="city" value="TP. Đà Nẵng" readonly style="background:var(--cream-soft); cursor:not-allowed;" />
-              </label>
-            </div>
+ <!-- ===== FOOTER ===== -->
+ <footer id="footer">
+ <div class="section-inner footer-inner">
+ <div class="footer-brand">
+ <a href="./index.html" class="logo">
+ <span class="logo-badge">
+ <svg viewBox="0 0 24 24" fill="currentColor">
+ <ellipse cx="12" cy="16" rx="6" ry="5" />
+ <ellipse cx="5" cy="9" rx="2.2" ry="3" />
+ <ellipse cx="10" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="14" cy="6" rx="2.2" ry="3" />
+ <ellipse cx="19" cy="9" rx="2.2" ry="3" />
+ </svg>
+ </span>
+ <span class="logo-text">PawnCare</span>
+ </a>
+ <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
+ <div class="footer-address">
+ <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
+ </div>
+ </div>
+ <div class="footer-column">
+ <h4>Dịch vụ</h4>
+ <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
+ <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
+ <a href="./index.html#services" class="link">Phục hồi chức năng</a>
+ <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
+ </div>
+ <div class="footer-column">
+ <h4>Điều hướng</h4>
+ <a href="./index.html" class="link">Trang chủ</a>
+ <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
+ <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
+ <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
+ <a href="./pet-profile.html" class="link">Hồ sơ thú cưng</a>
+ </div>
+ <div class="footer-column">
+ <h4>Hỗ trợ khẩn cấp</h4>
+ <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
+ <a href="tel:0900123456" class="footer-emergency-pill">
+ <span>🚨</span>
+ <span>0900 123 456</span>
+ </a>
+ <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
+ </div>
+ </div>
+ <div class="footer-copy-wrap">
+ <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
+ <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
+ </div>
+ </footer>
 
-            <div class="profile-actions">
-              <button type="submit" class="btn-cta">
-                <span>💾</span>
-                <span>Lưu thay đổi hồ sơ</span>
-              </button>
-              <button type="button" class="btn-cta btn-cta-outline" id="btnCancelCustomerEdit">
-                <span>Khôi phục ban đầu</span>
-              </button>
-            </div>
-          </form>
-        </section>
-      </div>
-    </main>
-
-    <!-- ===== FOOTER ===== -->
-    <footer id="footer">
-      <div class="section-inner footer-inner">
-        <div class="footer-brand">
-          <a href="./index.html" class="logo">
-            <span class="logo-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <ellipse cx="12" cy="16" rx="6" ry="5" />
-                <ellipse cx="5" cy="9" rx="2.2" ry="3" />
-                <ellipse cx="10" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="14" cy="6" rx="2.2" ry="3" />
-                <ellipse cx="19" cy="9" rx="2.2" ry="3" />
-              </svg>
-            </span>
-            <span class="logo-text">PawnCare</span>
-          </a>
-          <p>Hệ sinh thái chăm sóc toàn diện cho thú cưng tại TP. Đà Nẵng — Đem đến sự an tâm cho ba mẹ và sức khỏe cho Boss.</p>
-          <div class="footer-address">
-            <span>📍 123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng</span>
-          </div>
-        </div>
-        <div class="footer-column">
-          <h4>Dịch vụ</h4>
-          <a href="./index.html#services" class="link">Khám thú y &amp; Tiêm chủng</a>
-          <a href="./index.html#services" class="link">Spa &amp; Cắt tỉa lông</a>
-          <a href="./index.html#services" class="link">Phục hồi chức năng</a>
-          <a href="./index.html#services" class="link">Khách sạn thú cưng</a>
-        </div>
-        <div class="footer-column">
-          <h4>Điều hướng</h4>
-          <a href="./index.html" class="link">Trang chủ</a>
-          <a href="./forum.html" class="link">Diễn đàn cộng đồng</a>
-          <a href="./campaigns.html" class="link">Chiến dịch xã hội</a>
-          <a href="./customer-profile.html" class="link">Hồ sơ khách hàng</a>
-          <a href="./pet-profile.html" class="link">Hồ sơ thú cưng</a>
-        </div>
-        <div class="footer-column">
-          <h4>Hỗ trợ khẩn cấp</h4>
-          <p class="footer-hours">Đường dây nóng túc trực 24/7 cho các tình huống khẩn cấp của Boss:</p>
-          <a href="tel:0900123456" class="footer-emergency-pill">
-            <span>🚨</span>
-            <span>0900 123 456</span>
-          </a>
-          <p class="footer-hours" style="margin-top: 10px;">Giờ mở cửa: 08:00 - 20:30 hàng ngày</p>
-        </div>
-      </div>
-      <div class="footer-copy-wrap">
-        <p class="footer-copy">© 2026 PawnCare Đà Nẵng. Mọi quyền được bảo lưu.</p>
-        <span class="footer-badge-student">Đồ án nhóm CMU-IS 432-AIS</span>
-      </div>
-    </footer>
-
-    <script type="module" src="../js/main.js"></script>
-  </body>
+ <script type="module" src="../js/main.js"></script>
+ </body>
 </html>
