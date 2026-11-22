@@ -21,7 +21,7 @@ const boardingSchema = new mongoose.Schema(
     },
     // Khách hàng gửi thú cưng
     customerId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "User",
       required: [true, "Mã khách hàng (customerId) là bắt buộc"],
       index: true,
@@ -38,7 +38,7 @@ const boardingSchema = new mongoose.Schema(
     },
     // Thú cưng được nhận gửi
     petId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "Pet",
       required: [true, "Mã thú cưng (petId) là bắt buộc"],
       index: true,
@@ -55,7 +55,7 @@ const boardingSchema = new mongoose.Schema(
     },
     // Chuồng lưu trú
     cageId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "Cage",
       required: [true, "Mã chuồng (cageId) là bắt buộc"],
       index: true,
@@ -156,6 +156,31 @@ const boardingSchema = new mongoose.Schema(
   }
 );
 
+// Virtual aliases tương thích với frontend
+boardingSchema.virtual("totalFee").get(function () {
+  return this.totalAmount;
+}).set(function (val) {
+  this.totalAmount = val;
+});
+
+boardingSchema.virtual("checkoutHealthNote").get(function () {
+  return this.checkOutHealthNote;
+}).set(function (val) {
+  this.checkOutHealthNote = val;
+});
+
+boardingSchema.virtual("code").get(function () {
+  return this.boardingCode;
+}).set(function (val) {
+  this.boardingCode = val;
+});
+
+boardingSchema.virtual("pricePerDay").get(function () {
+  return this.dailyPrice;
+}).set(function (val) {
+  this.dailyPrice = val;
+});
+
 // Tự động sinh mã boardingCode nếu chưa có
 boardingSchema.pre("save", function () {
   if (!this.boardingCode) {
@@ -207,22 +232,41 @@ boardingSchema.statics.performCheckIn = async function ({
   }
 
   // 2. Kiểm tra thú cưng tồn tại & có thuộc khách hàng đã chọn không
-  const pet = await Pet.findById(petId).lean();
+  const isPetObjectId = mongoose.Types.ObjectId.isValid(petId);
+  const pet = await Pet.findOne({
+    $or: [
+      { _id: isPetObjectId ? petId : null },
+      { name: String(petId).trim() },
+    ],
+  }).lean();
   if (!pet) {
     throw new Error("Không tìm thấy thông tin thú cưng!");
   }
-  if (String(pet.ownerId) !== String(customerId)) {
+
+  // Lấy thông tin khách hàng
+  const isUserObjectId = mongoose.Types.ObjectId.isValid(customerId);
+  const user = await User.findOne({
+    $or: [
+      { _id: isUserObjectId ? customerId : null },
+      { phone: String(customerId).trim() },
+    ],
+  }).lean();
+
+  const userIdentifier = user ? String(user._id) : String(customerId);
+  if (String(pet.ownerId) !== userIdentifier && String(pet.ownerId) !== String(customerId)) {
     throw new Error("Thú cưng không thuộc về khách hàng đã chọn!");
   }
 
-  // Lấy thông tin khách hàng
-  const user = await User.findById(customerId).lean();
-  const customerName = user ? (user.fullName || user.username) : "Khách hàng";
+  const customerName = user ? (user.fullName || user.name || "Khách hàng") : "Khách hàng";
   const customerPhone = user ? (user.phone || "") : "";
 
   // 3. Kiểm tra thú cưng có đang lưu ở chuồng khác không
   const existingActive = await this.findOne({
-    petId: pet._id,
+    $or: [
+      { petId: pet._id },
+      { petId: String(pet._id) },
+      { petId: String(petId) },
+    ],
     status: "checked_in",
     isDeleted: false,
   }).lean();
@@ -233,8 +277,15 @@ boardingSchema.statics.performCheckIn = async function ({
   }
 
   // 4. Kiểm tra chuồng có trạng thái "available" không
-  const cage = await Cage.findById(cageId);
-  if (!cage || cage.isDeleted) {
+  const isCageObjectId = mongoose.Types.ObjectId.isValid(cageId);
+  const cage = await Cage.findOne({
+    $or: [
+      { _id: isCageObjectId ? cageId : null },
+      { cageCode: String(cageId).trim().toUpperCase() },
+    ],
+    isDeleted: false,
+  });
+  if (!cage) {
     throw new Error("Không tìm thấy chuồng lưu trú được chọn!");
   }
   if (cage.status !== "available") {
@@ -332,7 +383,13 @@ boardingSchema.methods.performCheckOut = async function ({
 
   // Chuồng tự chuyển về "available"
   const Cage = mongoose.model("Cage");
-  const cage = await Cage.findById(this.cageId);
+  const isCageObjectId = mongoose.Types.ObjectId.isValid(this.cageId);
+  const cage = await Cage.findOne({
+    $or: [
+      { _id: isCageObjectId ? this.cageId : null },
+      { cageCode: String(this.cageCode || this.cageId).trim().toUpperCase() },
+    ],
+  });
   if (cage) {
     await cage.checkOut();
   }
@@ -344,16 +401,17 @@ boardingSchema.methods.performCheckOut = async function ({
  * Static Helper: Check-out theo ID hoặc mã boardingCode
  */
 boardingSchema.statics.checkOutById = async function (idOrCode, options = {}) {
+  const isObjectId = mongoose.Types.ObjectId.isValid(idOrCode);
   const boarding = await this.findOne({
     $or: [
-      { _id: idOrCode.match(/^[0-9a-fA-F]{24}$/) ? idOrCode : null },
-      { boardingCode: idOrCode },
+      { _id: isObjectId ? new mongoose.Types.ObjectId(idOrCode) : null },
+      { boardingCode: String(idOrCode).trim().toUpperCase() },
     ],
     isDeleted: false,
   });
 
   if (!boarding) {
-    throw new Error(`Không tìm thấy lượt lưu chuồng với mã/ID: ${idOrCode}`);
+    throw new Error(`Không tìm thấy lượt lưu chuồng với mã hoặc ID: ${idOrCode}`);
   }
 
   return boarding.performCheckOut(options);

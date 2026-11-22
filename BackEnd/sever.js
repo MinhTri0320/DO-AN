@@ -24,6 +24,8 @@ const dispensingR = require("./routes/dispensingR");
 const invoicesR = require("./routes/invoicesR");
 const paymentsR = require("./routes/paymentsR");
 const receptionistR = require("./routes/receptionistR");
+const cagesR = require("./routes/cagesR");
+const boardingsR = require("./routes/boardingsR");
 
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
@@ -39,6 +41,8 @@ const Dispensing = require("./models/dispensing");
 const Invoice = require("./models/invoice");
 const Payment = require("./models/payment");
 const Role = require("./models/role");
+const Cage = require("./models/cage");
+const Boarding = require("./models/boarding");
 
 const app = express();
 
@@ -69,6 +73,8 @@ app.use("/api", dispensingR);
 app.use("/api", invoicesR);
 app.use("/api", paymentsR);
 app.use("/api", receptionistR);
+app.use("/api", cagesR);
+app.use("/api", boardingsR);
 
 
 // Kiểm tra server
@@ -108,6 +114,8 @@ async function startServer() {
         await Payment.init();
         await Role.init();
         await Role.seedDefaultRoles();
+        await Cage.init();
+        await Boarding.init();
 
         startCampaignReminderScheduler();
 

@@ -17,13 +17,19 @@ const cageSchema = new mongoose.Schema(
       uppercase: true,
       index: true,
     },
+    // Tên chuồng hiển thị
+    name: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     // Loại / kích cỡ chuồng: nhỏ, vừa, lớn
     size: {
       type: String,
       required: [true, "Kích cỡ chuồng là bắt buộc"],
       trim: true,
       enum: {
-        values: ["nhỏ", "vừa", "lớn", "Small", "Medium", "Large"],
+        values: ["nhỏ", "vừa", "lớn", "small", "medium", "large", "Small", "Medium", "Large"],
         message: "Kích cỡ chuồng phải là nhỏ, vừa hoặc lớn",
       },
       default: "vừa",
@@ -91,6 +97,32 @@ cageSchema.virtual("dailyPrice").get(function () {
   return this.pricePerDay;
 }).set(function (val) {
   this.pricePerDay = val;
+});
+
+// Virtual alias cho code, price, description tương thích với frontend
+cageSchema.virtual("code").get(function () {
+  return this.cageCode;
+}).set(function (val) {
+  this.cageCode = val;
+});
+
+cageSchema.virtual("price").get(function () {
+  return this.pricePerDay;
+}).set(function (val) {
+  this.pricePerDay = val;
+});
+
+cageSchema.virtual("description").get(function () {
+  return this.notes;
+}).set(function (val) {
+  this.notes = val;
+});
+
+cageSchema.virtual("sizeLabel").get(function () {
+  const s = (this.size || "").toLowerCase();
+  if (s === "nhỏ" || s === "small") return "Nhỏ (Dưới 5kg)";
+  if (s === "lớn" || s === "large") return "Lớn (Trên 15kg)";
+  return "Vừa (5kg - 15kg)";
 });
 
 // Middleware: Ngăn xóa chuồng đang occupied (đang dùng) theo nghiệp vụ Sprint 4
