@@ -689,3 +689,298 @@ export async function apiGetPetReExaminations(petId) {
  return { success: false, reExaminations: [] };
  }
 }
+
+
+/* ============================================================
+   7. SPRINT 4: GROOMING, MEDICINE, INVOICE & PAYMENT, ROLE MANAGEMENT
+   ============================================================ */
+
+/* --- A. GROOMING APIS --- */
+
+export async function apiCreateGrooming(groomingData) {
+  try {
+    return await request("/grooming", {
+      method: "POST",
+      body: JSON.stringify(groomingData),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi khi tạo lịch grooming:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetGroomings(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = query ? `/grooming?${query}` : "/grooming";
+    return await request(endpoint, { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách grooming:", err.message);
+    return { success: false, groomings: [], message: err.message };
+  }
+}
+
+export async function apiGetGroomingById(id) {
+  try {
+    return await request(`/grooming/${encodeURIComponent(id)}`, { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy chi tiết grooming:", err.message);
+    return null;
+  }
+}
+
+export async function apiChangeGroomingStatus(id, newStatus) {
+  try {
+    return await request(`/grooming/${encodeURIComponent(id)}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: newStatus }),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi chuyển trạng thái grooming:", err.message);
+    throw err;
+  }
+}
+
+export async function apiCancelGrooming(id) {
+  try {
+    return await request(`/grooming/${encodeURIComponent(id)}/cancel`, {
+      method: "PATCH",
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi hủy lịch grooming:", err.message);
+    throw err;
+  }
+}
+
+/* --- B. MEDICINE & DISPENSING APIS --- */
+
+export async function apiGetMedicines(options = {}) {
+  try {
+    const query = new URLSearchParams(options).toString();
+    const endpoint = query ? `/medicines?${query}` : "/medicines";
+    return await request(endpoint, { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh mục thuốc:", err.message);
+    return { success: false, medicines: [] };
+  }
+}
+
+export async function apiGetMedicineById(id) {
+  try {
+    return await request(`/medicines/${encodeURIComponent(id)}`, { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy chi tiết thuốc:", err.message);
+    return null;
+  }
+}
+
+export async function apiCreateMedicine(medicineData) {
+  try {
+    return await request("/medicines", {
+      method: "POST",
+      body: JSON.stringify(medicineData),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi thêm thuốc mới:", err.message);
+    throw err;
+  }
+}
+
+export async function apiUpdateMedicine(id, medicineData) {
+  try {
+    return await request(`/medicines/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify(medicineData),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi cập nhật thuốc:", err.message);
+    throw err;
+  }
+}
+
+export async function apiDeleteMedicine(id) {
+  try {
+    return await request(`/medicines/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi xóa thuốc:", err.message);
+    throw err;
+  }
+}
+
+export async function apiDispensePrescription(dispenseData) {
+  try {
+    return await request("/dispensing", {
+      method: "POST",
+      body: JSON.stringify(dispenseData),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi cấp thuốc theo đơn:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetDispensings(options = {}) {
+  try {
+    const query = new URLSearchParams(options).toString();
+    const endpoint = query ? `/dispensing?${query}` : "/dispensing";
+    return await request(endpoint, { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách cấp thuốc:", err.message);
+    return { success: false, dispensings: [] };
+  }
+}
+
+/* --- C. INVOICE & PAYMENT APIS --- */
+
+export async function apiCreateInvoice(invoiceData) {
+  try {
+    return await request("/invoices", {
+      method: "POST",
+      body: JSON.stringify(invoiceData),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi tạo hóa đơn:", err.message);
+    throw err;
+  }
+}
+
+export async function apiCreateInvoiceFromDispensing(dispensingId) {
+  try {
+    return await request(`/invoices/from-dispensing/${encodeURIComponent(dispensingId)}`, {
+      method: "POST",
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi tạo hóa đơn từ lượt cấp thuốc:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetInvoices(options = {}) {
+  try {
+    const headers = {};
+    if (options.userId) {
+      headers["x-user-id"] = options.userId;
+    }
+    const query = new URLSearchParams(options).toString();
+    const endpoint = query ? `/invoices?${query}` : "/invoices";
+    return await request(endpoint, { method: "GET", headers });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách hóa đơn:", err.message);
+    return { success: false, invoices: [] };
+  }
+}
+
+export async function apiGetInvoiceById(id, userId = null) {
+  try {
+    const headers = {};
+    if (userId) headers["x-user-id"] = userId;
+    return await request(`/invoices/${encodeURIComponent(id)}`, { method: "GET", headers });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy chi tiết hóa đơn:", err.message);
+    throw err;
+  }
+}
+
+export async function apiProcessPayment(paymentData) {
+  try {
+    return await request("/payments", {
+      method: "POST",
+      body: JSON.stringify(paymentData),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi thực hiện thanh toán:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetPayments(options = {}) {
+  try {
+    const query = new URLSearchParams(options).toString();
+    const endpoint = query ? `/payments?${query}` : "/payments";
+    return await request(endpoint, { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách thanh toán:", err.message);
+    return { success: false, payments: [] };
+  }
+}
+
+/* --- D. ADMIN ROLE MANAGEMENT & DOCTOR APIS --- */
+
+export async function apiAdminGetUsers(search = "", role_id = null, adminId = null) {
+  try {
+    const headers = {};
+    if (adminId) headers["x-user-id"] = adminId;
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (role_id) params.append("role_id", role_id);
+    const query = params.toString() ? `?${params.toString()}` : "";
+    return await request(`/admin/users${query}`, { method: "GET", headers });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách user admin:", err.message);
+    throw err;
+  }
+}
+
+export async function apiAdminUpdateUserRole(userId, role_id, adminId = null) {
+  try {
+    const headers = {};
+    if (adminId) headers["x-user-id"] = adminId;
+    return await request(`/admin/users/${encodeURIComponent(userId)}/role`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ role_id }),
+    });
+  } catch (err) {
+    console.warn("[API] Lỗi cập nhật phân quyền người dùng:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetDoctors() {
+  try {
+    return await request("/doctors", { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách bác sĩ:", err.message);
+    return { success: false, doctors: [] };
+  }
+}
+
+export async function apiGetDoctorAppointments(id_bac_sy = null, doctorId = null) {
+  try {
+    const headers = {};
+    if (doctorId) headers["x-user-id"] = doctorId;
+    if (id_bac_sy) headers["x-doctor-id"] = id_bac_sy;
+    const query = id_bac_sy ? `?id_bac_sy=${encodeURIComponent(id_bac_sy)}` : "";
+    return await request(`/doctor/appointments${query}`, { method: "GET", headers });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy lịch đặt trước của bác sĩ:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetDoctorDiagnoses(id_bac_sy = null, doctorId = null) {
+  try {
+    const headers = {};
+    if (doctorId) headers["x-user-id"] = doctorId;
+    if (id_bac_sy) headers["x-doctor-id"] = id_bac_sy;
+    const query = id_bac_sy ? `?id_bac_sy=${encodeURIComponent(id_bac_sy)}` : "";
+    return await request(`/doctor/diagnoses${query}`, { method: "GET", headers });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy phiếu khám của bác sĩ:", err.message);
+    throw err;
+  }
+}
+
+export async function apiGetDoctorMedicalRecords(petId = null, doctorId = null) {
+  try {
+    const headers = {};
+    if (doctorId) headers["x-user-id"] = doctorId;
+    const query = petId ? `?petId=${encodeURIComponent(petId)}` : "";
+    return await request(`/doctor/medical-records${query}`, { method: "GET", headers });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy hồ sơ khám thú cưng:", err.message);
+    throw err;
+  }
+}

@@ -148,11 +148,22 @@ const groomingSchema = new mongoose.Schema(
       default: "pending",
       index: true,
     },
-    // Nhân viên kỹ thuật grooming phụ trách
+    // Nhân viên kỹ thuật grooming / Bác sĩ phụ trách
     groomerName: {
       type: String,
       trim: true,
       default: "Nhân viên Grooming PawnCare",
+    },
+    // Mã bác sĩ / kỹ thuật viên phụ trách (format: bs0xxxx)
+    id_bac_sy: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    doctorPhone: {
+      type: String,
+      trim: true,
+      index: true,
     },
     isDeleted: {
       type: Boolean,
@@ -201,6 +212,7 @@ groomingSchema.statics.checkOverlap = async function ({
   dateISO,
   startTime,
   duration,
+  id_bac_sy = null,
   excludeId = null,
 }) {
   const normDate = normalizeDateISO(dateISO);
@@ -217,12 +229,16 @@ groomingSchema.statics.checkOverlap = async function ({
     ],
   };
 
+  if (id_bac_sy) {
+    query.id_bac_sy = id_bac_sy;
+  }
+
   if (excludeId) {
     query._id = { $ne: excludeId };
   }
 
-  const conflictingBooking = await this.findOne(query).lean();
-  return conflictingBooking;
+  const conflictingBookings = await this.find(query).lean();
+  return conflictingBookings;
 };
 
 /**
@@ -241,11 +257,13 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
   startTime,
   duration = 45,
   note = "",
+  id_bac_sy = null,
   groomerName = "Kỹ thuật viên Grooming",
   skipPastCheck = false,
 }) {
   const Pet = mongoose.model("Pet");
   const User = mongoose.model("User");
+  const Doctor = mongoose.models.Doctor || mongoose.model("Doctor");
 
   // 1. Kiểm tra thú cưng tồn tại & có thuộc khách hàng đã chọn không
   const pet = await Pet.findById(petId).lean();
@@ -258,7 +276,7 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
 
   // Lấy thông tin khách hàng
   const user = await User.findById(customerId).lean();
-  const customerName = user ? (user.fullName || user.username) : "Khách hàng";
+  const customerName = user ? (user.fullName || user.username || user.name) : "Khách hàng";
   const customerPhone = user ? (user.phone || "") : "";
 
   const normDateISO = normalizeDateISO(date);
@@ -271,22 +289,56 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
     }
   }
 
-  // 3. Kiểm tra không cho tạo lịch trùng giờ với lịch chưa hủy
-  const overlap = await this.checkOverlap({
-    dateISO: normDateISO,
-    startTime,
-    duration,
-  });
-
-  if (overlap) {
+  // 3. Kiểm tra danh sách bác sĩ đang hoạt động trong hệ thống
+  const activeDoctors = await Doctor.find({ isActive: true }).lean();
+  if (!activeDoctors || activeDoctors.length === 0) {
     throw new Error(
-      `Khung giờ ${startTime} - ${minutesToTime(timeToMinutes(startTime) + Number(duration))} ngày ${date} đã bị trùng với lịch hẹn [${overlap.groomingCode}] (${overlap.startTime} - ${overlap.endTime}) chưa hủy!`
+      "Hệ thống hiện chưa có bác sĩ nào được phân quyền (role_id = 2). Vui lòng yêu cầu Admin phân quyền tài khoản bác sĩ trước khi tạo lịch!"
     );
   }
 
   const startM = timeToMinutes(startTime);
   const endM = startM + Number(duration);
   const endTime = minutesToTime(endM);
+
+  let finalDoctor = null;
+
+  if (id_bac_sy) {
+    finalDoctor = activeDoctors.find((d) => d.id_bac_sy === id_bac_sy);
+    if (!finalDoctor) {
+      throw new Error(`Không tìm thấy bác sĩ có mã [${id_bac_sy}] đang hoạt động trong hệ thống!`);
+    }
+
+    const overlap = await this.checkOverlap({
+      dateISO: normDateISO,
+      startTime,
+      duration,
+      id_bac_sy,
+    });
+
+    if (overlap && overlap.length > 0) {
+      throw new Error(
+        `Bác sĩ ${finalDoctor.name} (${id_bac_sy}) đã có lịch hẹn [${overlap[0].groomingCode}] (${overlap[0].startTime} - ${overlap[0].endTime}) trong khung giờ này!`
+      );
+    }
+  } else {
+    // Không chỉ định đích danh bác sĩ: kiểm tra tổng số lịch đang có
+    const conflicts = await this.checkOverlap({
+      dateISO: normDateISO,
+      startTime,
+      duration,
+    });
+
+    if (conflicts.length >= activeDoctors.length) {
+      throw new Error(
+        `Lịch đã đầy trong khung giờ ${startTime} - ${endTime} ngày ${date} (tất cả ${activeDoctors.length} bác sĩ đều bận)!`
+      );
+    }
+
+    // Tự động phân bổ vào bác sĩ còn rảnh trong ca này
+    const busyDoctorIds = conflicts.map((c) => c.id_bac_sy).filter(Boolean);
+    finalDoctor = activeDoctors.find((d) => !busyDoctorIds.includes(d.id_bac_sy)) || activeDoctors[0];
+  }
 
   const randomNum = Math.floor(100 + Math.random() * 900);
   const groomingCode = `GRM-${new Date().getFullYear()}-${randomNum}`;
@@ -310,7 +362,9 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
     endMinutes: endM,
     note,
     status: "pending",
-    groomerName,
+    id_bac_sy: finalDoctor.id_bac_sy,
+    doctorPhone: finalDoctor.phone,
+    groomerName: finalDoctor.name || groomerName,
   });
 
   return newGrooming;

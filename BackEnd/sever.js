@@ -16,6 +16,13 @@ const medicalRecordsR = require("./routes/medicalRecordsR");
 const diagnosisR = require("./routes/diagnosisR");
 const prescriptionsR = require("./routes/prescriptionsR");
 const reExaminationsR = require("./routes/reExaminationsR");
+const adminUsersR = require("./routes/adminUsersR");
+const doctorFeaturesR = require("./routes/doctorFeaturesR");
+const groomingR = require("./routes/groomingR");
+const medicinesR = require("./routes/medicinesR");
+const dispensingR = require("./routes/dispensingR");
+const invoicesR = require("./routes/invoicesR");
+const paymentsR = require("./routes/paymentsR");
 
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
@@ -24,6 +31,12 @@ const PetHealthProfile = require("./models/petHealthProfile");
 const Diagnosis = require("./models/diagnosis");
 const Prescription = require("./models/prescription");
 const ReExamination = require("./models/reExamination");
+const Doctor = require("./models/doctor");
+const Grooming = require("./models/grooming");
+const Medicine = require("./models/medicine");
+const Dispensing = require("./models/dispensing");
+const Invoice = require("./models/invoice");
+const Payment = require("./models/payment");
 
 const app = express();
 
@@ -46,6 +59,13 @@ app.use("/api", medicalRecordsR);
 app.use("/api", diagnosisR);
 app.use("/api", prescriptionsR);
 app.use("/api", reExaminationsR);
+app.use("/api", adminUsersR);
+app.use("/api", doctorFeaturesR);
+app.use("/api", groomingR);
+app.use("/api", medicinesR);
+app.use("/api", dispensingR);
+app.use("/api", invoicesR);
+app.use("/api", paymentsR);
 
 
 // Kiểm tra server
@@ -77,6 +97,12 @@ async function startServer() {
         await Diagnosis.init();
         await Prescription.init();
         await ReExamination.init();
+        await Doctor.init();
+        await Grooming.init();
+        await Medicine.init();
+        await Dispensing.init();
+        await Invoice.init();
+        await Payment.init();
 
         startCampaignReminderScheduler();
 

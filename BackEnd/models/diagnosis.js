@@ -87,6 +87,16 @@ const diagnosisSchema = new mongoose.Schema(
       trim: true,
       default: "BS. CKI. Nguyễn Văn Hùng",
     },
+    id_bac_sy: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    doctorPhone: {
+      type: String,
+      trim: true,
+      index: true,
+    },
     clinicBranch: {
       type: String,
       trim: true,

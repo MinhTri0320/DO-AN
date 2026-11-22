@@ -28,12 +28,14 @@ const register = async (req, res) => {
     // Người đăng ký tài khoản đầu tiên sẽ là admin, các tài khoản sau mặc định là pet_owner
     const userCount = await User.countDocuments();
     const role = userCount === 0 ? "admin" : "pet_owner";
+    const role_id = userCount === 0 ? 1 : 4;
 
     const user = await User.create({
       name: name,
       phone: phone,
       password: hashedPassword,
-      role
+      role,
+      role_id
     });
 
     res.status(201).json({
@@ -42,7 +44,8 @@ const register = async (req, res) => {
         id: user._id,
         name: user.name,
         phone: user.phone,
-        role: user.role
+        role: user.role,
+        role_id: user.role_id || role_id
       }
     });
 

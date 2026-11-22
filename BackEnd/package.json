@@ -9,6 +9,7 @@
     "fix:passwords": "node scripts/fixPasswords.js",
     "seed:medical": "node scripts/seedMedicalRecords.js",
     "seed:prescriptions-reexam": "node scripts/seedPrescriptionsAndReExam.js",
+    "sync:roles": "node scripts/syncRoleIdsAndSeedSprint4.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

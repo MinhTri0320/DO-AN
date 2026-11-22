@@ -31,13 +31,25 @@ const login = async (req, res) => {
       });
     }
 
+    const roleMap = { admin: 1, doctor: 2, receptionist: 3, pet_owner: 4 };
+    const role_id = user.role_id || roleMap[user.role] || 4;
+
+    let id_bac_sy = undefined;
+    if (role_id === 2) {
+      const Doctor = require("../models/doctor");
+      const doc = await Doctor.findOne({ userId: user._id, isActive: true }).lean();
+      if (doc) id_bac_sy = doc.id_bac_sy;
+    }
+
     res.status(200).json({
       message: "Đăng nhập thành công",
       user: {
         id: user._id,
         name: user.name,
         phone: user.phone,
-        role: user.role
+        role: user.role,
+        role_id: role_id,
+        id_bac_sy: id_bac_sy
       }
     });
 
