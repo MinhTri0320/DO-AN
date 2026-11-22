@@ -908,6 +908,15 @@ export async function apiGetPayments(options = {}) {
 
 /* --- D. ADMIN ROLE MANAGEMENT & DOCTOR APIS --- */
 
+export async function apiAdminGetRoles() {
+  try {
+    return await request("/admin/roles", { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh mục roles:", err.message);
+    return { success: false, roles: [] };
+  }
+}
+
 export async function apiAdminGetUsers(search = "", role_id = null, adminId = null) {
   try {
     const headers = {};

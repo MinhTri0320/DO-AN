@@ -32,7 +32,17 @@ const login = async (req, res) => {
     }
 
     const roleMap = { admin: 1, doctor: 2, receptionist: 3, pet_owner: 4 };
-    const role_id = user.role_id || roleMap[user.role] || 4;
+    let role_id = user.role_id || roleMap[user.role] || 4;
+
+    // Tự động gán role_id vào MongoDB nếu tài khoản cũ chưa có
+    if (!user.role_id) {
+      user.role_id = role_id;
+      try {
+        await user.save();
+      } catch (saveErr) {
+        console.warn("Không thể tự động lưu role_id cho user:", saveErr.message);
+      }
+    }
 
     let id_bac_sy = undefined;
     if (role_id === 2) {

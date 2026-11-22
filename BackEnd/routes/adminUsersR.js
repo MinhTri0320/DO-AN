@@ -7,6 +7,9 @@ const router = express.Router();
    ADMIN USER & ROLE MANAGEMENT ROUTES (Chỉ dành riêng cho Admin)
    ============================================================ */
 
+// 0. Danh mục các vai trò chuẩn trong MongoDB
+router.get("/admin/roles", adminUsers.getRoles);
+
 // 1. Danh sách người dùng (tìm kiếm song song theo tên/số điện thoại, lọc theo role_id)
 router.get("/admin/users", adminUsers.getUsers);
 

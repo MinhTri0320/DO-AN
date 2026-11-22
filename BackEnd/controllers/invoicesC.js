@@ -19,6 +19,7 @@ async function getCallerInfo(req) {
       return {
         id: String(user._id),
         name: user.name,
+        phone: user.phone,
         role: user.role,
         role_id: user.role_id || (user.role === "admin" ? 1 : user.role === "doctor" ? 2 : user.role === "receptionist" ? 3 : 4),
       };
@@ -99,14 +100,32 @@ const getInvoices = async (req, res) => {
     const { customerId, status } = req.query;
     const caller = await getCallerInfo(req);
 
+    // 1. Bắt buộc phải có thông tin định danh người gọi
+    if (!caller) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập để truy cập thông tin hóa đơn.",
+      });
+    }
+
+    // 2. Phân quyền: role_id = 1 (Admin) và role_id = 2 (Bác sĩ) không có quyền truy cập hóa đơn phòng khám
+    if (caller.role_id === 1 || caller.role_id === 2) {
+      return res.status(403).json({
+        success: false,
+        message: "Quyền truy cập bị từ chối! Quản trị viên và Bác sĩ không có quyền truy cập danh sách hóa đơn chung. Chức năng này chỉ dành cho Nhân viên Lễ tân (role_id = 3).",
+      });
+    }
+
     const filter = { isDeleted: false };
 
-    // Ràng buộc phân quyền:
-    // Nếu caller là Khách hàng (role_id = 4) -> Ép buộc lọc chỉ hóa đơn của chính mình
-    if (caller && caller.role_id === 4) {
-      filter.customerId = caller.id;
-    } else if (customerId) {
-      filter.customerId = customerId;
+    // 3. Khách hàng (role_id = 4): CHỈ được phép xem duy nhất hóa đơn gắn với chính mình
+    if (caller.role_id === 4) {
+      filter.$or = [{ customerId: caller.id }, { customerPhone: caller.phone }];
+    } else if (caller.role_id === 3) {
+      // 4. Lễ tân (role_id = 3): Được xem danh sách chung hoặc lọc theo khách hàng
+      if (customerId) {
+        filter.customerId = customerId;
+      }
     }
 
     if (status) {
@@ -134,11 +153,25 @@ const getInvoices = async (req, res) => {
 };
 
 // 4. Chi tiết một hóa đơn (GET /api/invoices/:id)
-// Khách hàng không thể xem trộm hóa đơn của người khác
+// Khách hàng không thể xem trộm hóa đơn của người khác; Admin & Bác sĩ không truy cập
 const getInvoiceById = async (req, res) => {
   try {
     const { id } = req.params;
     const caller = await getCallerInfo(req);
+
+    if (!caller) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập để xem chi tiết hóa đơn.",
+      });
+    }
+
+    if (caller.role_id === 1 || caller.role_id === 2) {
+      return res.status(403).json({
+        success: false,
+        message: "Quyền truy cập bị từ chối! Quản trị viên và Bác sĩ không có quyền truy cập chi tiết hóa đơn.",
+      });
+    }
 
     const invoice = await Invoice.findOne({
       $or: [
@@ -160,12 +193,12 @@ const getInvoiceById = async (req, res) => {
     }
 
     // Kiểm tra phân quyền: Khách hàng chỉ xem được hóa đơn của chính mình
-    if (caller && caller.role_id === 4) {
+    if (caller.role_id === 4) {
       const invCustomerId = invoice.customerId?._id
         ? String(invoice.customerId._id)
         : String(invoice.customerId);
 
-      if (invCustomerId !== caller.id) {
+      if (invCustomerId !== caller.id && invoice.customerPhone !== caller.phone) {
         return res.status(403).json({
           success: false,
           message: "Quyền truy cập bị từ chối! Bạn chỉ có thể xem hóa đơn của chính mình.",

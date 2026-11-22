@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Doctor = require("../models/doctor");
+const Role = require("../models/role");
 
 /**
  * Middleware kiểm tra quyền Quản trị viên (Admin - role_id = 1)
@@ -196,9 +197,31 @@ const getDoctors = async (req, res) => {
   }
 };
 
+// 4. Lấy danh sách danh mục các vai trò trong MongoDB (GET /api/admin/roles)
+const getRoles = async (req, res) => {
+  try {
+    let roles = await Role.find({}).sort({ role_id: 1 }).lean();
+    if (!roles || roles.length === 0) {
+      await Role.seedDefaultRoles();
+      roles = await Role.find({}).sort({ role_id: 1 }).lean();
+    }
+    return res.status(200).json({
+      success: true,
+      roles,
+    });
+  } catch (error) {
+    console.error("Lỗi lấy danh mục vai trò:", error);
+    return res.status(200).json({
+      success: true,
+      roles: Role.DEFAULT_ROLES,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   updateUserRole,
   getDoctors,
+  getRoles,
   verifyAdminCaller,
 };

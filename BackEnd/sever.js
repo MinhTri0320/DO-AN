@@ -23,6 +23,7 @@ const medicinesR = require("./routes/medicinesR");
 const dispensingR = require("./routes/dispensingR");
 const invoicesR = require("./routes/invoicesR");
 const paymentsR = require("./routes/paymentsR");
+const receptionistR = require("./routes/receptionistR");
 
 const { startCampaignReminderScheduler } = require("./services/campaignReminders");
 const Appointment = require("./models/appointment");
@@ -37,6 +38,7 @@ const Medicine = require("./models/medicine");
 const Dispensing = require("./models/dispensing");
 const Invoice = require("./models/invoice");
 const Payment = require("./models/payment");
+const Role = require("./models/role");
 
 const app = express();
 
@@ -66,6 +68,7 @@ app.use("/api", medicinesR);
 app.use("/api", dispensingR);
 app.use("/api", invoicesR);
 app.use("/api", paymentsR);
+app.use("/api", receptionistR);
 
 
 // Kiểm tra server
@@ -103,6 +106,8 @@ async function startServer() {
         await Dispensing.init();
         await Invoice.init();
         await Payment.init();
+        await Role.init();
+        await Role.seedDefaultRoles();
 
         startCampaignReminderScheduler();
 

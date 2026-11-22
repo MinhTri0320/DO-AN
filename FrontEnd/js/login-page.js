@@ -21,9 +21,20 @@ export function initLoginPage() {
  const phoneOrEmailInput = form.elements.phoneOrEmail || form.elements.phone || form.elements.email;
  const rememberBox = form.elements.remember || document.getElementById("rememberLogin");
 
+ // Tự động điền nếu có tham số từ URL
+ const urlParams = new URLSearchParams(window.location.search);
+ const paramPhone = urlParams.get("phoneOrEmail") || urlParams.get("phone");
+ const paramPass = urlParams.get("password");
+ if (paramPhone && phoneOrEmailInput) {
+ phoneOrEmailInput.value = paramPhone;
+ }
+ if (paramPass && form.elements.password) {
+ form.elements.password.value = paramPass;
+ }
+
  // Tự động điền số điện thoại nếu người dùng từng tích "Ghi nhớ đăng nhập"
  const savedPhone = localStorage.getItem(REMEMBER_KEY);
- if (savedPhone && phoneOrEmailInput) {
+ if (savedPhone && phoneOrEmailInput && !phoneOrEmailInput.value) {
  phoneOrEmailInput.value = savedPhone;
  if (rememberBox) rememberBox.checked = true;
  }
@@ -106,7 +117,10 @@ export function initLoginPage() {
  alertEl.className = "auth-alert show success";
  }
  const params = new URLSearchParams(window.location.search);
- const redirectUrl = params.get("redirect") || "./index.html";
+ let redirectUrl = params.get("redirect");
+ if (!redirectUrl) {
+ redirectUrl = (user && (user.role_id === 1 || user.role === "admin")) ? "./admin-roles.html" : "./index.html";
+ }
  setTimeout(() => {
  window.location.href = redirectUrl;
  }, 700);

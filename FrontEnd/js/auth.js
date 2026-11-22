@@ -165,10 +165,11 @@ export async function registerUser({
 // ============================================================
 
 export async function loginUser({
- phone,
- password
+  phone,
+  phoneOrEmail,
+  password
 }) {
- const account = (phone || "").trim();
+  const account = (phone || phoneOrEmail || "").trim();
 
  // Tìm tài khoản theo số điện thoại
  const users = getLocalUsers();
