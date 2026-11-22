@@ -66,128 +66,37 @@ function renderRoleSpecificNavAndDropdown(user) {
 
     if (menuNav) {
       menuNav.innerHTML = `
-        <a href="./index.html" class="link active">Trang chủ</a>
-        <a href="./admin-roles.html" class="link" style="color: #FFF; background: #7A4E2D; font-weight: 700; border-radius: 20px; padding: 6px 14px;">⚙️ Quản lý phân quyền</a>
+        <a href="./admin-roles.html" class="link active" style="color: #FFF; background: #7A4E2D; font-weight: 700; border-radius: 20px; padding: 6px 14px;">⚙️ Quản lý phân quyền</a>
       `;
     }
   }
-  // 2. BÁC SĨ (role_id === 2): HIỂN THỊ 3 CHỨC NĂNG BÁC SĨ + ĐĂNG XUẤT
+  // 2. BÁC SĨ (role_id === 2): CHUYỂN VÀO BÀN LÀM VIỆC BÁC SĨ + ĐĂNG XUẤT
   else if (roleId === 2) {
     dropdown.innerHTML = `
       <p class="dropdown-name" id="userName">${user.name} <span style="font-size: 11px; background: #DEF7EC; color: #03543F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Bác sĩ</span></p>
-      <a href="#" class="dropdown-link" id="btnDoctorApptsModal">📅 Lịch hẹn (cá nhân)</a>
-      <a href="#" class="dropdown-link" id="btnDoctorDiagnosesModal">📋 Phiếu khám (cá nhân)</a>
-      <a href="#" class="dropdown-link" id="btnDoctorRecordsModal">📁 Hồ sơ khám bệnh nhân</a>
+      <a href="./doctor-dashboard.html" class="dropdown-link">👨‍⚕️ Bàn làm việc Bác sĩ</a>
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
 
     if (menuNav) {
       menuNav.innerHTML = `
-        <a href="./index.html" class="link active">Trang chủ</a>
-        <a href="#" class="link" id="navDoctorAppts">📅 Lịch hẹn cá nhân</a>
-        <a href="#" class="link" id="navDoctorDiagnoses">📋 Phiếu khám bệnh</a>
-        <a href="#" class="link" id="navDoctorRecords">📁 Hồ sơ khám bệnh nhân</a>
+        <a href="./doctor-dashboard.html" class="link active">👨‍⚕️ Bàn làm việc Bác sĩ</a>
       `;
     }
-
-    setTimeout(() => {
-      initModalFilters();
-      const openAppts = (e) => {
-        e.preventDefault();
-        openRoleModal("modalDoctorAppts");
-        loadDoctorAppointments();
-      };
-      const openDiag = (e) => {
-        e.preventDefault();
-        openRoleModal("modalDoctorDiagnoses");
-        loadDoctorDiagnoses();
-      };
-      const openRecs = (e) => {
-        e.preventDefault();
-        openRoleModal("modalDoctorRecords");
-        loadDoctorMedicalRecords();
-      };
-
-      const btn1 = document.getElementById("btnDoctorApptsModal");
-      const btn2 = document.getElementById("btnDoctorDiagnosesModal");
-      const btn3 = document.getElementById("btnDoctorRecordsModal");
-      const nav1 = document.getElementById("navDoctorAppts");
-      const nav2 = document.getElementById("navDoctorDiagnoses");
-      const nav3 = document.getElementById("navDoctorRecords");
-
-      if (btn1) btn1.addEventListener("click", openAppts);
-      if (btn2) btn2.addEventListener("click", openDiag);
-      if (btn3) btn3.addEventListener("click", openRecs);
-      if (nav1) nav1.addEventListener("click", openAppts);
-      if (nav2) nav2.addEventListener("click", openDiag);
-      if (nav3) nav3.addEventListener("click", openRecs);
-    }, 100);
   }
-  // 3. LỄ TÂN (role_id === 3): HIỂN THỊ 4 CHỨC NĂNG LỄ TÂN + ĐĂNG XUẤT
+  // 3. LỄ TÂN (role_id === 3): CHUYỂN VÀO CỔNG NGHIỆP VỤ LỄ TÂN + ĐĂNG XUẤT
   else if (roleId === 3) {
     dropdown.innerHTML = `
       <p class="dropdown-name" id="userName">${user.name} <span style="font-size: 11px; background: #E1EFFE; color: #1E429F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Lễ tân</span></p>
-      <a href="#" class="dropdown-link" id="btnRecepInvoicesModal">💳 Hóa đơn &amp; Thanh toán (payment)</a>
-      <a href="#" class="dropdown-link" id="btnRecepAllApptsModal">📅 Lịch khám tất cả khách hàng</a>
-      <a href="#" class="dropdown-link" id="btnRecepPrescriptionsModal">💊 Hóa đơn thuốc sau khám</a>
-      <a href="#" class="dropdown-link" id="btnRecepPharmacyModal">📦 Quản lý kho thuốc</a>
+      <a href="./receptionist-dashboard.html" class="dropdown-link">🛎️ Cổng nghiệp vụ Lễ tân</a>
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
 
     if (menuNav) {
       menuNav.innerHTML = `
-        <a href="./index.html" class="link active">Trang chủ</a>
-        <a href="#" class="link" id="navRecepInvoices">💳 Hóa đơn &amp; Thanh toán</a>
-        <a href="#" class="link" id="navRecepAllAppts">📅 Lịch khám khách hàng</a>
-        <a href="#" class="link" id="navRecepPrescriptions">💊 Hóa đơn thuốc</a>
-        <a href="#" class="link" id="navRecepPharmacy">📦 Quản lý kho thuốc</a>
+        <a href="./receptionist-dashboard.html" class="link active">🛎️ Cổng nghiệp vụ Lễ tân</a>
       `;
     }
-
-    setTimeout(() => {
-      initModalFilters();
-
-      const openInv = (e) => {
-        e.preventDefault();
-        openRoleModal("modalRecepInvoices");
-        loadRecepInvoices();
-      };
-      const openAppts = (e) => {
-        e.preventDefault();
-        openRoleModal("modalRecepAllAppts");
-        loadRecepAllAppointments();
-      };
-      const openPres = (e) => {
-        e.preventDefault();
-        openRoleModal("modalRecepPrescriptions");
-        loadRecepPrescriptions();
-      };
-      const openPharm = (e) => {
-        e.preventDefault();
-        openRoleModal("modalRecepPharmacy");
-        loadRecepPharmacy();
-      };
-
-      const btn1 = document.getElementById("btnRecepInvoicesModal");
-      const btn2 = document.getElementById("btnRecepAllApptsModal");
-      const btn3 = document.getElementById("btnRecepPrescriptionsModal");
-      const btn4 = document.getElementById("btnRecepPharmacyModal");
-
-      const nav1 = document.getElementById("navRecepInvoices");
-      const nav2 = document.getElementById("navRecepAllAppts");
-      const nav3 = document.getElementById("navRecepPrescriptions");
-      const nav4 = document.getElementById("navRecepPharmacy");
-
-      if (btn1) btn1.addEventListener("click", openInv);
-      if (btn2) btn2.addEventListener("click", openAppts);
-      if (btn3) btn3.addEventListener("click", openPres);
-      if (btn4) btn4.addEventListener("click", openPharm);
-
-      if (nav1) nav1.addEventListener("click", openInv);
-      if (nav2) nav2.addEventListener("click", openAppts);
-      if (nav3) nav3.addEventListener("click", openPres);
-      if (nav4) nav4.addEventListener("click", openPharm);
-    }, 100);
   }
   // 4. KHÁCH HÀNG (role_id === 4): GIỮ NGUYÊN 100% GIAO DIỆN
   else {
@@ -212,6 +121,42 @@ function renderHeaderAuth() {
 
   const user = getCurrentUser();
   if (user) {
+    const roleId =
+      Number(user.role_id) ||
+      (user.role === "admin"
+        ? 1
+        : user.role === "doctor"
+        ? 2
+        : user.role === "receptionist"
+        ? 3
+        : 4);
+
+    const path = window.location.pathname.toLowerCase();
+    const isHomePage =
+      path.endsWith("index.html") ||
+      path.endsWith("/frontend/") ||
+      path.endsWith("/frontend") ||
+      path.endsWith("/frontend/html/") ||
+      path.endsWith("/frontend/html") ||
+      path.endsWith("/html/") ||
+      path.endsWith("/html") ||
+      path === "" ||
+      path === "/";
+
+    // Xóa trang chủ đối với 3 vai trò nội bộ: Admin (1), Bác sĩ (2), Lễ tân (3)
+    if (isHomePage) {
+      if (roleId === 1) {
+        window.location.replace("./admin-roles.html");
+        return;
+      } else if (roleId === 2) {
+        window.location.replace("./doctor-dashboard.html");
+        return;
+      } else if (roleId === 3) {
+        window.location.replace("./receptionist-dashboard.html");
+        return;
+      }
+    }
+
     guestBox.hidden = true;
     userBox.hidden = false;
     const initialEl = document.getElementById("userInitial");

@@ -554,12 +554,21 @@ export function initAuthModal() {
  closeAuthModal();
  submitBtn.disabled = false;
  submitBtn.textContent = "ĐĂNG NHẬP NGAY";
+ const roleId = Number(user.role_id) || (user.role === "admin" ? 1 : user.role === "doctor" ? 2 : user.role === "receptionist" ? 3 : 4);
+ if (roleId === 1) {
+ window.location.href = "./admin-roles.html";
+ } else if (roleId === 2) {
+ window.location.href = "./doctor-dashboard.html";
+ } else if (roleId === 3) {
+ window.location.href = "./receptionist-dashboard.html";
+ } else {
  if (window.pendingRedirectUrl) {
  const dest = window.pendingRedirectUrl;
  window.pendingRedirectUrl = null;
  window.location.href = dest;
  } else {
  window.location.reload();
+ }
  }
  }, 600);
  } catch (err) {

@@ -4,7 +4,7 @@
    - Bác sĩ (role_id = 2):
      1. Lịch hẹn cá nhân (lọc theo khung tháng, xem lịch tiếp theo, kèm hóa đơn)
      2. Phiếu khám bệnh cá nhân (tổng hợp hóa đơn cá nhân)
-     3. Hồ sơ khám bệnh nhân dùng chung
+     3. Hồ sơ khám (bệnh án) dùng chung
    - Lễ tân (role_id = 3):
      1. Hóa đơn & Thanh toán (payment)
      2. Lịch khám tất cả khách hàng (dựa trên hóa đơn khách hàng)
@@ -272,11 +272,11 @@ function ensureModalDOM() {
       </div>
     </div>
 
-    <!-- 3. HỒ SƠ KHÁM BỆNH NHÂN DÙNG CHUNG -->
+    <!-- 3. HỒ SƠ KHÁM -->
     <div id="modalDoctorRecords" class="role-modal-overlay">
       <div class="role-modal-card">
         <div class="role-modal-header">
-          <h3>📁 Hồ Sơ Bệnh Án Thú Cưng Dùng Chung</h3>
+          <h3>📁 Hồ Sơ Khám</h3>
           <button class="role-modal-close" data-close="modalDoctorRecords">&times;</button>
         </div>
         <div class="role-modal-toolbar">
@@ -367,7 +367,7 @@ function ensureModalDOM() {
                 <th>Bé cưng</th>
                 <th>Khách hàng</th>
                 <th>Bác sĩ / Nhân viên</th>
-                <th>Trạng thái</th>
+                <th>Trạng thái (Nhấp để duyệt)</th>
                 <th>Hóa đơn đi kèm</th>
               </tr>
             </thead>
@@ -489,6 +489,61 @@ function ensureModalDOM() {
               <tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải danh sách kho thuốc...</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. POP-UP XÁC NHẬN PHIẾU KHÁM & PHÂN CÔNG BÁC SĨ (LỄ TÂN) -->
+    <div id="popupRoleConfirmAppt" class="role-modal-overlay" style="z-index: 1000000; align-items: center; justify-content: center;">
+      <div class="role-modal-card" style="max-width: 540px; border-radius: 18px; box-shadow: 0 20px 45px rgba(0,0,0,0.3); overflow: hidden;">
+        <div class="role-modal-header" style="background: linear-gradient(135deg, #1E429F 0%, #3B82F6 100%); color: #FFF; padding: 16px 22px;">
+          <h3 style="margin: 0; font-size: 18px; font-family: 'Lora', serif; color: #EFF6FF;">📋 Xác Nhận Phiếu Khám &amp; Phân Công BS</h3>
+          <button type="button" class="role-modal-close" id="btnCloseRoleConfirmAppt" style="background: none; border: none; color: #FFF; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <div style="padding: 20px 24px;">
+          <input type="hidden" id="roleConfirmApptId" />
+          <input type="hidden" id="roleConfirmApptType" />
+
+          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed #E6D8CD; font-size: 13.5px;">
+            <span>Mã lịch khám:</span>
+            <strong id="roleConfirmApptCode">—</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed #E6D8CD; font-size: 13.5px;">
+            <span>Ngày &amp; Giờ hẹn:</span>
+            <strong id="roleConfirmApptDateTime">—</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed #E6D8CD; font-size: 13.5px;">
+            <span>Khách hàng:</span>
+            <strong id="roleConfirmApptCustomer">—</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed #E6D8CD; font-size: 13.5px;">
+            <span>Bé cưng &amp; Dịch vụ:</span>
+            <strong id="roleConfirmApptPetService">—</strong>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <label style="display: block; font-weight: 700; font-size: 13.5px; color: #1E429F; margin-bottom: 6px;">
+              Phân công Bác sĩ phụ trách * (Bắt buộc chọn 1 BS):
+            </label>
+            <select id="roleConfirmSelectDoctor" class="admin-select" style="width: 100%; box-sizing: border-box; font-weight: 600; color: #1E3A8A;">
+              <option value="">-- Đang tải danh sách Bác sĩ... --</option>
+            </select>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <label style="display: block; font-weight: 600; font-size: 13px; color: #666; margin-bottom: 4px;">
+              Ghi chú / Lý do hủy (nếu có):
+            </label>
+            <input type="text" id="roleConfirmCancelReason" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="Nhập ghi chú hoặc lý do nếu hủy..." />
+          </div>
+        </div>
+        <div style="padding: 14px 24px 20px; display: flex; gap: 12px; justify-content: flex-end; background: #FDFBF9; border-top: 1px solid #EFE6DD;">
+          <button type="button" id="btnRoleExecuteCancel" class="pill-btn" style="background: #DC2626; color: #fff; padding: 8px 18px; font-size: 13px;">
+            ✕ Hủy đơn khám
+          </button>
+          <button type="button" id="btnRoleExecuteConfirm" class="pill-btn" style="background: #16A34A; color: #fff; padding: 8px 22px; font-size: 13.5px; font-weight: 700;">
+            ✓ Duyệt đơn khám
+          </button>
         </div>
       </div>
     </div>
@@ -896,12 +951,52 @@ export async function loadRecepAllAppointments(search = "") {
               <small style="color: #666;">${item.customerPhone}</small>
             </td>
             <td><small style="color: #555;">${item.doctorName}</small></td>
-            <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+            <td>
+              <span class="status-pill status-pending btn-open-role-confirm" style="cursor: pointer; font-weight: 700; text-decoration: underline;" data-item='${JSON.stringify(item).replace(/'/g, "&#39;")}' title="Nhấp để Duyệt hoặc Hủy đơn khám">
+                Chờ xác nhận 👆
+              </span>
+            </td>
             <td>${invoicesHtml}</td>
           </tr>
         `;
       })
       .join("");
+
+    // Gắn sự kiện click mở pop-up xác nhận phiếu khám
+    tbody.querySelectorAll(".btn-open-role-confirm").forEach((el) => {
+      el.addEventListener("click", async () => {
+        const item = JSON.parse(el.dataset.item.replace(/&#39;/g, "'"));
+        const popup = document.getElementById("popupRoleConfirmAppt");
+        if (!popup) return;
+
+        document.getElementById("roleConfirmApptId").value = item.id;
+        document.getElementById("roleConfirmApptType").value = item.type;
+        document.getElementById("roleConfirmApptCode").textContent = item.code;
+        document.getElementById("roleConfirmApptDateTime").textContent = `${item.date} lúc ${item.time || "--:--"}`;
+        document.getElementById("roleConfirmApptCustomer").textContent = `${item.customerName} (${item.customerPhone})`;
+        document.getElementById("roleConfirmApptPetService").textContent = `${item.petName} — ${item.serviceName}`;
+        document.getElementById("roleConfirmCancelReason").value = "";
+
+        const selectDoc = document.getElementById("roleConfirmSelectDoctor");
+        selectDoc.innerHTML = `<option value="">-- Đang tải danh sách Bác sĩ... --</option>`;
+
+        try {
+          const docRes = await fetch(`${API_BASE_URL}/doctors`);
+          const docData = await docRes.json();
+          const docs = docData.doctors || [];
+          if (docs.length > 0) {
+            selectDoc.innerHTML = `<option value="">-- Chọn Bác sĩ phụ trách (Bắt buộc) * --</option>` +
+              docs.map((d) => `<option value="${d.id_bac_sy}">BS. ${d.name} (${d.id_bac_sy}) - ${d.specialty || "Thú y"}</option>`).join("");
+          } else {
+            selectDoc.innerHTML = `<option value="">Chưa có dữ liệu bác sĩ trong hệ thống</option>`;
+          }
+        } catch (e) {
+          selectDoc.innerHTML = `<option value="">Lỗi tải danh sách bác sĩ</option>`;
+        }
+
+        popup.classList.add("open");
+      });
+    });
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
   }
@@ -1308,6 +1403,104 @@ export function initModalFilters() {
       } finally {
         btnSaveMed.disabled = false;
         btnSaveMed.textContent = "Lưu thuốc";
+      }
+    });
+  }
+
+  // LỄ TÂN: Đóng popup duyệt ca khám
+  const btnCloseRoleConfirm = document.getElementById("btnCloseRoleConfirmAppt");
+  if (btnCloseRoleConfirm) {
+    btnCloseRoleConfirm.addEventListener("click", () => {
+      const popup = document.getElementById("popupRoleConfirmAppt");
+      if (popup) popup.classList.remove("open");
+    });
+  }
+
+  // LỄ TÂN: Nút Duyệt đơn khám (Bắt buộc chọn 1 BS)
+  const btnRoleExecuteConfirm = document.getElementById("btnRoleExecuteConfirm");
+  if (btnRoleExecuteConfirm) {
+    btnRoleExecuteConfirm.addEventListener("click", async () => {
+      const user = getCurrentUser();
+      const apptId = document.getElementById("roleConfirmApptId").value;
+      const apptType = document.getElementById("roleConfirmApptType").value;
+      const selectedDocId = document.getElementById("roleConfirmSelectDoctor").value;
+
+      if (!selectedDocId) {
+        alert("Vui lòng chọn 1 Bác sĩ phụ trách từ danh sách để duyệt đơn khám!");
+        return;
+      }
+
+      btnRoleExecuteConfirm.disabled = true;
+      btnRoleExecuteConfirm.textContent = "Đang duyệt...";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/receptionist/appointments/${apptId}/confirm`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": user.id || user._id,
+          },
+          body: JSON.stringify({
+            action: "confirm",
+            type: apptType,
+            id_bac_sy: selectedDocId,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Duyệt đơn khám thất bại.");
+
+        alert(data.message || "Đã duyệt đơn khám và phân công bác sĩ thành công!");
+        const popup = document.getElementById("popupRoleConfirmAppt");
+        if (popup) popup.classList.remove("open");
+        loadRecepAllAppointments();
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+      } finally {
+        btnRoleExecuteConfirm.disabled = false;
+        btnRoleExecuteConfirm.textContent = "✓ Duyệt đơn khám";
+      }
+    });
+  }
+
+  // LỄ TÂN: Nút Hủy đơn khám
+  const btnRoleExecuteCancel = document.getElementById("btnRoleExecuteCancel");
+  if (btnRoleExecuteCancel) {
+    btnRoleExecuteCancel.addEventListener("click", async () => {
+      const user = getCurrentUser();
+      const apptId = document.getElementById("roleConfirmApptId").value;
+      const apptType = document.getElementById("roleConfirmApptType").value;
+      const cancelReason = document.getElementById("roleConfirmCancelReason").value.trim();
+
+      if (!confirm("Bạn có chắc chắn muốn HỦY đơn khám này không?")) return;
+
+      btnRoleExecuteCancel.disabled = true;
+      btnRoleExecuteCancel.textContent = "Đang hủy...";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/receptionist/appointments/${apptId}/confirm`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": user.id || user._id,
+          },
+          body: JSON.stringify({
+            action: "cancel",
+            type: apptType,
+            cancelReason: cancelReason || "Lễ tân hủy đơn",
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Hủy đơn khám thất bại.");
+
+        alert(data.message || "Đã hủy đơn khám thành công.");
+        const popup = document.getElementById("popupRoleConfirmAppt");
+        if (popup) popup.classList.remove("open");
+        loadRecepAllAppointments();
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+      } finally {
+        btnRoleExecuteCancel.disabled = false;
+        btnRoleExecuteCancel.textContent = "✕ Hủy đơn khám";
       }
     });
   }

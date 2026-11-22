@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/buttons.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" />
+    <link rel="stylesheet" href="../css/forms.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <title>Cổng Nghiệp Vụ Lễ Tân - PawnCare Đà Nẵng</title>
+    <style>
+      .portal-container {
+        max-width: 1200px;
+        margin: 32px auto;
+        padding: 0 20px 60px;
+      }
+      .portal-header-card {
+        background: linear-gradient(135deg, #1E429F 0%, #3B82F6 100%);
+        color: #fff;
+        padding: 24px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(30, 66, 159, 0.15);
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .portal-header-card h1 {
+        font-family: "Lora", serif;
+        font-size: 24px;
+        margin: 0 0 6px 0;
+        color: #EFF6FF;
+      }
+      .portal-header-card p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 13.5px;
+      }
+      .portal-nav-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #E6D8CD;
+        padding-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        background: #FDFBF9;
+        border: 1.5px solid #E6D8CD;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #5C3A21;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tab-btn:hover {
+        background: #F5EBE1;
+        border-color: #B5835A;
+      }
+      .tab-btn.active {
+        background: #1E429F;
+        color: #FFF;
+        border-color: #1E429F;
+        box-shadow: 0 4px 12px rgba(30, 66, 159, 0.25);
+      }
+      .portal-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+      }
+      .portal-toolbar {
+        padding: 16px 22px;
+        background: #FDFBF9;
+        border-bottom: 1px solid #EFE6DD;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .portal-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 13.5px;
+      }
+      .portal-table th {
+        background: #F8F4F0;
+        padding: 14px 18px;
+        font-weight: 700;
+        color: #6B462B;
+        border-bottom: 2px solid #E6D8CD;
+      }
+      .portal-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #F0EAE4;
+        vertical-align: middle;
+      }
+      .portal-table tr:hover {
+        background-color: #FCFAF8;
+      }
+      .status-pill {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-clickable {
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+      .status-clickable:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      }
+      .status-pending { background: #FEF08A; color: #854D0E; border: 1px solid #FDE047; }
+      .invoice-tag {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 600;
+        background: #F3E8FF;
+        color: #6B21A8;
+        border: 1px solid #D8B4FE;
+      }
+      .invoice-tag.paid {
+        background: #DCFCE7;
+        color: #15803D;
+        border-color: #86EFAC;
+      }
+      .stock-badge-out {
+        background: #FEE2E2;
+        color: #991B1B;
+        border: 1px solid #F87171;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+      .stock-badge-exp {
+        background: #FEF3C7;
+        color: #92400E;
+        border: 1px solid #FCD34D;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+      .btn-action-small {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-pay { background: #16A34A; color: #fff; }
+      .btn-pay:hover { background: #15803D; }
+      .btn-dispense { background: #1E429F; color: #fff; }
+      .btn-dispense:hover { background: #1E3A8A; }
+      .btn-edit-med { background: #D97706; color: #fff; margin-right: 6px; }
+      .btn-delete-med { background: #DC2626; color: #fff; }
+      .admin-input, .admin-select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1.5px solid #E6D8CD;
+        font-size: 13.5px;
+        background: #FDFBF9;
+        outline: none;
+      }
+      .admin-input:focus, .admin-select:focus {
+        border-color: #B5835A;
+      }
+
+      /* POP-UP XÁC NHẬN PHIẾU KHÁM */
+      .popup-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(30, 20, 10, 0.65);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+      }
+      .popup-card {
+        background: #FFF;
+        width: 90%;
+        max-width: 540px;
+        border-radius: 18px;
+        box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        overflow: hidden;
+        animation: modalSlideUp 0.25s ease;
+      }
+      .popup-header {
+        background: linear-gradient(135deg, #1E429F 0%, #3B82F6 100%);
+        color: #FFF;
+        padding: 16px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .popup-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-family: "Lora", serif;
+        color: #EFF6FF;
+      }
+      .popup-body {
+        padding: 20px 24px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #E6D8CD;
+        font-size: 13.5px;
+      }
+      .info-row strong { color: #4A3324; }
+      .popup-footer {
+        padding: 14px 24px 20px;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== HEADER DÀNH RIÊNG CHO LỄ TÂN (KHÔNG CÓ TRANG CHỦ KHÁCH) ===== -->
+    <header id="header">
+      <div class="header-pawmily-container">
+        <div class="header-top-row">
+          <div class="logo">
+            <span class="logo-badge">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+                <circle cx="23" cy="36" r="13" fill="#1E429F" />
+                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#1E3A8A" />
+                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#1E3A8A" />
+                <circle cx="43" cy="38" r="11.5" fill="#3B82F6" />
+              </svg>
+            </span>
+            <span class="logo-text">PAWNCARE RECEPTIONIST</span>
+          </div>
+
+          <div class="header-right-cluster">
+            <div class="auth auth-user" id="authUser">
+              <span id="receptionistGreeting" style="font-weight: 600; color: #FFF; margin-right: 15px;">Lễ tân: —</span>
+              <a href="#" class="pill-btn btn-signup" id="receptionistLogoutBtn">
+                <span>🚪 Đăng xuất</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== NỘI DUNG CHÍNH: BÀN LÀM VIỆC LỄ TÂN ===== -->
+    <main class="portal-container">
+      <div class="portal-header-card">
+        <div>
+          <h1>🛎️ Cổng Nghiệp Vụ Lễ Tân &amp; Thu Ngân</h1>
+          <p>Điều phối lịch khám khách hàng, thu ngân hóa đơn, cấp thuốc và quản lý kho dược</p>
+        </div>
+        <div style="font-size: 13.5px; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px;">
+          Phiên làm việc: <strong>Lễ tân trực viện</strong>
+        </div>
+      </div>
+
+      <!-- THANH CHUYỂN TAB 4 CHỨC NĂNG LỄ TÂN -->
+      <div class="portal-nav-tabs">
+        <button type="button" class="tab-btn active" data-tab="tabRecepInvoices">
+          💳 Hóa Đơn &amp; Thanh Toán
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabRecepAppts">
+          📅 Lịch Khám Khách Hàng (Chờ Duyệt)
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabRecepPrescriptions">
+          💊 Hóa Đơn Thuốc Sau Khám
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabRecepPharmacy">
+          📦 Quản Lý Kho Thuốc
+        </button>
+      </div>
+
+      <!-- TAB 1: HÓA ĐƠN & THANH TOÁN -->
+      <div id="tabRecepInvoices" class="tab-content">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <label style="font-weight: 600; font-size: 13.5px; color: #4A3324;">Trạng thái:</label>
+            <select id="recepInvoiceStatusFilter" class="admin-select">
+              <option value="">-- Tất cả hóa đơn --</option>
+              <option value="unpaid">Chưa thanh toán (unpaid)</option>
+              <option value="paid">Đã thanh toán (paid)</option>
+            </select>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Tổng hóa đơn: <strong id="recepInvoicesCount">0</strong>
+            </div>
+          </div>
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Mã HĐ</th>
+                <th>Khách hàng</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Thời điểm lập</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="recepInvoicesTableBody">
+              <tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Đang tải danh sách hóa đơn...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: LỊCH KHÁM KHÁCH HÀNG (CHỜ DUYỆT) -->
+      <div id="tabRecepAppts" class="tab-content" style="display: none;">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <input type="text" id="recepApptSearch" placeholder="Tìm tên khách, SĐT, tên bé, mã lịch..." class="admin-input" style="flex: 1; max-width: 320px;" />
+            <button type="button" class="pill-btn" id="btnRecepApptSearch" style="padding: 7px 16px; font-size: 13px; background: #1E429F; color: #fff;">Tìm kiếm</button>
+            <span style="font-size: 12.5px; color: #B45309; background: #FEF3C7; padding: 5px 12px; border-radius: 8px; font-weight: 600;">
+              💡 Nhấp vào ô "Chờ xác nhận" để duyệt/hủy và phân công Bác sĩ
+            </span>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Lịch chờ duyệt: <strong id="recepApptsCount">0</strong>
+            </div>
+          </div>
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Ngày &amp; Giờ</th>
+                <th>Dịch vụ</th>
+                <th>Bé cưng</th>
+                <th>Khách hàng</th>
+                <th>Bác sĩ / Nhân viên</th>
+                <th>Trạng thái (Nhấp để duyệt)</th>
+                <th>Hóa đơn đi kèm</th>
+              </tr>
+            </thead>
+            <tbody id="recepAllApptsTableBody">
+              <tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch khám chờ duyệt...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: HÓA ĐƠN THUỐC SAU KHÁM -->
+      <div id="tabRecepPrescriptions" class="tab-content" style="display: none;">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <input type="text" id="recepPrescriptionSearch" placeholder="Tìm mã đơn, tên bé, bác sĩ chẩn đoán..." class="admin-input" style="flex: 1; max-width: 350px;" />
+            <button type="button" class="pill-btn" id="btnRecepPrescriptionSearch" style="padding: 7px 16px; font-size: 13px; background: #1E429F; color: #fff;">Tìm kiếm</button>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Tổng đơn thuốc: <strong id="recepPrescriptionsCount">0</strong>
+            </div>
+          </div>
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Mã đơn / Ngày</th>
+                <th>Bé thú cưng</th>
+                <th>Bác sĩ &amp; Chẩn đoán</th>
+                <th>Thuốc kê trong đơn</th>
+                <th>Cấp thuốc</th>
+                <th>Hóa đơn thuốc</th>
+              </tr>
+            </thead>
+            <tbody id="recepPrescriptionsTableBody">
+              <tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Đang tải đơn thuốc sau khám...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: QUẢN LÝ KHO THUỐC -->
+      <div id="tabRecepPharmacy" class="tab-content" style="display: none;">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <input type="text" id="pharmacySearch" placeholder="Tìm tên thuốc, hoạt chất..." class="admin-input" style="flex: 1; max-width: 280px;" />
+            <select id="pharmacyStockFilter" class="admin-select">
+              <option value="">-- Tất cả kho --</option>
+              <option value="Còn hàng">Còn hàng</option>
+              <option value="Hết hàng">Hết hàng (Hết tồn kho)</option>
+              <option value="Hết hạn">Hết hạn (Quá hạn dùng)</option>
+            </select>
+            <button type="button" class="pill-btn" id="btnAddNewMedicine" style="padding: 7px 16px; font-size: 13px; background: #16A34A; color: #fff; font-weight: 700;">
+              ➕ Thêm thuốc mới
+            </button>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Tổng loại thuốc: <strong id="pharmacyMedicinesCount">0</strong>
+            </div>
+          </div>
+
+          <!-- Form Thêm / Sửa thuốc -->
+          <div id="medicineFormPanel" style="display: none; background: #F8F4F0; padding: 18px 22px; margin: 18px; border-radius: 12px; border: 1.5px solid #E6D8CD;">
+            <h4 id="medFormTitle" style="margin: 0 0 12px 0; color: #6B462B;">➕ Thêm Thuốc Mới Vào Kho</h4>
+            <input type="hidden" id="medFormId" />
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: #4A3324;">Tên thuốc *:</label>
+                <input type="text" id="medInputName" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="vd: Amoxicillin 250mg" />
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: #4A3324;">Đơn vị *:</label>
+                <input type="text" id="medInputUnit" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="vd: viên, chai, lọ, ống..." />
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: #4A3324;">Giá bán (VNĐ) *:</label>
+                <input type="number" id="medInputPrice" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="vd: 15000" min="1" />
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: #4A3324;">Số lượng tồn (Quantity) *:</label>
+                <input type="number" id="medInputQty" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="vd: 100" min="0" />
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: #4A3324;">Hạn dùng (Expiry Date) *:</label>
+                <input type="date" id="medInputExpiry" class="admin-input" style="width: 100%; box-sizing: border-box;" />
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: #4A3324;">Mô tả / Lưu ý:</label>
+                <input type="text" id="medInputDesc" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="Mô tả công dụng..." />
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" id="btnSaveMedicine" class="pill-btn" style="background: #16A34A; color: #fff; padding: 7px 18px; font-size: 13px;">Lưu thuốc</button>
+              <button type="button" id="btnCancelMedicine" class="pill-btn" style="background: #9CA3AF; color: #fff; padding: 7px 14px; font-size: 13px;">Hủy bỏ</button>
+            </div>
+          </div>
+
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Mã &amp; Tên thuốc</th>
+                <th>Đơn vị</th>
+                <th>Đơn giá</th>
+                <th>Tồn kho (Số lượng)</th>
+                <th>Hạn dùng</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="pharmacyTableBody">
+              <tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải danh sách kho thuốc...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== POP-UP XÁC NHẬN PHIẾU KHÁM & PHÂN CÔNG BÁC SĨ ===== -->
+    <div id="popupConfirmAppt" class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-header">
+          <h3>🩺 Xác Nhận Phiếu Khám &amp; Phân Công Bác Sĩ</h3>
+          <button type="button" id="btnClosePopupConfirm" style="background:none; border:none; color:#FFF; font-size:22px; cursor:pointer;">&times;</button>
+        </div>
+        <div class="popup-body">
+          <input type="hidden" id="confirmApptId" />
+          <input type="hidden" id="confirmApptType" />
+
+          <div class="info-row">
+            <span>Mã lịch khám:</span>
+            <strong id="confirmApptCode">—</strong>
+          </div>
+          <div class="info-row">
+            <span>Ngày &amp; Giờ hẹn:</span>
+            <strong id="confirmApptDateTime">—</strong>
+          </div>
+          <div class="info-row">
+            <span>Khách hàng:</span>
+            <strong id="confirmApptCustomer">—</strong>
+          </div>
+          <div class="info-row">
+            <span>Bé cưng &amp; Dịch vụ:</span>
+            <strong id="confirmApptPetService">—</strong>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <label style="display: block; font-weight: 700; font-size: 13.5px; color: #1E429F; margin-bottom: 6px;">
+              Phân công Bác sĩ phụ trách * (Bắt buộc chọn 1 BS):
+            </label>
+            <select id="confirmSelectDoctor" class="admin-select" style="width: 100%; box-sizing: border-box; font-weight: 600; color: #1E3A8A;">
+              <option value="">-- Đang tải danh sách Bác sĩ... --</option>
+            </select>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <label style="display: block; font-weight: 600; font-size: 13px; color: #666; margin-bottom: 4px;">
+              Ghi chú / Lý do hủy (nếu có):
+            </label>
+            <input type="text" id="confirmCancelReason" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="Nhập ghi chú hoặc lý do nếu hủy..." />
+          </div>
+        </div>
+        <div class="popup-footer">
+          <button type="button" id="btnExecuteCancel" class="pill-btn" style="background: #DC2626; color: #fff; padding: 8px 18px; font-size: 13px;">
+            ✕ Hủy đơn khám
+          </button>
+          <button type="button" id="btnExecuteConfirm" class="pill-btn" style="background: #16A34A; color: #fff; padding: 8px 22px; font-size: 13.5px; font-weight: 700;">
+            ✓ Duyệt đơn khám
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="footer" style="margin-top: 40px; text-align: center; color: #888; font-size: 13px;">
+      <p>© 2026 PawnCare Veterinary &amp; Pet Spa Center Đà Nẵng. Cổng thông tin Nghiệp vụ Lễ tân.</p>
+    </footer>
+
+    <script type="module" src="../js/receptionist-dashboard.js"></script>
+  </body>
+</html>

@@ -119,7 +119,16 @@ export function initLoginPage() {
  const params = new URLSearchParams(window.location.search);
  let redirectUrl = params.get("redirect");
  if (!redirectUrl) {
- redirectUrl = (user && (user.role_id === 1 || user.role === "admin")) ? "./admin-roles.html" : "./index.html";
+ const roleId = Number(user.role_id) || (user.role === "admin" ? 1 : user.role === "doctor" ? 2 : user.role === "receptionist" ? 3 : 4);
+ if (roleId === 1) {
+ redirectUrl = "./admin-roles.html";
+ } else if (roleId === 2) {
+ redirectUrl = "./doctor-dashboard.html";
+ } else if (roleId === 3) {
+ redirectUrl = "./receptionist-dashboard.html";
+ } else {
+ redirectUrl = "./index.html";
+ }
  }
  setTimeout(() => {
  window.location.href = redirectUrl;

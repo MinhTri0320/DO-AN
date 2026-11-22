@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/buttons.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" />
+    <link rel="stylesheet" href="../css/forms.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <title>Bàn Làm Việc Bác Sĩ - PawnCare Đà Nẵng</title>
+    <style>
+      .portal-container {
+        max-width: 1180px;
+        margin: 32px auto;
+        padding: 0 20px 60px;
+      }
+      .portal-header-card {
+        background: linear-gradient(135deg, #2A5A44 0%, #448968 100%);
+        color: #fff;
+        padding: 24px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(42, 90, 68, 0.15);
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .portal-header-card h1 {
+        font-family: "Lora", serif;
+        font-size: 24px;
+        margin: 0 0 6px 0;
+        color: #F0FDF4;
+      }
+      .portal-header-card p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 13.5px;
+      }
+      .portal-nav-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #E6D8CD;
+        padding-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        background: #FDFBF9;
+        border: 1.5px solid #E6D8CD;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #5C3A21;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tab-btn:hover {
+        background: #F5EBE1;
+        border-color: #B5835A;
+      }
+      .tab-btn.active {
+        background: #7A4E2D;
+        color: #FFF;
+        border-color: #7A4E2D;
+        box-shadow: 0 4px 12px rgba(122, 78, 45, 0.2);
+      }
+      .portal-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+      }
+      .portal-toolbar {
+        padding: 16px 22px;
+        background: #FDFBF9;
+        border-bottom: 1px solid #EFE6DD;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .portal-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 13.5px;
+      }
+      .portal-table th {
+        background: #F8F4F0;
+        padding: 14px 18px;
+        font-weight: 700;
+        color: #6B462B;
+        border-bottom: 2px solid #E6D8CD;
+      }
+      .portal-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #F0EAE4;
+        vertical-align: middle;
+      }
+      .portal-table tr:hover {
+        background-color: #FCFAF8;
+      }
+      .status-pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-pending { background: #FEF08A; color: #854D0E; }
+      .status-in_progress { background: #BAE6FD; color: #0369A1; }
+      .status-completed { background: #BBF7D0; color: #166534; }
+      .status-cancelled { background: #FEE2E2; color: #991B1B; }
+      .invoice-tag {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 600;
+        background: #F3E8FF;
+        color: #6B21A8;
+        border: 1px solid #D8B4FE;
+      }
+      .invoice-tag.paid {
+        background: #DCFCE7;
+        color: #15803D;
+        border-color: #86EFAC;
+      }
+      .admin-input, .admin-select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1.5px solid #E6D8CD;
+        font-size: 13.5px;
+        background: #FDFBF9;
+        outline: none;
+      }
+      .admin-input:focus, .admin-select:focus {
+        border-color: #B5835A;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== HEADER DÀNH RIÊNG CHO BÁC SĨ (KHÔNG CÓ TRANG CHỦ KHÁCH) ===== -->
+    <header id="header">
+      <div class="header-pawmily-container">
+        <div class="header-top-row">
+          <div class="logo">
+            <span class="logo-badge">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+                <circle cx="23" cy="36" r="13" fill="#2A5A44" />
+                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#1E3F30" />
+                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#1E3F30" />
+                <circle cx="43" cy="38" r="11.5" fill="#448968" />
+              </svg>
+            </span>
+            <span class="logo-text">PAWNCARE DOCTOR</span>
+          </div>
+
+          <div class="header-right-cluster">
+            <div class="auth auth-user" id="authUser">
+              <span id="doctorGreeting" style="font-weight: 600; color: #FFF; margin-right: 15px;">BS: —</span>
+              <a href="#" class="pill-btn btn-signup" id="doctorLogoutBtn">
+                <span>🚪 Đăng xuất</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== NỘI DUNG CHÍNH: BÀN LÀM VIỆC BÁC SĨ ===== -->
+    <main class="portal-container">
+      <div class="portal-header-card">
+        <div>
+          <h1>👨‍⚕️ Bàn Làm Việc Bác Sĩ Thú Y</h1>
+          <p>Quản lý lịch hẹn cá nhân, hồ sơ phiếu khám và tra cứu tiền sử bệnh án</p>
+        </div>
+        <div style="font-size: 13.5px; background: rgba(255,255,255,0.18); padding: 8px 16px; border-radius: 8px;" id="doctorCodeBadge">
+          Mã BS: <strong>—</strong>
+        </div>
+      </div>
+
+      <!-- THANH CHUYỂN TAB 3 CHỨC NĂNG BÁC SĨ -->
+      <div class="portal-nav-tabs">
+        <button type="button" class="tab-btn active" data-tab="tabDoctorAppts">
+          📅 Lịch Hẹn Cá Nhân
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabDoctorDiagnoses">
+          📋 Phiếu Khám Bệnh
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabDoctorRecords">
+          📁 Hồ Sơ Khám
+        </button>
+      </div>
+
+      <!-- TAB 1: LỊCH HẸN CÁ NHÂN -->
+      <div id="tabDoctorAppts" class="tab-content">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <label style="font-weight: 600; font-size: 13.5px; color: #4A3324;">Khung tháng:</label>
+            <input type="month" id="docFilterMonth" class="admin-input" />
+            <button type="button" class="pill-btn" id="btnDocApptsToday" style="padding: 7px 16px; font-size: 13px; background: #2A5A44; color: #fff;">Hôm nay</button>
+            <button type="button" class="pill-btn" id="btnDocApptsUpcoming" style="padding: 7px 16px; font-size: 13px; background: #7A4E2D; color: #fff;">Tất cả ca tiếp theo</button>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Tổng số ca hẹn: <strong id="docApptsCount">0</strong>
+            </div>
+          </div>
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Ngày &amp; Giờ</th>
+                <th>Dịch vụ</th>
+                <th>Bé cưng</th>
+                <th>Khách hàng</th>
+                <th>Trạng thái</th>
+                <th>Hóa đơn đi kèm</th>
+              </tr>
+            </thead>
+            <tbody id="docApptsTableBody">
+              <tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch hẹn...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: PHIẾU KHÁM BỆNH -->
+      <div id="tabDoctorDiagnoses" class="tab-content" style="display: none;">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <span style="font-size: 13.5px; color: #666;">Danh sách phiếu chẩn đoán lâm sàng và tổng hợp hóa đơn khám của riêng bác sĩ.</span>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Tổng phiếu khám: <strong id="docDiagnosesCount">0</strong>
+            </div>
+          </div>
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Mã phiếu / Ngày</th>
+                <th>Bé thú cưng</th>
+                <th>Chẩn đoán lâm sàng</th>
+                <th>Chỉ số sinh hiệu</th>
+                <th>Hóa đơn liên quan</th>
+              </tr>
+            </thead>
+            <tbody id="docDiagnosesTableBody">
+              <tr><td colspan="5" style="text-align: center; color: #888; padding: 30px;">Đang tải phiếu khám...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: HỒ SƠ KHÁM -->
+      <div id="tabDoctorRecords" class="tab-content" style="display: none;">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <input type="text" id="docRecordSearch" placeholder="Tìm theo tên bé, mã bệnh án, chẩn đoán..." class="admin-input" style="flex: 1; max-width: 360px;" />
+            <button type="button" class="pill-btn" id="btnDocRecordSearch" style="padding: 7px 16px; font-size: 13px; background: #2A5A44; color: #fff;">Tìm kiếm</button>
+            <div style="margin-left: auto; font-size: 13.5px; color: #666;">
+              Tổng hồ sơ: <strong id="docRecordsCount">0</strong>
+            </div>
+          </div>
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th>Mã bệnh án</th>
+                <th>Ngày khám</th>
+                <th>Thú cưng</th>
+                <th>Chẩn đoán xác định</th>
+                <th>Hướng điều trị</th>
+              </tr>
+            </thead>
+            <tbody id="docRecordsTableBody">
+              <tr><td colspan="5" style="text-align: center; color: #888; padding: 30px;">Đang tải hồ sơ khám...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="footer" style="margin-top: 40px; text-align: center; color: #888; font-size: 13px;">
+      <p>© 2026 PawnCare Veterinary &amp; Pet Spa Center Đà Nẵng. Cổng thông tin Bác sĩ thú y.</p>
+    </footer>
+
+    <script type="module" src="../js/doctor-dashboard.js"></script>
+  </body>
+</html>
