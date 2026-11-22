@@ -1,0 +1,417 @@
+/* ============================================================
+   medicine-dispensing.css
+   Sprint 4: Medicine & Dispensing (Toàn phụ trách)
+   1. Medicine list (số lượng, hạn dùng, nhãn Còn hàng/Hết hàng/Hết hạn)
+   2. Thêm/sửa/xóa/tìm kiếm thuốc
+   3. Prescription dispensing (chọn đơn, kiểm tra tồn kho, hạn dùng, chặn cấp lặp)
+   ============================================================ */
+
+/* ===== NAVIGATION TABS GIỮA KHO THUỐC & CẤP THUỐC ===== */
+.med-feature-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cream-latte);
+  border: 1.5px solid var(--tan-light);
+  border-radius: var(--radius-pill);
+  padding: 6px;
+  margin-bottom: 24px;
+}
+
+.med-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.25s var(--ease-pawmily);
+}
+
+.med-tab-btn:hover {
+  background: rgba(126, 90, 62, 0.1);
+  color: var(--espresso);
+}
+
+.med-tab-btn.active {
+  background: var(--espresso);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(78, 42, 20, 0.22);
+}
+
+/* ===== KPI STATS CARDS ===== */
+.med-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.med-stat-card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s var(--ease-pawmily);
+}
+
+.med-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.med-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  background: var(--cream-latte);
+  border: 1px solid var(--tan-light);
+}
+
+.med-stat-card.stat-available .med-stat-icon {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+.med-stat-card.stat-out .med-stat-icon {
+  background: #FEF2F2;
+  border-color: #FCA5A5;
+}
+.med-stat-card.stat-expired .med-stat-icon {
+  background: #FFFBEB;
+  border-color: #FCD34D;
+}
+
+.med-stat-info strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+.med-stat-info span {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* ===== TOOLBAR BỘ LỌC ===== */
+.med-toolbar {
+  background: var(--surface-alt);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.med-search-input {
+  flex: 1;
+  min-width: 240px;
+  max-width: 360px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  font-size: 13.5px;
+  background: #ffffff;
+  outline: none;
+}
+.med-search-input:focus {
+  border-color: var(--caramel);
+}
+
+.med-select-filter {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  font-size: 13.5px;
+  background: #ffffff;
+  outline: none;
+  color: var(--ink);
+}
+
+.btn-add-medicine {
+  margin-left: auto;
+  padding: 9px 20px;
+  background: #16A34A;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-add-medicine:hover {
+  background: #15803D;
+  transform: translateY(-1px);
+}
+
+/* ===== BẢNG DANH SÁCH ===== */
+.med-card-table {
+  background: #ffffff;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.med-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.med-table th {
+  background: #F8F4F0;
+  padding: 14px 18px;
+  font-weight: 700;
+  color: var(--espresso);
+  border-bottom: 2px solid var(--line);
+}
+
+.med-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #F0EAE4;
+  vertical-align: middle;
+}
+
+.med-table tr:hover {
+  background: #FCFAF8;
+}
+
+/* NHÃN TRẠNG THÁI THUỐC */
+.stock-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stock-tag.available {
+  background: #ECFDF5;
+  color: #047857;
+  border: 1px solid #A7F3D0;
+}
+
+.stock-tag.out-of-stock {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+}
+
+.stock-tag.expired {
+  background: #FFFBEB;
+  color: #D97706;
+  border: 1px solid #FCD34D;
+}
+
+/* NÚT THAO TÁC */
+.btn-med-act {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-med-edit {
+  background: #F59E0B;
+  color: #ffffff;
+  margin-right: 6px;
+}
+.btn-med-edit:hover { background: #D97706; }
+
+.btn-med-delete {
+  background: #EF4444;
+  color: #ffffff;
+}
+.btn-med-delete:hover { background: #DC2626; }
+
+.btn-dispense-act {
+  background: #2563EB;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-dispense-act:hover {
+  background: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+/* MODAL THÊM / SỬA THUỐC & CẤP THUỐC */
+.med-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 20, 10, 0.65);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+}
+
+.med-modal-card {
+  background: #ffffff;
+  width: 90%;
+  max-width: 620px;
+  border-radius: 18px;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: modalSlideUp 0.25s ease;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.med-modal-header {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.med-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-family: var(--font-title);
+  color: #ffffff;
+}
+
+.med-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+}
+
+.med-modal-footer {
+  padding: 14px 24px 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+}
+
+.med-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.med-form-group {
+  margin-bottom: 14px;
+}
+
+.med-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.med-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.med-form-input,
+.med-form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--line);
+  font-size: 13.5px;
+  background: var(--surface-alt);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.med-form-input:focus,
+.med-form-textarea:focus {
+  border-color: var(--caramel);
+  background: #ffffff;
+}
+
+/* THÔNG BÁO LỖI KIỂM TRA TỒN KHO & HẠN DÙNG */
+.dispense-alert-box {
+  background: #FEF2F2;
+  border: 1.5px solid #FCA5A5;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  color: #991B1B;
+  font-size: 13.5px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.45;
+}
+
+.dispense-items-list {
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.dispense-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 13px;
+}
+
+.dispense-item-row:last-child {
+  border-bottom: none;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

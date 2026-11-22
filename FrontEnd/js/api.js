@@ -752,6 +752,15 @@ export async function apiCancelGrooming(id) {
   }
 }
 
+export async function apiGetGroomingCustomers() {
+  try {
+    return await request("/grooming-meta/customers", { method: "GET" });
+  } catch (err) {
+    console.warn("[API] Lỗi lấy danh sách khách hàng grooming:", err.message);
+    return { success: false, customers: [] };
+  }
+}
+
 /* --- B. MEDICINE & DISPENSING APIS --- */
 
 export async function apiGetMedicines(options = {}) {

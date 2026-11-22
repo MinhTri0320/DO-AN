@@ -288,19 +288,22 @@
         </div>
       </div>
 
-      <!-- THANH CHUYỂN TAB 4 CHỨC NĂNG LỄ TÂN -->
+      <!-- THANH CHUYỂN TAB 5 CHỨC NĂNG LỄ TÂN -->
       <div class="portal-nav-tabs">
         <button type="button" class="tab-btn active" data-tab="tabRecepInvoices">
           💳 Hóa Đơn &amp; Thanh Toán
         </button>
         <button type="button" class="tab-btn" data-tab="tabRecepAppts">
-          📅 Lịch Khám Khách Hàng (Chờ Duyệt)
+          📅 Lịch Khám &amp; Grooming
         </button>
         <button type="button" class="tab-btn" data-tab="tabRecepPrescriptions">
           💊 Hóa Đơn Thuốc Sau Khám
         </button>
         <button type="button" class="tab-btn" data-tab="tabRecepPharmacy">
           📦 Quản Lý Kho Thuốc
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabRecepLookup">
+          🔍 Tra Cứu Thông Tin
         </button>
       </div>
 
@@ -314,6 +317,9 @@
               <option value="unpaid">Chưa thanh toán (unpaid)</option>
               <option value="paid">Đã thanh toán (paid)</option>
             </select>
+            <button type="button" class="pill-btn" id="btnOpenCreateInvoiceModal" style="padding: 7px 16px; font-size: 13px; background: #16A34A; color: #fff; font-weight: 700;">
+              ➕ Lập Hóa Đơn Mới
+            </button>
             <div style="margin-left: auto; font-size: 13.5px; color: #666;">
               Tổng hóa đơn: <strong id="recepInvoicesCount">0</strong>
             </div>
@@ -336,17 +342,21 @@
         </div>
       </div>
 
-      <!-- TAB 2: LỊCH KHÁM KHÁCH HÀNG (CHỜ DUYỆT) -->
+      <!-- TAB 2: LỊCH KHÁM KHÁCH HÀNG & GROOMING -->
       <div id="tabRecepAppts" class="tab-content" style="display: none;">
         <div class="portal-card">
           <div class="portal-toolbar">
-            <input type="text" id="recepApptSearch" placeholder="Tìm tên khách, SĐT, tên bé, mã lịch..." class="admin-input" style="flex: 1; max-width: 320px;" />
+            <input type="text" id="recepApptSearch" placeholder="Tìm tên khách, SĐT, tên bé, mã lịch..." class="admin-input" style="flex: 1; max-width: 260px;" />
+            <select id="recepApptStatusFilter" class="admin-select" style="max-width: 200px;">
+              <option value="">-- Tất cả lịch &amp; Hóa đơn --</option>
+              <option value="pending">Chờ xác nhận (Cần duyệt)</option>
+              <option value="Đã xác nhận">Đã duyệt (Đã xác nhận)</option>
+              <option value="Hoàn thành">Đã hoàn thành</option>
+              <option value="Đã hủy">Đã hủy</option>
+            </select>
             <button type="button" class="pill-btn" id="btnRecepApptSearch" style="padding: 7px 16px; font-size: 13px; background: #1E429F; color: #fff;">Tìm kiếm</button>
-            <span style="font-size: 12.5px; color: #B45309; background: #FEF3C7; padding: 5px 12px; border-radius: 8px; font-weight: 600;">
-              💡 Nhấp vào ô "Chờ xác nhận" để duyệt/hủy và phân công Bác sĩ
-            </span>
             <div style="margin-left: auto; font-size: 13.5px; color: #666;">
-              Lịch chờ duyệt: <strong id="recepApptsCount">0</strong>
+              Tổng lịch: <strong id="recepApptsCount">0</strong>
             </div>
           </div>
           <table class="portal-table">
@@ -469,7 +479,72 @@
           </table>
         </div>
       </div>
+      <!-- TAB 5: TRA CỨU THÔNG TIN LỄ TÂN (API TRA CỨU) -->
+      <div id="tabRecepLookup" class="tab-content" style="display: none;">
+        <div class="portal-card">
+          <div class="portal-toolbar">
+            <input type="text" id="recepLookupInput" placeholder="🔍 Nhập SĐT khách hàng, tên chủ, tên thú cưng, mã HĐ, mã đơn khám..." class="admin-input" style="flex: 1; max-width: 480px;" />
+            <button type="button" class="pill-btn" id="btnRecepLookupExecute" style="padding: 8px 20px; font-size: 13.5px; background: #1E429F; color: #fff; font-weight: 700;">Tra Cứu Nhanh</button>
+          </div>
+          <div id="recepLookupResultsContainer" style="padding: 24px;">
+            <div style="text-align: center; color: #888; padding: 40px 20px;">
+              Nhập từ khóa (Số điện thoại, tên khách, tên bé cưng hoặc mã hồ sơ) rồi bấm <strong>Tra Cứu Nhanh</strong> để tra cứu toàn bộ dữ liệu.
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
+
+    <!-- MODAL LẬP HÓA ĐƠN MỚI CHO KHÁCH HÀNG -->
+    <div id="modalCreateInvoice" class="popup-overlay">
+      <div class="popup-card" style="max-width: 600px;">
+        <div class="popup-header" style="background: linear-gradient(135deg, #1E429F 0%, #3B82F6 100%);">
+          <h3>➕ Lập Hóa Đơn Mới Cho Khách Hàng</h3>
+          <button type="button" id="btnCloseCreateInvModal" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;">✕</button>
+        </div>
+        <form id="formCreateNewInvoice">
+          <div class="popup-body">
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 13.5px; color: #1E429F;">Khách hàng (*):</label>
+              <select id="newInvCustomerSelect" class="admin-select" style="width: 100%; box-sizing: border-box;" required>
+                <option value="">-- Đang tải danh sách khách hàng... --</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 13.5px; color: #1E429F;">Thú cưng (*):</label>
+              <select id="newInvPetSelect" class="admin-select" style="width: 100%; box-sizing: border-box;">
+                <option value="">-- Chọn khách hàng trước --</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 13.5px; color: #1E429F;">Danh mục dịch vụ / Thuốc (*):</label>
+              <input type="text" id="newInvItemName" class="admin-input" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;" placeholder="Ví dụ: Phí khám bệnh thú y tổng quát, Cắt móng..." required />
+              <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                  <label style="font-size: 12px; color: #666;">Số lượng:</label>
+                  <input type="number" id="newInvItemQty" class="admin-input" style="width: 100%; box-sizing: border-box;" value="1" min="1" required />
+                </div>
+                <div style="flex: 2;">
+                  <label style="font-size: 12px; color: #666;">Đơn giá (VNĐ):</label>
+                  <input type="number" id="newInvItemPrice" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="Ví dụ: 150000" min="0" required />
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-weight: 600; font-size: 13px; color: #666; margin-bottom: 4px;">Ghi chú hóa đơn:</label>
+              <input type="text" id="newInvNotes" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="Ví dụ: Khách thanh toán tại quầy lễ tân..." />
+            </div>
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #1E429F;">
+              Tổng tiền dự kiến: <strong id="newInvTotalPreview" style="font-size: 16px; color: #1E3A8A;">0 đ</strong>
+            </div>
+          </div>
+          <div class="popup-footer">
+            <button type="button" id="btnCancelCreateInvModal" class="pill-btn" style="background: #9CA3AF; color: #fff;">Đóng</button>
+            <button type="submit" id="btnSubmitCreateInv" class="pill-btn" style="background: #16A34A; color: #fff; font-weight: 700;">✓ Lập Hóa Đơn</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- ===== POP-UP XÁC NHẬN PHIẾU KHÁM & PHÂN CÔNG BÁC SĨ ===== -->
     <div id="popupConfirmAppt" class="popup-overlay">

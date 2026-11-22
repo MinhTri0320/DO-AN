@@ -230,10 +230,11 @@ function ensureModalDOM() {
                 <th>Khách hàng</th>
                 <th>Trạng thái</th>
                 <th>Hóa đơn liên quan</th>
+                <th>Thao tác</th>
               </tr>
             </thead>
             <tbody id="docApptsTableBody">
-              <tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch hẹn...</td></tr>
+              <tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch hẹn...</td></tr>
             </tbody>
           </table>
         </div>
@@ -640,6 +641,11 @@ export async function loadDoctorAppointments(filter = {}) {
           )
           .join("") || '<span style="color: #999; font-size: 12px;">Chưa có HĐ</span>';
 
+        const isDone = item.status === "completed" || item.status === "Hoàn thành";
+        const actionBtn = isDone
+          ? `<span style="color: #16A34A; font-weight: 700; font-size: 12px;">✓ Đã chuyển Hồ sơ</span>`
+          : `<button class="btn-action-small btn-doc-complete" data-id="${item.code || item.id}" style="background: #16A34A; color: #fff; font-weight: 700;">✓ Hoàn thành</button>`;
+
         return `
           <tr>
             <td>
@@ -657,12 +663,42 @@ export async function loadDoctorAppointments(filter = {}) {
             </td>
             <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
             <td>${invoicesHtml}</td>
+            <td>${actionBtn}</td>
           </tr>
         `;
       })
       .join("");
+
+    tbody.querySelectorAll(".btn-doc-complete").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+        const diag = prompt("Nhập chẩn đoán / ghi chú điều trị hoàn thành:", "Khám lâm sàng tốt");
+        if (diag === null) return;
+
+        try {
+          btn.disabled = true;
+          btn.textContent = "Đang xử lý...";
+          const compRes = await fetch(`${API_BASE_URL}/doctor/appointments/${encodeURIComponent(id)}/complete`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-user-id": user.id || user._id,
+            },
+            body: JSON.stringify({ diagnosis: diag }),
+          });
+          const compData = await compRes.json();
+          if (!compRes.ok) throw new Error(compData.message || "Lỗi hoàn thành.");
+          alert("✓ Hoàn thành ca khám! Đã tự động chuyển vào Hồ Sơ Khám & Phiếu Khám Bệnh.");
+          loadDoctorAppointments();
+        } catch (e) {
+          alert("Lỗi: " + e.message);
+          btn.disabled = false;
+          btn.textContent = "✓ Hoàn thành";
+        }
+      });
+    });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
   }
 }
 

@@ -89,12 +89,20 @@ function renderRoleSpecificNavAndDropdown(user) {
     dropdown.innerHTML = `
       <p class="dropdown-name" id="userName">${user.name} <span style="font-size: 11px; background: #E1EFFE; color: #1E429F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Lễ tân</span></p>
       <a href="./receptionist-dashboard.html" class="dropdown-link">🛎️ Cổng nghiệp vụ Lễ tân</a>
+      <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
+      <a href="./grooming-schedule.html" class="dropdown-link">✂️ Lịch Chăm Sóc Grooming</a>
+      <a href="./medicine-dispensing.html" class="dropdown-link">💊 Kho Thuốc &amp; Cấp Thuốc</a>
+      <a href="./invoice-payment.html" class="dropdown-link">💳 Hóa Đơn &amp; Thanh Toán</a>
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
 
     if (menuNav) {
       menuNav.innerHTML = `
         <a href="./receptionist-dashboard.html" class="link active">🛎️ Cổng nghiệp vụ Lễ tân</a>
+        <a href="./cage-management.html" class="link">🏨 Khách Sạn</a>
+        <a href="./grooming-schedule.html" class="link">✂️ Grooming</a>
+        <a href="./medicine-dispensing.html" class="link">💊 Kho Thuốc</a>
+        <a href="./invoice-payment.html" class="link">💳 Hóa Đơn</a>
       `;
     }
   }
@@ -106,6 +114,8 @@ function renderRoleSpecificNavAndDropdown(user) {
       <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
       <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
       <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
+      <a href="./grooming-schedule.html" class="dropdown-link">✂️ Lịch Chăm Sóc Grooming</a>
+      <a href="./invoice-payment.html" class="dropdown-link">💳 Hóa Đơn Của Tôi</a>
       <a href="./booking.html#my-appts" class="dropdown-link">📅 Lịch hẹn của tôi</a>
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
@@ -163,6 +173,14 @@ function renderHeaderAuth() {
     const nameEl = document.getElementById("userName");
     if (initialEl) initialEl.textContent = user.name.trim().charAt(0).toUpperCase();
     if (nameEl) nameEl.textContent = user.name;
+
+    // Cập nhật thẻ người dùng ở sidebar nếu trang hiện tại có
+    const sideInitial = document.getElementById("sidebarUserInitial");
+    const sideName = document.getElementById("sidebarUserName");
+    const sidePhone = document.getElementById("sidebarUserPhone");
+    if (sideInitial && user.name) sideInitial.textContent = user.name.trim().charAt(0).toUpperCase();
+    if (sideName && user.name) sideName.textContent = user.name;
+    if (sidePhone && (user.phone || user.email)) sidePhone.textContent = user.phone || user.email;
 
     renderRoleSpecificNavAndDropdown(user);
   } else {

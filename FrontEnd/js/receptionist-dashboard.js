@@ -11,6 +11,7 @@
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { API_BASE_URL } from "./config.js";
+import { escapeHTML } from "./storage.js";
 
 let doctorListCache = [];
 
@@ -133,17 +134,27 @@ async function loadInvoices(status = "") {
   }
 }
 
-// 2. TẢI LỊCH KHÁM CHỜ DUYỆT & POP-UP XÁC NHẬN PHIẾU KHÁM
-async function loadAppointments(search = "") {
+// 2. TẢI LỊCH KHÁM & GROOMING KÈM THÔNG TIN HÓA ĐƠN
+async function loadAppointments(search = "", customStatus = null) {
   const user = getCurrentUser();
   if (!user) return;
 
   const tbody = document.getElementById("recepAllApptsTableBody");
-  tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch khám chờ duyệt...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải danh sách lịch khám &amp; hóa đơn...</td></tr>`;
 
   try {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
+
+    const statusFilterEl = document.getElementById("recepApptStatusFilter");
+    const activeStatus = customStatus !== null ? customStatus : (statusFilterEl ? statusFilterEl.value : "");
+
+    if (activeStatus) {
+      params.append("status", activeStatus);
+    } else {
+      // Mặc định hoặc Tất cả: gửi showAll=true để hiển thị đầy đủ lịch và hóa đơn đi kèm
+      params.append("showAll", "true");
+    }
 
     const res = await fetch(`${API_BASE_URL}/receptionist/appointments?${params.toString()}`, {
       headers: { "x-user-id": user.id || user._id },
@@ -157,7 +168,7 @@ async function loadAppointments(search = "") {
     if (countEl) countEl.textContent = list.length;
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #15803D; padding: 30px; font-weight: 600;">✓ Tuyệt vời! Hiện tại không có lịch khám nào đang chờ xác nhận.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #666; padding: 30px; font-weight: 600;">Không có ca lịch hẹn nào trong bộ lọc này.</td></tr>`;
       return;
     }
 
@@ -484,6 +495,260 @@ function openMedicineForm(medicine = null) {
   panel.scrollIntoView({ behavior: "smooth" });
 }
 
+let recepCustomersCache = [];
+
+// 5. Khởi tạo Modal Lập Hóa Đơn Mới cho Lễ Tân
+function initCreateInvoiceModal() {
+  const modal = document.getElementById("modalCreateInvoice");
+  const openBtn = document.getElementById("btnOpenCreateInvoiceModal");
+  const closeBtn = document.getElementById("btnCloseCreateInvModal");
+  const cancelBtn = document.getElementById("btnCancelCreateInvModal");
+  const form = document.getElementById("formCreateNewInvoice");
+
+  const customerSelect = document.getElementById("newInvCustomerSelect");
+  const petSelect = document.getElementById("newInvPetSelect");
+  const qtyInput = document.getElementById("newInvItemQty");
+  const priceInput = document.getElementById("newInvItemPrice");
+  const totalPreview = document.getElementById("newInvTotalPreview");
+
+  if (!modal) return;
+
+  function updateTotal() {
+    const qty = Number(qtyInput?.value) || 0;
+    const price = Number(priceInput?.value) || 0;
+    if (totalPreview) totalPreview.textContent = (qty * price).toLocaleString("vi-VN") + " đ";
+  }
+
+  if (qtyInput) qtyInput.addEventListener("input", updateTotal);
+  if (priceInput) priceInput.addEventListener("input", updateTotal);
+
+  async function openModal() {
+    modal.style.display = "flex";
+    updateTotal();
+
+    // Tải danh sách khách hàng nếu chưa có
+    try {
+      const res = await fetch(`${API_BASE_URL}/grooming-meta/customers`);
+      const data = await res.json();
+      recepCustomersCache = data.customers || [];
+      if (customerSelect) {
+        customerSelect.innerHTML = `<option value="">-- Chọn khách hàng --</option>` +
+          recepCustomersCache.map(c => `<option value="${c.id}">${escapeHTML(c.name)} (${c.phone || "Chưa có SĐT"})</option>`).join("");
+      }
+    } catch (e) {
+      console.warn("Không thể nạp khách hàng:", e);
+    }
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  if (openBtn) openBtn.addEventListener("click", openModal);
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+  if (customerSelect) {
+    customerSelect.addEventListener("change", () => {
+      const custId = customerSelect.value;
+      const cust = recepCustomersCache.find(c => String(c.id) === String(custId));
+      if (!cust || !cust.pets || cust.pets.length === 0) {
+        petSelect.innerHTML = `<option value="">-- Khách này chưa có thú cưng --</option>`;
+      } else {
+        petSelect.innerHTML = `<option value="">-- Chọn thú cưng --</option>` +
+          cust.pets.map(p => `<option value="${p.id}">${escapeHTML(p.name)} (${p.species || "Thú cưng"})</option>`).join("");
+      }
+    });
+  }
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const customerId = customerSelect.value;
+      const petId = petSelect.value || null;
+      const itemName = document.getElementById("newInvItemName").value.trim();
+      const qty = Number(qtyInput.value) || 1;
+      const price = Number(priceInput.value) || 0;
+      const notes = document.getElementById("newInvNotes").value.trim();
+
+      if (!customerId || !itemName || price <= 0) {
+        alert("Vui lòng chọn khách hàng, nhập tên mục và đơn giá lớn hơn 0!");
+        return;
+      }
+
+      const submitBtn = document.getElementById("btnSubmitCreateInv");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang lập HĐ...";
+      }
+
+      try {
+        const user = getCurrentUser();
+        const payload = {
+          customerId,
+          petId,
+          items: [{ name: itemName, quantity: qty, unitPrice: price, amount: qty * price }],
+          notes: notes || "Lập trực tiếp tại quầy Lễ tân",
+        };
+
+        const res = await fetch(`${API_BASE_URL}/invoices`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": user.id || user._id,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Không thể tạo hóa đơn.");
+
+        alert(`✓ Thành công!\n${data.message}`);
+        closeModal();
+        form.reset();
+        await loadInvoices();
+      } catch (err) {
+        alert("Lỗi lập hóa đơn: " + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "✓ Lập Hóa Đơn";
+        }
+      }
+    });
+  }
+}
+
+// 6. Tra cứu thông tin toàn diện cho Lễ Tân (Tab 5)
+async function executeReceptionistLookup(query) {
+  const container = document.getElementById("recepLookupResultsContainer");
+  if (!container) return;
+
+  if (!query) {
+    container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 20px;">Vui lòng nhập từ khóa tra cứu.</div>`;
+    return;
+  }
+
+  container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 20px;">⏳ Đang tra cứu thông tin cho "${escapeHTML(query)}"...</div>`;
+
+  try {
+    const user = getCurrentUser();
+    const res = await fetch(`${API_BASE_URL}/receptionist/lookup?q=${encodeURIComponent(query)}`, {
+      headers: { "x-user-id": user.id || user._id },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Không thể tra cứu thông tin.");
+
+    const {
+      customers = [],
+      pets = [],
+      appointments = [],
+      groomings = [],
+      invoices = [],
+      prescriptions = [],
+    } = data.results || {};
+
+    const totalFound = customers.length + pets.length + appointments.length + groomings.length + invoices.length + prescriptions.length;
+
+    if (totalFound === 0) {
+      container.innerHTML = `<div style="text-align: center; color: #666; padding: 40px 20px;">Không tìm thấy dữ liệu nào phù hợp với "<strong>${escapeHTML(query)}</strong>".</div>`;
+      return;
+    }
+
+    let html = `<div style="margin-bottom: 16px; font-weight: 700; color: #1E429F;">🔍 Kết quả tra cứu cho "${escapeHTML(query)}" (${totalFound} mục tìm thấy):</div>`;
+
+    // 1. Hóa đơn
+    if (invoices.length > 0) {
+      html += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px 0; color: #1E429F;">💳 Hóa Đơn Khách Hàng (${invoices.length})</h4>
+          <table class="portal-table" style="margin-bottom: 0;">
+            <thead>
+              <tr><th>Mã HĐ</th><th>Khách hàng</th><th>SĐT</th><th>Tổng tiền</th><th>Trạng thái</th><th>Ngày lập</th></tr>
+            </thead>
+            <tbody>
+              ${invoices.map(inv => `
+                <tr>
+                  <td><strong>${inv.invoiceCode}</strong></td>
+                  <td>${inv.customerName || "—"}</td>
+                  <td>${inv.customerPhone || "—"}</td>
+                  <td><strong style="color: #1E429F;">${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ</strong></td>
+                  <td><span class="invoice-tag ${inv.status === "paid" ? "paid" : ""}">${inv.status === "paid" ? "Đã thanh toán" : "Chưa thanh toán"}</span></td>
+                  <td><small style="color: #666;">${new Date(inv.createdAt).toLocaleString("vi-VN")}</small></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // 2. Lịch khám & Grooming
+    if (appointments.length > 0 || groomings.length > 0) {
+      html += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px 0; color: #1E429F;">📅 Lịch Khám &amp; Grooming (${appointments.length + groomings.length})</h4>
+          <table class="portal-table" style="margin-bottom: 0;">
+            <thead>
+              <tr><th>Mã lịch</th><th>Dịch vụ</th><th>Thú cưng</th><th>Khách hàng</th><th>Thời gian</th><th>Trạng thái</th></tr>
+            </thead>
+            <tbody>
+              ${appointments.map(a => `
+                <tr>
+                  <td><strong>${a.bookingCode}</strong></td>
+                  <td>${a.serviceName}</td>
+                  <td>${a.petName}</td>
+                  <td>${a.ownerName} (${a.ownerPhone})</td>
+                  <td>${a.date} - ${a.time}</td>
+                  <td><span class="status-pill status-${a.status === 'Đã xác nhận' ? 'completed' : 'pending'}">${a.status}</span></td>
+                </tr>
+              `).join("")}
+              ${groomings.map(g => `
+                <tr>
+                  <td><strong>${g.groomingCode}</strong></td>
+                  <td>${g.serviceName}</td>
+                  <td>${g.petName}</td>
+                  <td>${g.customerName} (${g.customerPhone})</td>
+                  <td>${g.date} - ${g.startTime}</td>
+                  <td><span class="status-pill status-${g.status === 'completed' ? 'completed' : 'pending'}">${g.status}</span></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // 3. Khách hàng & Thú cưng
+    if (customers.length > 0 || pets.length > 0) {
+      html += `
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          ${customers.length > 0 ? `
+            <div style="flex: 1; min-width: 280px;">
+              <h4 style="margin: 0 0 10px 0; color: #1E429F;">👤 Khách Hàng (${customers.length})</h4>
+              <ul style="padding-left: 20px; line-height: 1.8;">
+                ${customers.map(c => `<li><strong>${c.name || c.fullName}</strong> - SĐT: ${c.phone || "Chưa có"}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+          ${pets.length > 0 ? `
+            <div style="flex: 1; min-width: 280px;">
+              <h4 style="margin: 0 0 10px 0; color: #1E429F;">🐾 Thú Cưng (${pets.length})</h4>
+              <ul style="padding-left: 20px; line-height: 1.8;">
+                ${pets.map(p => `<li><strong>${p.name}</strong> (${p.species || "Thú cưng"} ${p.breed ? "- " + p.breed : ""})</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+  } catch (err) {
+    container.innerHTML = `<div style="text-align: center; color: #c53030; padding: 30px;">Lỗi: ${err.message}</div>`;
+  }
+}
+
 // KHỞI TẠO DASHBOARD LỄ TÂN
 document.addEventListener("DOMContentLoaded", async () => {
   const currentUser = checkReceptionistAuth();
@@ -518,10 +783,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       else if (targetTab === "tabRecepAppts") loadAppointments();
       else if (targetTab === "tabRecepPrescriptions") loadPrescriptions();
       else if (targetTab === "tabRecepPharmacy") loadPharmacy();
+      else if (targetTab === "tabRecepLookup") {
+        const input = document.getElementById("recepLookupInput");
+        if (input && input.value.trim()) executeReceptionistLookup(input.value.trim());
+      }
     });
   });
 
-  // Tab 1: Lọc trạng thái hóa đơn
+  // Tab 1: Lọc trạng thái hóa đơn & Nút Lập Hóa Đơn Mới
   const invoiceStatusFilter = document.getElementById("recepInvoiceStatusFilter");
   if (invoiceStatusFilter) {
     invoiceStatusFilter.addEventListener("change", () => {
@@ -529,15 +798,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Tab 2: Tìm kiếm lịch khám
+  // Khởi tạo Modal Lập Hóa Đơn Mới
+  initCreateInvoiceModal();
+
+  // Tab 2: Tìm kiếm & Lọc trạng thái lịch khám
   const apptSearch = document.getElementById("recepApptSearch");
   const btnApptSearch = document.getElementById("btnRecepApptSearch");
+  const apptStatusFilter = document.getElementById("recepApptStatusFilter");
+
+  if (apptStatusFilter) {
+    apptStatusFilter.addEventListener("change", () => {
+      loadAppointments(apptSearch ? apptSearch.value.trim() : "", apptStatusFilter.value);
+    });
+  }
+
   if (btnApptSearch && apptSearch) {
     btnApptSearch.addEventListener("click", () => {
       loadAppointments(apptSearch.value.trim());
     });
     apptSearch.addEventListener("keydown", (e) => {
       if (e.key === "Enter") loadAppointments(apptSearch.value.trim());
+    });
+  }
+
+  // Tab 5: Tra cứu thông tin Lễ tân (Lookup)
+  const recepLookupInput = document.getElementById("recepLookupInput");
+  const btnRecepLookup = document.getElementById("btnRecepLookupExecute");
+  if (btnRecepLookup && recepLookupInput) {
+    btnRecepLookup.addEventListener("click", () => {
+      executeReceptionistLookup(recepLookupInput.value.trim());
+    });
+    recepLookupInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") executeReceptionistLookup(recepLookupInput.value.trim());
     });
   }
 

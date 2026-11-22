@@ -23,4 +23,7 @@ router.put("/grooming/:id/status", grooming.changeStatus);
 // 5. Hủy lịch hẹn
 router.patch("/grooming/:id/cancel", grooming.cancelGrooming);
 
+// 6. Lấy danh sách khách hàng & thú cưng phục vụ form tạo lịch Grooming
+router.get("/grooming-meta/customers", grooming.getGroomingCustomers);
+
 module.exports = router;

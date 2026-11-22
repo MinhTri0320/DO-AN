@@ -16,4 +16,7 @@ router.get("/receptionist/prescriptions", receptionistC.getPrescriptionsWithDisp
 // 3. Duyệt hoặc Hủy đơn khám & Phân công bác sĩ phụ trách
 router.patch("/receptionist/appointments/:id/confirm", receptionistC.confirmOrCancelAppointment);
 
+// 4. Tra cứu thông tin tổng hợp cho Lễ tân
+router.get("/receptionist/lookup", receptionistC.lookupReceptionistInfo);
+
 module.exports = router;

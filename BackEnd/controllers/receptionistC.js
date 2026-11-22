@@ -41,16 +41,21 @@ const getAllAppointmentsWithInvoices = async (req, res) => {
       return res.status(auth.status).json({ success: false, message: auth.message });
     }
 
-    const { date, month, search, showAll } = req.query;
+    const { date, month, search, showAll, status } = req.query;
 
     const filterAppointment = {};
     const filterGrooming = { isDeleted: false };
 
-    // Yêu cầu: Ẩn các lịch khám "Đã xác nhận" hoặc "Đã hủy", chỉ hiển thị lịch cần duyệt
-    if (showAll !== "true") {
+    // Nếu người dùng chọn trạng thái cụ thể
+    if (status) {
+      filterAppointment.status = status;
+      filterGrooming.status = status;
+    } else if (showAll === "false") {
+      // Chỉ khi người dùng yêu cầu rõ ràng "chỉ xem chờ duyệt"
       filterAppointment.status = { $in: ["Chờ xác nhận", "pending"] };
       filterGrooming.status = { $in: ["pending", "Chờ xác nhận"] };
     }
+    // Mặc định hoặc showAll="true": hiển thị tất cả các ca để Lễ tân theo dõi được hóa đơn và trạng thái!
 
     if (date) {
       filterAppointment.date = date;
@@ -82,64 +87,99 @@ const getAllAppointmentsWithInvoices = async (req, res) => {
       Grooming.find(filterGrooming).sort({ dateISO: -1, startMinutes: 1 }).lean(),
     ]);
 
-    // Tìm hóa đơn khớp theo SĐT khách hàng
+    // Tìm hóa đơn khớp theo SĐT khách hàng hoặc Customer ID
     const allPhones = [...new Set([
       ...appointments.map((a) => a.ownerPhone).filter(Boolean),
       ...groomings.map((g) => g.customerPhone).filter(Boolean),
     ])];
+    const allCustomerIds = [...new Set([
+      ...appointments.map((a) => String(a.userId || a.ownerId || "")).filter(Boolean),
+      ...groomings.map((g) => String(g.customerId || "")).filter(Boolean),
+    ])];
 
     const invoices = await Invoice.find({
-      customerPhone: { $in: allPhones },
+      $or: [
+        { customerPhone: { $in: allPhones } },
+        { customerId: { $in: allCustomerIds } },
+      ],
       isDeleted: false,
     }).lean();
 
     const invoiceByPhoneMap = new Map();
     invoices.forEach((inv) => {
-      if (!invoiceByPhoneMap.has(inv.customerPhone)) invoiceByPhoneMap.set(inv.customerPhone, []);
-      invoiceByPhoneMap.get(inv.customerPhone).push({
+      const keyPhone = inv.customerPhone;
+      const keyCustId = inv.customerId ? String(inv.customerId) : null;
+
+      const item = {
         id: inv._id,
         invoiceCode: inv.invoiceCode,
         totalAmount: inv.totalAmount,
         status: inv.status,
         createdAt: inv.createdAt,
-      });
+      };
+
+      if (keyPhone) {
+        if (!invoiceByPhoneMap.has(keyPhone)) invoiceByPhoneMap.set(keyPhone, []);
+        invoiceByPhoneMap.get(keyPhone).push(item);
+      }
+      if (keyCustId) {
+        if (!invoiceByPhoneMap.has(keyCustId)) invoiceByPhoneMap.set(keyCustId, []);
+        invoiceByPhoneMap.get(keyCustId).push(item);
+      }
     });
 
-    const enrichedAppointments = appointments.map((a) => ({
-      id: a._id,
-      code: a.bookingCode,
-      type: "appointment",
-      typeName: "Khám bệnh thú y",
-      serviceName: a.serviceName,
-      petName: a.petName,
-      petSpecies: a.petSpecies,
-      customerName: a.ownerName,
-      customerPhone: a.ownerPhone,
-      date: a.date,
-      dateISO: a.dateISO,
-      time: a.time,
-      status: a.status,
-      doctorName: a.notes?.includes("BS") ? a.notes : (a.id_bac_sy ? `BS. [${a.id_bac_sy}]` : "Chưa phân công"),
-      invoices: invoiceByPhoneMap.get(a.ownerPhone) || [],
-    }));
+    const enrichedAppointments = appointments.map((a) => {
+      const matchedInvoices = [
+        ...(invoiceByPhoneMap.get(a.ownerPhone) || []),
+        ...(invoiceByPhoneMap.get(String(a.userId || a.ownerId)) || []),
+      ];
+      // Loại bỏ trùng lặp hóa đơn nếu có
+      const uniqueInvoices = Array.from(new Map(matchedInvoices.map(i => [String(i.id), i])).values());
 
-    const enrichedGroomings = groomings.map((g) => ({
-      id: g._id,
-      code: g.groomingCode,
-      type: "grooming",
-      typeName: "Spa & Cắt tỉa",
-      serviceName: g.serviceName,
-      petName: g.petName,
-      petSpecies: "Thú cưng",
-      customerName: g.customerName,
-      customerPhone: g.customerPhone,
-      date: g.date,
-      dateISO: g.dateISO,
-      time: g.startTime,
-      status: g.status,
-      doctorName: g.groomerName || (g.id_bac_sy ? `BS/KTV. [${g.id_bac_sy}]` : "Chưa phân công"),
-      invoices: invoiceByPhoneMap.get(g.customerPhone) || [],
-    }));
+      return {
+        id: a._id,
+        code: a.bookingCode,
+        type: "appointment",
+        typeName: "Khám bệnh thú y",
+        serviceName: a.serviceName,
+        petName: a.petName,
+        petSpecies: a.petSpecies,
+        customerName: a.ownerName,
+        customerPhone: a.ownerPhone,
+        date: a.date,
+        dateISO: a.dateISO,
+        time: a.time,
+        status: a.status,
+        doctorName: a.notes?.includes("BS") ? a.notes : (a.id_bac_sy ? `BS. [${a.id_bac_sy}]` : "Chưa phân công"),
+        invoices: uniqueInvoices,
+      };
+    });
+
+    const enrichedGroomings = groomings.map((g) => {
+      const matchedInvoices = [
+        ...(invoiceByPhoneMap.get(g.customerPhone) || []),
+        ...(invoiceByPhoneMap.get(String(g.customerId)) || []),
+      ];
+      const uniqueInvoices = Array.from(new Map(matchedInvoices.map(i => [String(i.id), i])).values());
+
+      return {
+        id: g._id,
+        code: g.groomingCode,
+        type: "grooming",
+        typeName: "Spa & Cắt tỉa",
+        serviceName: g.serviceName,
+        petName: g.petName,
+        petSpecies: "Thú cưng",
+        customerName: g.customerName,
+        customerPhone: g.customerPhone,
+        date: g.date,
+        dateISO: g.dateISO,
+        time: g.startTime,
+        status: g.status,
+        doctorName: g.groomerName || (g.id_bac_sy ? `BS/KTV. [${g.id_bac_sy}]` : "Chưa phân công"),
+        invoices: uniqueInvoices,
+      };
+    });
 
     const allList = [...enrichedAppointments, ...enrichedGroomings].sort((a, b) => {
       const cmp = (b.dateISO || "").localeCompare(a.dateISO || "");
@@ -356,9 +396,114 @@ const confirmOrCancelAppointment = async (req, res) => {
   }
 };
 
+// 4. Tra cứu thông tin tổng hợp cho Lễ tân (GET /api/receptionist/lookup?q=...)
+const lookupReceptionistInfo = async (req, res) => {
+  try {
+    const auth = await verifyReceptionistCaller(req);
+    if (!auth.authorized) {
+      return res.status(auth.status).json({ success: false, message: auth.message });
+    }
+
+    const { q, search } = req.query;
+    const queryStr = (q || search || "").trim();
+
+    if (!queryStr) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng nhập từ khóa tra cứu (SĐT, tên khách hàng, tên thú cưng, mã hóa đơn/lịch hẹn)!",
+      });
+    }
+
+    const regex = new RegExp(queryStr, "i");
+    const Pet = require("../models/pet");
+
+    // 1. Tra cứu Khách hàng
+    const customers = await User.find({
+      $or: [{ name: regex }, { fullName: regex }, { phone: regex }, { email: regex }],
+    })
+      .select("name fullName phone email address role role_id createdAt")
+      .lean();
+
+    // 2. Tra cứu Thú cưng
+    const pets = await Pet.find({
+      $or: [{ name: regex }, { species: regex }, { breed: regex }],
+    }).lean();
+
+    // 3. Tra cứu Lịch khám & Grooming
+    const [appointments, groomings] = await Promise.all([
+      Appointment.find({
+        $or: [
+          { bookingCode: regex },
+          { ownerName: regex },
+          { ownerPhone: regex },
+          { petName: regex },
+          { serviceName: regex },
+        ],
+      }).sort({ createdAt: -1 }).lean(),
+      Grooming.find({
+        $or: [
+          { groomingCode: regex },
+          { customerName: regex },
+          { customerPhone: regex },
+          { petName: regex },
+          { serviceName: regex },
+        ],
+        isDeleted: false,
+      }).sort({ createdAt: -1 }).lean(),
+    ]);
+
+    // 4. Tra cứu Hóa đơn
+    const invoices = await Invoice.find({
+      $or: [
+        { invoiceCode: regex },
+        { customerName: regex },
+        { customerPhone: regex },
+        { petName: regex },
+        { prescriptionCode: regex },
+      ],
+      isDeleted: false,
+    }).sort({ createdAt: -1 }).lean();
+
+    // 5. Tra cứu Đơn thuốc
+    const prescriptions = await Prescription.find({
+      $or: [
+        { prescriptionCode: regex },
+        { petName: regex },
+        { diagnosisCode: regex },
+      ],
+    }).sort({ createdAt: -1 }).lean();
+
+    return res.status(200).json({
+      success: true,
+      query: queryStr,
+      results: {
+        customersCount: customers.length,
+        customers,
+        petsCount: pets.length,
+        pets,
+        appointmentsCount: appointments.length,
+        appointments,
+        groomingsCount: groomings.length,
+        groomings,
+        invoicesCount: invoices.length,
+        invoices,
+        prescriptionsCount: prescriptions.length,
+        prescriptions,
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi tra cứu thông tin lễ tân:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi máy chủ khi tra cứu thông tin.",
+    });
+  }
+};
+
 module.exports = {
   getAllAppointmentsWithInvoices,
   getPrescriptionsWithDispensings,
   confirmOrCancelAppointment,
+  lookupReceptionistInfo,
   verifyReceptionistCaller,
 };

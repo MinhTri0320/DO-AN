@@ -32,7 +32,7 @@ const appointmentSchema = new mongoose.Schema(
     location: { type: String, trim: true, maxlength: 250 },
     status: {
       type: String,
-      enum: ["Chờ xác nhận", "Đã xác nhận", "Đã hủy"],
+      enum: ["Chờ xác nhận", "Đã xác nhận", "Đã hủy", "Hoàn thành", "completed", "pending"],
       default: "Chờ xác nhận",
     },
     feeDisplay: { type: String, trim: true, maxlength: 60 },

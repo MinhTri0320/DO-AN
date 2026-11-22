@@ -108,21 +108,21 @@ const getInvoices = async (req, res) => {
       });
     }
 
-    // 2. Phân quyền: role_id = 1 (Admin) và role_id = 2 (Bác sĩ) không có quyền truy cập hóa đơn phòng khám
-    if (caller.role_id === 1 || caller.role_id === 2) {
-      return res.status(403).json({
-        success: false,
-        message: "Quyền truy cập bị từ chối! Quản trị viên và Bác sĩ không có quyền truy cập danh sách hóa đơn chung. Chức năng này chỉ dành cho Nhân viên Lễ tân (role_id = 3).",
-      });
-    }
-
+    // 2. Phân quyền truy cập hóa đơn:
+    // - Lễ tân (role_id = 3) & Quản trị viên (role_id = 1): Xem toàn bộ danh sách hóa đơn của khách hàng, có thể lọc theo customerId
+    // - Khách hàng (role_id = 4): CHỈ được phép xem duy nhất hóa đơn gắn với chính mình (theo customerId hoặc số điện thoại)
+    // - Bác sĩ (role_id = 2): Được phép xem hóa đơn liên quan đến thú cưng điều trị
     const filter = { isDeleted: false };
 
-    // 3. Khách hàng (role_id = 4): CHỈ được phép xem duy nhất hóa đơn gắn với chính mình
     if (caller.role_id === 4) {
       filter.$or = [{ customerId: caller.id }, { customerPhone: caller.phone }];
-    } else if (caller.role_id === 3) {
-      // 4. Lễ tân (role_id = 3): Được xem danh sách chung hoặc lọc theo khách hàng
+    } else if (caller.role_id === 3 || caller.role_id === 1) {
+      // Lễ tân hoặc Admin: Xem toàn bộ hoặc lọc theo khách hàng
+      if (customerId) {
+        filter.customerId = customerId;
+      }
+    } else if (caller.role_id === 2) {
+      // Bác sĩ: nếu có customerId thì lọc theo đó
       if (customerId) {
         filter.customerId = customerId;
       }
@@ -166,12 +166,8 @@ const getInvoiceById = async (req, res) => {
       });
     }
 
-    if (caller.role_id === 1 || caller.role_id === 2) {
-      return res.status(403).json({
-        success: false,
-        message: "Quyền truy cập bị từ chối! Quản trị viên và Bác sĩ không có quyền truy cập chi tiết hóa đơn.",
-      });
-    }
+    // Cho phép Lễ tân (3), Admin (1) và Bác sĩ (2) xem chi tiết hóa đơn
+    // Riêng Khách hàng (4) chỉ xem hóa đơn của chính mình
 
     const invoice = await Invoice.findOne({
       $or: [

@@ -1,0 +1,814 @@
+/* ============================================================
+   grooming-schedule.css
+   Sprint 4: Grooming Schedule & Status
+   - Thiết kế giao diện Form tạo lịch, Lịch theo ngày, Nhãn màu trạng thái
+   - Hệ màu ấm áp Pawmily: Espresso, Caramel, Cream, Sage
+   ============================================================ */
+
+/* ===== TIÊU ĐỀ & THANH ĐIỀU HƯỚNG DỊCH VỤ ===== */
+.grooming-feature-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cream-latte);
+  border: 1.5px solid var(--tan-light);
+  border-radius: var(--radius-pill);
+  padding: 6px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.grooming-feature-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.grooming-tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  transition: all 0.25s var(--ease-pawmily);
+  white-space: nowrap;
+}
+
+.grooming-tab-item:hover {
+  background: rgba(126, 90, 62, 0.1);
+  color: var(--espresso);
+  transform: translateY(-1px);
+}
+
+.grooming-tab-item.active {
+  background: var(--espresso);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(78, 42, 20, 0.22);
+}
+
+/* ===== KPI THỐNG KÊ TRẠNG THÁI GROOMING ===== */
+.grooming-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.grooming-stat-card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s var(--ease-pawmily), box-shadow 0.25s;
+}
+
+.grooming-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+.grooming-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  background: var(--cream-latte);
+  border: 1px solid var(--tan-light);
+}
+
+.grooming-stat-card.stat-pending .grooming-stat-icon {
+  background: #FFF8E1;
+  border-color: #FDE68A;
+}
+.grooming-stat-card.stat-inprogress .grooming-stat-icon {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+}
+.grooming-stat-card.stat-completed .grooming-stat-icon {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+.grooming-stat-card.stat-cancelled .grooming-stat-icon {
+  background: #F3F4F6;
+  border-color: #E5E7EB;
+}
+
+.grooming-stat-info strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+.grooming-stat-info span {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+/* ===== LAYOUT CHÍNH: 2 CỘT (FORM TẠO LỊCH + DANH SÁCH LỊCH) ===== */
+.grooming-main-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .grooming-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .grooming-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grooming-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== CỘT TRÁI: FORM TẠO LỊCH HẸN ===== */
+.grooming-form-card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 90px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.card-title-row h2 {
+  font-size: 18px;
+  font-family: var(--font-title);
+  color: var(--espresso);
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.form-group-grooming {
+  margin-bottom: 16px;
+}
+
+.form-group-grooming label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.form-group-grooming label .req {
+  color: var(--coral-warm);
+  margin-left: 3px;
+}
+
+.form-input-grooming,
+.form-select-grooming,
+.form-textarea-grooming {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface-alt);
+  transition: all 0.2s var(--ease-pawmily);
+  font-family: var(--font-base);
+  box-sizing: border-box;
+}
+
+.form-input-grooming:focus,
+.form-select-grooming:focus,
+.form-textarea-grooming:focus {
+  outline: none;
+  border-color: var(--caramel);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(152, 117, 88, 0.15);
+}
+
+.form-select-grooming:disabled {
+  background: #F3F4F6;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  border-color: #E5E7EB;
+}
+
+/* Service suggestion chips */
+.service-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.service-chip-btn {
+  background: var(--cream-latte);
+  border: 1px dashed var(--tan);
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+
+.service-chip-btn:hover {
+  background: var(--caramel-soft);
+  color: var(--espresso);
+  border-color: var(--caramel);
+}
+
+/* 2 inputs per row */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Alert Thông Báo Lỗi / Trùng Giờ */
+.grooming-alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.45;
+}
+
+.grooming-alert.danger {
+  background: #FEF2F2;
+  border: 1.5px solid #FCA5A5;
+  color: #991B1B;
+}
+
+.grooming-alert.warning {
+  background: #FFFBEB;
+  border: 1.5px solid #FCD34D;
+  color: #92400E;
+}
+
+.grooming-alert.success {
+  background: #ECFDF5;
+  border: 1.5px solid #A7F3D0;
+  color: #065F46;
+}
+
+/* Nút Submit Tạo Lịch */
+.btn-submit-grooming {
+  width: 100%;
+  padding: 12px 20px;
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(78, 42, 20, 0.25);
+  transition: all 0.25s var(--ease-pawmily);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-submit-grooming:hover {
+  background: var(--accent-gradient-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(78, 42, 20, 0.35);
+}
+
+.btn-submit-grooming:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== CỘT PHẢI: BỘ LỌC NGÀY & DANH SÁCH LỊCH ===== */
+.grooming-list-card {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Toolbar Bộ Lọc */
+.grooming-toolbar {
+  background: var(--surface-alt);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-row-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date-picker-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-picker-wrap label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.quick-date-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-quick-date {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--tan);
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-quick-date:hover {
+  background: var(--cream-latte);
+  color: var(--espresso);
+  border-color: var(--caramel);
+}
+
+.btn-quick-date.active {
+  background: var(--espresso);
+  color: #ffffff;
+  border-color: var(--espresso);
+}
+
+.filter-row-bottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.filter-status-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-filter-pill {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  background: #ffffff;
+  color: var(--ink-soft);
+  border-color: var(--line);
+  transition: all 0.2s;
+}
+
+.status-filter-pill:hover {
+  border-color: var(--caramel);
+  color: var(--espresso);
+}
+
+.status-filter-pill.active {
+  background: var(--espresso);
+  color: #ffffff;
+  border-color: var(--espresso);
+}
+
+.filter-search-box {
+  margin-left: auto;
+  position: relative;
+  min-width: 220px;
+}
+
+.filter-search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--line);
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.filter-search-input:focus {
+  border-color: var(--caramel);
+}
+
+.search-icon-pos {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-faint);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ===== DANH SÁCH LỊCH HẸN (TIMELINE GIỜ TĂNG DẦN) ===== */
+.schedule-timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Thẻ Lịch Hẹn */
+.schedule-item-card {
+  background: #ffffff;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s var(--ease-pawmily);
+  position: relative;
+  border-left-width: 6px;
+}
+
+.schedule-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Viền trái tương ứng từng trạng thái */
+.schedule-item-card.status-pending {
+  border-left-color: #F59E0B;
+}
+.schedule-item-card.status-in_progress {
+  border-left-color: #2563EB;
+}
+.schedule-item-card.status-completed {
+  border-left-color: #10B981;
+}
+.schedule-item-card.status-cancelled {
+  border-left-color: #9CA3AF;
+  opacity: 0.85;
+  background: #FAFAFA;
+}
+
+.item-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.time-slot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream-latte);
+  border: 1px solid var(--tan-light);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--espresso);
+}
+
+.time-slot-badge .duration-pill {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  background: #ffffff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--tan-light);
+}
+
+/* NHÃN MÀU TRẠNG THÁI CHUẨN 4 MÀU KHÁC NHAU */
+.grooming-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* 1. Pending (Chờ làm) - Vàng Cam */
+.grooming-status-tag.pending {
+  background: #FFF8E1;
+  color: #B45309;
+  border: 1.5px solid #FDE68A;
+}
+
+/* 2. In Progress (Đang làm) - Xanh Dương */
+.grooming-status-tag.in_progress {
+  background: #EFF6FF;
+  color: #1E429F;
+  border: 1.5px solid #BFDBFE;
+}
+
+/* 3. Completed (Hoàn thành) - Xanh Lá */
+.grooming-status-tag.completed {
+  background: #ECFDF5;
+  color: #047857;
+  border: 1.5px solid #A7F3D0;
+}
+
+/* 4. Cancelled (Đã hủy) - Xám */
+.grooming-status-tag.cancelled {
+  background: #F3F4F6;
+  color: #6B7280;
+  border: 1.5px solid #E5E7EB;
+}
+
+/* Thông tin thân thẻ */
+.item-main-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 12px 14px;
+  background: var(--surface-alt);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 768px) {
+  .item-main-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.item-info-col h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--espresso);
+  margin: 0 0 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pet-details-line {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.customer-details-line {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.service-title-display {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--brown-hover);
+  margin-bottom: 4px;
+}
+
+.price-display-tag {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sage-dark, #166534);
+}
+
+.note-box-display {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: #ffffff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--tan);
+  font-style: italic;
+}
+
+/* THANH THAO TÁC ĐỔI TRẠNG THÁI */
+.item-bottom-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+}
+
+.groomer-assign-info {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btn-status-act {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-pawmily);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Nút Bắt đầu làm (pending -> in_progress) */
+.btn-start-grooming {
+  background: #2563EB;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+.btn-start-grooming:hover {
+  background: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+/* Nút Hoàn thành (in_progress -> completed) */
+.btn-complete-grooming {
+  background: #10B981;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+.btn-complete-grooming:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* Nút Hủy lịch */
+.btn-cancel-grooming {
+  background: #F3F4F6;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+}
+.btn-cancel-grooming:hover {
+  background: #FEE2E2;
+}
+
+/* Khi đã hoàn thành hoặc đã hủy */
+.state-locked-badge {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  font-style: italic;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ===== KHUNG RỖNG KHI NGÀY ĐÓ KHÔNG CÓ LỊCH HẸN ===== */
+/* Đúng yêu cầu: Ngày không có lịch thì hiển thị "Chưa có lịch hẹn" */
+.no-schedule-box {
+  background: var(--surface-alt);
+  border: 2px dashed var(--line);
+  border-radius: 18px;
+  padding: 48px 24px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.no-schedule-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+  opacity: 0.8;
+}
+
+.no-schedule-title {
+  font-size: 18px;
+  font-family: var(--font-title);
+  color: var(--espresso);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.no-schedule-desc {
+  font-size: 14px;
+  color: var(--ink-faint);
+  max-width: 400px;
+  margin: 0 auto 16px auto;
+  line-height: 1.5;
+}
+
+.btn-book-from-empty {
+  padding: 9px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--espresso);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-book-from-empty:hover {
+  background: var(--brown-hover);
+  transform: translateY(-1px);
+}
+
+/* Toast Thông Báo Góc Phải Màn Hình */
+.grooming-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  border-left: 6px solid #10B981;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 999999;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  animation: toastSlideIn 0.3s ease;
+  max-width: 380px;
+}
+
+.grooming-toast.error {
+  border-left-color: #DC2626;
+}
+
+.grooming-toast.warning {
+  border-left-color: #F59E0B;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

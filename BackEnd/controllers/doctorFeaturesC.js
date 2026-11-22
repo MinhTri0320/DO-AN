@@ -285,9 +285,269 @@ const getPetMedicalRecords = async (req, res) => {
   }
 };
 
+// 4. Xác nhận hoàn thành ca hẹn & Tự động chuyển từ Lịch hẹn cá nhân -> Hồ sơ khám (POST /api/doctor/appointments/:id/complete)
+const completeAppointment = async (req, res) => {
+  try {
+    const auth = await verifyDoctorCaller(req);
+    if (!auth.authorized) {
+      return res.status(auth.status).json({ success: false, message: auth.message });
+    }
+
+    const { id } = req.params;
+    const { diagnosis, treatmentPlan, notes } = req.body;
+
+    const doctorName = auth.doctor ? auth.doctor.name : (auth.user?.name || "Bác sĩ thú y");
+    const id_bac_sy = auth.doctor ? auth.doctor.id_bac_sy : (req.body.id_bac_sy || "bs00001");
+    const doctorPhone = auth.doctor ? auth.doctor.phone : auth.user?.phone;
+
+    let appointment = null;
+    let grooming = null;
+    let targetType = "appointment";
+
+    // 1. Tìm trong bảng Appointment
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      appointment = await Appointment.findById(id);
+    }
+    if (!appointment) {
+      appointment = await Appointment.findOne({ bookingCode: id });
+    }
+
+    // 2. Nếu không có, tìm trong bảng Grooming
+    if (!appointment) {
+      if (id.match(/^[0-9a-fA-F]{24}$/)) {
+        grooming = await Grooming.findById(id);
+      }
+      if (!grooming) {
+        grooming = await Grooming.findOne({ groomingCode: id });
+      }
+      if (grooming) targetType = "grooming";
+    }
+
+    if (!appointment && !grooming) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy thông tin ca hẹn cần hoàn thành.",
+      });
+    }
+
+    const now = new Date();
+    const todayStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
+    const todayISO = now.toISOString().split("T")[0];
+
+    let createdRecord = null;
+    let createdDiagnosis = null;
+
+    if (targetType === "appointment") {
+      appointment.status = "Hoàn thành";
+      appointment.slotReserved = false;
+      await appointment.save();
+
+      // Xác định petId hợp lệ (bắt buộc trong MedicalRecord)
+      const Pet = require("../models/pet");
+      let effectivePetId = appointment.petId;
+      if (!effectivePetId) {
+        const foundPet = await Pet.findOne({ name: appointment.petName }).lean();
+        if (foundPet) {
+          effectivePetId = String(foundPet._id);
+        } else {
+          effectivePetId = `pet_${String(appointment.userId || appointment._id).slice(-8)}`;
+        }
+      }
+
+      // Tạo Hồ sơ khám (MedicalRecord)
+      const recordCode = `MR-${now.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const confirmedDiag = diagnosis || appointment.serviceName || "Khám và điều trị hoàn tất";
+
+      createdRecord = await MedicalRecord.create({
+        recordCode,
+        petId: effectivePetId,
+        petName: appointment.petName || "Thú cưng",
+        petSpecies: appointment.petSpecies || "Chó",
+        ownerName: appointment.ownerName || "Khách hàng",
+        ownerPhone: appointment.ownerPhone || "",
+        title: `Hoàn thành ca khám: ${appointment.serviceName || "Khám bệnh"}`,
+        confirmedDiagnosis: confirmedDiag,
+        treatmentPlan: treatmentPlan || "Đã hoàn thành khám và tư vấn điều trị tại phòng khám",
+        veterinarian: `BS. ${doctorName}`,
+        id_bac_sy: id_bac_sy,
+        doctorPhone: doctorPhone,
+        date: appointment.date || todayStr,
+        dateISO: appointment.dateISO || todayISO,
+        notes: notes || appointment.notes || "",
+        isDeleted: false,
+      });
+
+      // Tạo Phiếu khám (Diagnosis) theo riêng Bác sĩ để hiển thị ở Tab 2
+      const diagCode = `DX-${now.getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+      createdDiagnosis = await Diagnosis.create({
+        diagnosisCode: diagCode,
+        petId: effectivePetId,
+        petName: appointment.petName || "Thú cưng",
+        petSpecies: appointment.petSpecies || "Chó",
+        customerName: appointment.ownerName || "Khách hàng",
+        customerPhone: appointment.ownerPhone || "",
+        category: appointment.serviceName || "Khám nội khoa",
+        confirmedDiagnosis: confirmedDiag,
+        treatmentPlan: treatmentPlan || "Theo dõi và chăm sóc tại nhà",
+        doctorName: `BS. ${doctorName}`,
+        id_bac_sy: id_bac_sy,
+        doctorPhone: doctorPhone,
+        date: appointment.date || todayStr,
+        dateISO: appointment.dateISO || todayISO,
+        vitalSigns: {
+          temperature: 38.5,
+          weight: 5.0,
+          heartRate: 110,
+        },
+        isDeleted: false,
+      });
+    } else {
+      // Grooming hoàn thành
+      grooming.status = "completed";
+      await grooming.save();
+
+      const Pet = require("../models/pet");
+      let effectivePetId = grooming.petId ? String(grooming.petId) : null;
+      if (!effectivePetId) {
+        const foundPet = await Pet.findOne({ name: grooming.petName }).lean();
+        effectivePetId = foundPet ? String(foundPet._id) : `pet_${String(grooming._id).slice(-8)}`;
+      }
+
+      const recordCode = `MR-${now.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      createdRecord = await MedicalRecord.create({
+        recordCode,
+        petId: effectivePetId,
+        petName: grooming.petName || "Thú cưng",
+        petSpecies: grooming.petSpecies || "Chó",
+        customerName: grooming.customerName || "Khách hàng",
+        customerPhone: grooming.customerPhone || "",
+        title: `Dịch vụ Spa Grooming: ${grooming.serviceName}`,
+        confirmedDiagnosis: `Hoàn thành dịch vụ ${grooming.serviceName}`,
+        treatmentPlan: "Bé cưng đã được vệ sinh sạch sẽ, lông mượt mà",
+        veterinarian: `KTV/BS. ${doctorName}`,
+        id_bac_sy: id_bac_sy,
+        doctorPhone: doctorPhone,
+        date: grooming.date || todayStr,
+        dateISO: grooming.dateISO || todayISO,
+        notes: grooming.note || "",
+        isDeleted: false,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Đã xác nhận hoàn thành ca hẹn [${id}]! Ca khám đã chuyển từ Lịch hẹn cá nhân sang Hồ sơ khám thành công.`,
+      targetType,
+      record: createdRecord,
+      diagnosis: createdDiagnosis,
+    });
+  } catch (error) {
+    console.error("Lỗi xác nhận hoàn thành lịch hẹn:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Lỗi máy chủ khi xác nhận hoàn thành lịch hẹn.",
+    });
+  }
+};
+
+// 5. Tra cứu thông tin toàn diện dành cho Bác sĩ (GET /api/doctor/lookup?q=...)
+const lookupDoctorInfo = async (req, res) => {
+  try {
+    const auth = await verifyDoctorCaller(req);
+    if (!auth.authorized) {
+      return res.status(auth.status).json({ success: false, message: auth.message });
+    }
+
+    const { q, search } = req.query;
+    const queryStr = (q || search || "").trim();
+
+    if (!queryStr) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng nhập từ khóa tra cứu (tên thú cưng, SĐT, mã bệnh án, chẩn đoán, v.v.)!",
+      });
+    }
+
+    const regex = new RegExp(queryStr, "i");
+    const Pet = require("../models/pet");
+    const Prescription = require("../models/prescription");
+
+    const [records, diagnoses, prescriptions, pets, customers] = await Promise.all([
+      // 1. Hồ sơ khám
+      MedicalRecord.find({
+        $or: [
+          { recordCode: regex },
+          { petName: regex },
+          { confirmedDiagnosis: regex },
+          { title: regex },
+          { ownerPhone: regex },
+          { ownerName: regex },
+        ],
+        isDeleted: false,
+      }).sort({ createdAt: -1 }).lean(),
+
+      // 2. Phiếu khám
+      Diagnosis.find({
+        $or: [
+          { diagnosisCode: regex },
+          { petName: regex },
+          { confirmedDiagnosis: regex },
+          { customerPhone: regex },
+          { customerName: regex },
+        ],
+        isDeleted: false,
+      }).sort({ createdAt: -1 }).lean(),
+
+      // 3. Đơn thuốc
+      Prescription.find({
+        $or: [
+          { prescriptionCode: regex },
+          { petName: regex },
+          { diagnosisCode: regex },
+        ],
+      }).sort({ createdAt: -1 }).lean(),
+
+      // 4. Thú cưng
+      Pet.find({
+        $or: [{ name: regex }, { species: regex }, { breed: regex }],
+      }).lean(),
+
+      // 5. Khách hàng
+      User.find({
+        $or: [{ name: regex }, { fullName: regex }, { phone: regex }],
+      }).select("name fullName phone email address").lean(),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      query: queryStr,
+      results: {
+        recordsCount: records.length,
+        records,
+        diagnosesCount: diagnoses.length,
+        diagnoses,
+        prescriptionsCount: prescriptions.length,
+        prescriptions,
+        petsCount: pets.length,
+        pets,
+        customersCount: customers.length,
+        customers,
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi tra cứu thông tin bác sĩ:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi máy chủ khi tra cứu thông tin bác sĩ.",
+    });
+  }
+};
+
 module.exports = {
   getDoctorAppointments,
   getDoctorDiagnoses,
   getPetMedicalRecords,
+  completeAppointment,
+  lookupDoctorInfo,
   verifyDoctorCaller,
 };

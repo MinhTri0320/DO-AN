@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/buttons.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" />
+    <link rel="stylesheet" href="../css/forms.css" />
+    <link rel="stylesheet" href="../css/profile.css" />
+    <link rel="stylesheet" href="../css/invoice-payment.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <title>Hóa Đơn &amp; Thanh Toán - PawnCare Đà Nẵng</title>
+  </head>
+  <body>
+    <!-- ===== HEADER 2-TIER PAWMILY ===== -->
+    <header id="header">
+      <div class="header-pawmily-container">
+        <div class="header-top-row">
+          <a href="./index.html" class="logo">
+            <span class="logo-badge">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="14" fill="#FDF8F2" />
+                <circle cx="23" cy="36" r="13" fill="#B5835A" />
+                <ellipse cx="13" cy="32" rx="4.5" ry="9" transform="rotate(18 13 32)" fill="#7A4E2D" />
+                <ellipse cx="33" cy="32" rx="4.5" ry="9" transform="rotate(-18 33 32)" fill="#7A4E2D" />
+                <ellipse cx="23" cy="39" rx="6.5" ry="5" fill="#FFF7EE" />
+                <circle cx="19" cy="33.5" r="2" fill="#3B2313" />
+                <circle cx="27" cy="33.5" r="2" fill="#3B2313" />
+                <ellipse cx="23" cy="37.5" rx="2.5" ry="1.8" fill="#3B2313" />
+                <circle cx="43" cy="38" r="11.5" fill="#F2C69A" />
+                <polygon points="33,31 35,20 42,27" fill="#E09F67" />
+                <polygon points="53,31 51,20 44,27" fill="#E09F67" />
+                <circle cx="39.5" cy="36.5" r="1.8" fill="#3B2313" />
+                <circle cx="46.5" cy="36.5" r="1.8" fill="#3B2313" />
+                <polygon points="43,39.5 41.2,37.8 44.8,37.8" fill="#D97264" />
+                <circle cx="33" cy="16" r="2.8" fill="#7A4E2D" />
+                <circle cx="28" cy="13" r="1.5" fill="#7A4E2D" />
+                <circle cx="31.5" cy="11" r="1.5" fill="#7A4E2D" />
+                <circle cx="35" cy="11" r="1.5" fill="#7A4E2D" />
+                <circle cx="38" cy="13" r="1.5" fill="#7A4E2D" />
+              </svg>
+            </span>
+            <span class="logo-text">PAWNCARE</span>
+          </a>
+
+          <div class="header-right-cluster">
+            <div class="auth" id="authGuest">
+              <a href="./login.html" class="pill-btn btn-login">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 16l4-4-4-4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Đăng nhập</span>
+              </a>
+              <a href="./register.html" class="pill-btn btn-signup">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c1.2-3.5 4.2-5.5 6.5-5.5s5.3 2 6.5 5.5M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>Đăng ký</span>
+              </a>
+            </div>
+
+            <div class="auth auth-user" id="authUser" hidden>
+              <div class="user-menu">
+                <button class="avatar-btn" id="avatarBtn" aria-label="Tài khoản">
+                  <span id="userInitial">U</span>
+                </button>
+                <div class="dropdown" id="userDropdown" hidden>
+                  <p class="dropdown-name" id="userName">—</p>
+                  <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
+                  <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
+                  <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
+                  <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
+                  <a href="./grooming-schedule.html" class="dropdown-link">✂️ Lịch Chăm Sóc Grooming</a>
+                  <a href="./medicine-dispensing.html" class="dropdown-link">💊 Kho Thuốc &amp; Cấp Thuốc</a>
+                  <a href="./invoice-payment.html" class="dropdown-link">💳 Hóa Đơn &amp; Thanh Toán</a>
+                  <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
+                </div>
+              </div>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="header-nav-row">
+          <nav id="menu">
+            <a href="./index.html" class="link">Trang chủ</a>
+            <a href="./booking.html" class="link">Đặt Lịch 📅</a>
+            <a href="./grooming-schedule.html" class="link">Spa &amp; Grooming ✂️</a>
+            <a href="./cage-management.html" class="link">Khách Sạn 5 ⭐</a>
+            <a href="./medicine-dispensing.html" class="link">Kho Thuốc &amp; Cấp Thuốc 💊</a>
+            <a href="./invoice-payment.html" class="link active">Hóa Đơn &amp; Thanh Toán 💳</a>
+            <a href="./medical-record.html" class="link">Dịch Vụ Thú Y 🩺</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="profile-page" id="invoicePaymentPage">
+      <div class="section-inner profile-layout">
+        <!-- Sidebar trái -->
+        <aside class="profile-sidebar">
+          <div class="profile-user-card">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="sidebarUserInitial">T</div>
+            </div>
+            <h3 id="sidebarUserName">Thu Ngân / Lễ Tân</h3>
+            <p id="sidebarUserPhone">Quản lý hóa đơn &amp; thu tiền</p>
+            <span class="member-tier-badge">💳 Thu Ngân PawnCare</span>
+          </div>
+
+          <nav class="profile-nav">
+            <a href="./customer-profile.html" class="profile-nav-link">
+              <span class="nav-icon">👤</span>
+              <span>Hồ sơ khách hàng</span>
+            </a>
+            <a href="./pet-profile.html" class="profile-nav-link">
+              <span class="nav-icon">🐾</span>
+              <span>Hồ sơ thú cưng</span>
+            </a>
+            <a href="./medical-record.html" class="profile-nav-link">
+              <span class="nav-icon">🩺</span>
+              <span>Hồ sơ y tế &amp; Bệnh án</span>
+            </a>
+            <a href="./cage-management.html" class="profile-nav-link">
+              <span class="nav-icon">🏨</span>
+              <span>Lưu chuồng &amp; Khách sạn</span>
+            </a>
+            <a href="./grooming-schedule.html" class="profile-nav-link">
+              <span class="nav-icon">✂️</span>
+              <span>Lịch Chăm Sóc Grooming</span>
+            </a>
+            <a href="./medicine-dispensing.html" class="profile-nav-link">
+              <span class="nav-icon">💊</span>
+              <span>Kho Thuốc &amp; Cấp Thuốc</span>
+            </a>
+            <a href="./invoice-payment.html" class="profile-nav-link active">
+              <span class="nav-icon">💳</span>
+              <span>Hóa Đơn &amp; Thanh Toán</span>
+            </a>
+            <a href="./receptionist-dashboard.html" class="profile-nav-link">
+              <span class="nav-icon">🛎️</span>
+              <span>Cổng Lễ Tân Tổng Hợp</span>
+            </a>
+            <a href="./index.html" class="profile-nav-link" id="sidebarLogoutLink">
+              <span class="nav-icon">🚪</span>
+              <span>Đăng xuất</span>
+            </a>
+          </nav>
+        </aside>
+
+        <!-- Main section -->
+        <section class="profile-main">
+          <div class="profile-header">
+            <div class="profile-header-left">
+              <span class="section-badge">💳 SPRINT 4: INVOICE &amp; PAYMENT</span>
+              <h1>Quản Lý Hóa Đơn &amp; Ghi Nhận Thanh Toán</h1>
+              <p>Lập hóa đơn từ thuốc đã cấp, theo dõi trạng thái unpaid/paid, thu tiền mặt hoặc chuyển khoản chính xác 100%.</p>
+            </div>
+            <div class="profile-header-right">
+              <button type="button" class="pill-btn btn-secondary" id="btnRefreshInvoices">
+                <span>🔄 Tải lại dữ liệu</span>
+              </button>
+              <button id="btnCreateNewInvoice" class="pill-btn" style="background: #1E429F; color: #fff; font-weight: 600; gap: 6px;">
+                ➕ Lập Hóa Đơn Mới
+              </button>
+            </div>
+          </div>
+
+          <!-- BẢNG KPI STATS -->
+          <div class="invoice-stats-grid">
+            <div class="invoice-stat-card">
+              <div class="invoice-stat-icon">📄</div>
+              <div class="invoice-stat-info">
+                <strong id="statTotalInvoices" style="color: var(--espresso);">0</strong>
+                <span>Tổng số hóa đơn</span>
+              </div>
+            </div>
+            <div class="invoice-stat-card stat-unpaid">
+              <div class="invoice-stat-icon">⏳</div>
+              <div class="invoice-stat-info">
+                <strong id="statUnpaidInvoices" style="color: #B45309;">0</strong>
+                <span>Chưa thanh toán (unpaid)</span>
+              </div>
+            </div>
+            <div class="invoice-stat-card stat-paid">
+              <div class="invoice-stat-icon">✅</div>
+              <div class="invoice-stat-info">
+                <strong id="statPaidInvoices" style="color: #047857;">0</strong>
+                <span>Đã thanh toán (paid)</span>
+              </div>
+            </div>
+            <div class="invoice-stat-card stat-revenue">
+              <div class="invoice-stat-icon">💰</div>
+              <div class="invoice-stat-info">
+                <strong id="statTotalRevenue" style="color: #1E429F; font-size: 19px;">0 đ</strong>
+                <span>Doanh thu đã thu</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOLBAR BỘ LỌC -->
+          <div class="invoice-toolbar">
+            <input
+              type="text"
+              id="searchInvoiceInput"
+              class="invoice-search-input"
+              placeholder="🔍 Tìm mã HĐ, tên khách hàng, số điện thoại..."
+            />
+            <div class="invoice-filter-pills">
+              <button type="button" class="invoice-pill-btn active" data-status="">Tất cả</button>
+              <button type="button" class="invoice-pill-btn" data-status="unpaid">⏳ Chưa thanh toán</button>
+              <button type="button" class="invoice-pill-btn" data-status="paid">✅ Đã thanh toán</button>
+            </div>
+            <div style="margin-left: auto; font-size: 13.5px; color: var(--ink-faint);">
+              Số hóa đơn: <strong id="invoicesCountDisplay" style="color: var(--espresso);">0</strong>
+            </div>
+          </div>
+
+          <!-- BẢNG DANH SÁCH HÓA ĐƠN -->
+          <div class="invoice-card-table">
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Mã Hóa Đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Số mục</th>
+                  <th>Tổng tiền (Backend tính)</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày lập</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="invoicesTableBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 30px; color: var(--ink-faint);">
+                    ⏳ Đang tải danh sách hóa đơn...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- MODAL CHI TIẾT HÓA ĐƠN (INVOICE DETAILS) -->
+    <div id="invoiceDetailModal" class="payment-modal-overlay">
+      <div class="payment-modal-card" style="max-width: 620px;">
+        <div class="payment-modal-header" style="background: var(--accent-gradient);">
+          <h3 id="invDetailTitle">📄 Chi Tiết Hóa Đơn</h3>
+          <button type="button" id="btnCloseDetailModal" style="background:none; border:none; color:#FFF; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+        <div class="payment-modal-body">
+          <div class="payment-summary-box">
+            <div class="payment-summary-row">
+              <span>Mã hóa đơn:</span>
+              <strong id="detailInvCode" style="color: var(--espresso); font-size: 15px;">—</strong>
+            </div>
+            <div class="payment-summary-row">
+              <span>Khách hàng:</span>
+              <strong id="detailCustomerName">—</strong>
+            </div>
+            <div class="payment-summary-row">
+              <span>Số điện thoại:</span>
+              <span id="detailCustomerPhone">—</span>
+            </div>
+            <div class="payment-summary-row">
+              <span>Ngày lập:</span>
+              <span id="detailCreatedAt">—</span>
+            </div>
+            <div class="payment-summary-row">
+              <span>Trạng thái:</span>
+              <span id="detailStatusBadge">—</span>
+            </div>
+          </div>
+
+          <label style="font-weight: 700; font-size: 13.5px; display: block; margin-bottom: 6px;">
+            📋 Danh sách các mục &amp; đơn giá cố định tại thời điểm lập:
+          </label>
+          <table class="invoice-detail-items">
+            <thead>
+              <tr>
+                <th>Tên mục / Thuốc</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody id="detailItemsBody">
+              <!-- Render items -->
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" style="text-align: right; font-weight: 700; padding: 12px 14px;">Tổng cộng:</td>
+                <td style="font-weight: 800; color: #1E429F; font-size: 15px; padding: 12px 14px;" id="detailTotalAmount">0 đ</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div id="detailPaymentInfo" style="display: none; margin-top: 16px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #065F46;">
+            <strong>✓ Thông tin giao dịch thanh toán:</strong>
+            <div id="detailPaymentContent" style="margin-top: 4px;">—</div>
+          </div>
+        </div>
+        <div class="med-modal-footer">
+          <button type="button" class="pill-btn" id="btnCloseDetailModalBtn" style="background: #9CA3AF; color: #fff;">Đóng</button>
+          <button type="button" class="pill-btn" id="btnPayFromDetail" style="background: #16A34A; color: #fff; font-weight: 700;">
+            💳 Thanh Toán Ngay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL THANH TOÁN (PAYMENT FORM) -->
+    <div id="paymentModal" class="payment-modal-overlay">
+      <div class="payment-modal-card">
+        <div class="payment-modal-header">
+          <h3>💳 Xác Nhận Thanh Toán Hóa Đơn</h3>
+          <button type="button" id="btnClosePayModal" style="background:none; border:none; color:#FFF; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+        <form id="paymentForm">
+          <div class="payment-modal-body">
+            <input type="hidden" id="payInvoiceId" />
+            <input type="hidden" id="payExpectedAmount" />
+
+            <!-- Cảnh báo lỗi sai số tiền hoặc thanh toán lại -->
+            <div id="paymentAlertBox" style="display: none;" class="payment-alert"></div>
+
+            <div class="payment-summary-box">
+              <div class="payment-summary-row">
+                <span>Hóa đơn:</span>
+                <strong id="paySummaryCode">—</strong>
+              </div>
+              <div class="payment-summary-row">
+                <span>Khách hàng:</span>
+                <strong id="paySummaryCustomer">—</strong>
+              </div>
+              <div class="payment-summary-row">
+                <span>Tổng tiền cần thanh toán:</span>
+                <strong id="paySummaryTotal" style="color: #1E429F; font-size: 18px;">0 đ</strong>
+              </div>
+            </div>
+
+            <div class="med-form-group">
+              <label for="payInputAmount">Số tiền thực tế thanh toán (VNĐ) * (Phải bằng 100% hóa đơn):</label>
+              <input
+                type="number"
+                id="payInputAmount"
+                class="med-form-input"
+                style="font-size: 16px; font-weight: 700; color: #1E429F;"
+                required
+              />
+            </div>
+
+            <label style="font-size: 13px; font-weight: 700; color: var(--ink); display: block; margin-bottom: 8px;">
+              Chọn phương thức thanh toán * (chưa hỗ trợ trả góp):
+            </label>
+            <div class="payment-method-options">
+              <label class="method-radio-card active" id="cardMethodCash">
+                <input type="radio" name="paymentMethod" value="cash" checked />
+                <div>
+                  <strong>💵 Tiền mặt</strong><br/>
+                  <small style="color: var(--ink-faint);">Thu trực tiếp tại quầy</small>
+                </div>
+              </label>
+
+              <label class="method-radio-card" id="cardMethodTransfer">
+                <input type="radio" name="paymentMethod" value="transfer" />
+                <div>
+                  <strong>🏦 Chuyển khoản</strong><br/>
+                  <small style="color: var(--ink-faint);">Quét mã QR ngân hàng</small>
+                </div>
+              </label>
+            </div>
+
+            <div class="med-form-group">
+              <label for="payInputNote">Ghi chú giao dịch:</label>
+              <input type="text" id="payInputNote" class="med-form-input" placeholder="Ví dụ: Khách thanh toán đủ qua QR Vietcombank..." />
+            </div>
+          </div>
+
+          <div class="med-modal-footer">
+            <button type="button" class="pill-btn" id="btnCancelPayModal" style="background: #9CA3AF; color: #fff;">Hủy bỏ</button>
+            <button type="submit" class="pill-btn" id="btnSubmitPayment" style="background: #16A34A; color: #fff; font-weight: 700;">
+              ✓ Xác Nhận Thu Tiền &amp; Đổi Sang Paid
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="../js/main.js"></script>
+    <script type="module" src="../js/invoice-payment.js"></script>
+  </body>
+</html>

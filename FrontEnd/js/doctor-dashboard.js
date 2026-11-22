@@ -10,6 +10,7 @@
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { API_BASE_URL } from "./config.js";
+import { escapeHTML } from "./storage.js";
 
 function checkDoctorAuth() {
   const user = getCurrentUser();
@@ -85,6 +86,18 @@ async function loadDoctorAppointments(filter = {}) {
           )
           .join("") || '<span style="color: #999; font-size: 12px;">Chưa có HĐ</span>';
 
+        let isCompleted = item.status === "completed" || item.status === "Hoàn thành";
+        let isCancelled = item.status === "cancelled" || item.status === "Đã hủy";
+
+        let actionHtml = "";
+        if (isCompleted) {
+          actionHtml = `<span style="color: #16A34A; font-weight: 700; font-size: 12.5px;">✓ Đã chuyển Hồ sơ</span>`;
+        } else if (isCancelled) {
+          actionHtml = `<span style="color: #999; font-size: 12px;">Đã hủy</span>`;
+        } else {
+          actionHtml = `<button type="button" class="btn-action-small btn-complete-appt" data-id="${item.code || item.id}" data-pet="${escapeHTML(item.petName)}" data-service="${escapeHTML(item.serviceName)}" style="background: #16A34A; color: #fff; font-weight: 700; cursor: pointer;">✓ Hoàn thành</button>`;
+        }
+
         return `
           <tr>
             <td>
@@ -102,25 +115,64 @@ async function loadDoctorAppointments(filter = {}) {
             </td>
             <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
             <td>${invoicesHtml}</td>
+            <td>${actionHtml}</td>
           </tr>
         `;
       })
       .join("");
+
+    // Gắn sự kiện cho các nút Xác nhận hoàn thành ca khám
+    tbody.querySelectorAll(".btn-complete-appt").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        const pet = btn.getAttribute("data-pet");
+        const service = btn.getAttribute("data-service");
+        openCompleteModal(id, pet, service);
+      });
+    });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
   }
 }
 
-// 2. Tải Phiếu Khám Bệnh
+// Hàm mở Modal Xác nhận hoàn thành ca khám
+function openCompleteModal(id, petName, serviceName) {
+  const modal = document.getElementById("modalCompleteAppt");
+  if (!modal) return;
+
+  document.getElementById("completeTargetId").value = id;
+  document.getElementById("completeApptCode").textContent = id;
+  document.getElementById("completePetName").textContent = petName || "Bé cưng";
+  document.getElementById("completeServiceName").textContent = serviceName || "Dịch vụ khám";
+  document.getElementById("completeDiagnosisInput").value = serviceName ? `${serviceName} - Bình thường` : "Khám lâm sàng tốt";
+  document.getElementById("completeTreatmentInput").value = "Theo dõi và chăm sóc bé tại nhà, giữ ấm và ăn uống điều độ.";
+
+  modal.style.display = "flex";
+}
+
+function closeCompleteModal() {
+  const modal = document.getElementById("modalCompleteAppt");
+  if (modal) modal.style.display = "none";
+}
+
+// 2. Tải Phiếu Khám Bệnh (TÁCH RIÊNG THEO ID BÁC SĨ)
 async function loadDoctorDiagnoses() {
   const user = getCurrentUser();
   if (!user) return;
 
+  const badgeEl = document.getElementById("docDiagDoctorIdBadge");
+  if (badgeEl && user.id_bac_sy) {
+    badgeEl.textContent = `Mã BS: ${user.id_bac_sy}`;
+  }
+
   const tbody = document.getElementById("docDiagnosesTableBody");
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888; padding: 30px;">Đang tải phiếu khám...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Đang tải phiếu khám của bác sĩ...</td></tr>`;
 
   try {
-    const res = await fetch(`${API_BASE_URL}/doctor/diagnoses`, {
+    const params = new URLSearchParams();
+    if (user.id_bac_sy) params.append("id_bac_sy", user.id_bac_sy);
+
+    const res = await fetch(`${API_BASE_URL}/doctor/diagnoses?${params.toString()}`, {
       headers: { "x-user-id": user.id || user._id },
     });
 
@@ -132,7 +184,7 @@ async function loadDoctorDiagnoses() {
     if (countEl) countEl.textContent = list.length;
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888; padding: 30px;">Chưa có phiếu khám nào được ghi nhận.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Chưa có phiếu khám nào gắn với mã bác sĩ [${user.id_bac_sy || "này"}].</td></tr>`;
       return;
     }
 
@@ -159,11 +211,15 @@ async function loadDoctorDiagnoses() {
               <small style="color: #777;">${d.date || ""}</small>
             </td>
             <td>
-              <strong>${d.petName || "Bé cưng"}</strong><br/>
-              <small style="color: #888;">${d.petSpecies || "Thú cưng"}</small>
+              <span style="background: #DEF7EC; color: #03543F; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">${d.id_bac_sy || user.id_bac_sy || "bs00001"}</span><br/>
+              <small style="color: #666;">${d.doctorName || user.name}</small>
             </td>
             <td>
-              <strong>${d.confirmedDiagnosis || d.category || "Khám tổng quát"}</strong><br/>
+              <strong>${d.petName || "Bé cưng"}</strong> (${d.petSpecies || "Thú cưng"})<br/>
+              <small style="color: #666;">Chủ: ${d.customerName || "Khách"} - ${d.customerPhone || ""}</small>
+            </td>
+            <td>
+              <strong style="color: #2A5A44;">${d.confirmedDiagnosis || d.category || "Khám tổng quát"}</strong><br/>
               <span style="font-size: 12.5px; color: #666;">${d.treatmentPlan || "Đang theo dõi điều trị"}</span>
             </td>
             <td><small style="color: #555;">${vitalsStr}</small></td>
@@ -173,7 +229,7 @@ async function loadDoctorDiagnoses() {
       })
       .join("");
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
   }
 }
 
@@ -226,6 +282,143 @@ async function loadDoctorMedicalRecords(search = "") {
   }
 }
 
+// 4. Tra cứu thông tin toàn diện cho Bác Sĩ (Tab 4)
+async function executeDoctorLookup(query) {
+  const container = document.getElementById("docLookupResultsContainer");
+  if (!container) return;
+
+  if (!query) {
+    container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 20px;">Vui lòng nhập từ khóa tra cứu.</div>`;
+    return;
+  }
+
+  container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 20px;">⏳ Đang tra cứu thông tin cho "${escapeHTML(query)}"...</div>`;
+
+  try {
+    const user = getCurrentUser();
+    const res = await fetch(`${API_BASE_URL}/doctor/lookup?q=${encodeURIComponent(query)}`, {
+      headers: { "x-user-id": user.id || user._id },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Không thể tra cứu thông tin.");
+
+    const { records = [], diagnoses = [], prescriptions = [], pets = [], customers = [] } = data.results || {};
+    const totalFound = records.length + diagnoses.length + prescriptions.length + pets.length + customers.length;
+
+    if (totalFound === 0) {
+      container.innerHTML = `<div style="text-align: center; color: #666; padding: 40px 20px;">Không tìm thấy thông tin nào phù hợp với từ khóa "<strong>${escapeHTML(query)}</strong>".</div>`;
+      return;
+    }
+
+    let html = `<div style="margin-bottom: 16px; font-weight: 700; color: #2A5A44;">🔍 Kết quả tra cứu cho "${escapeHTML(query)}" (${totalFound} mục tìm thấy):</div>`;
+
+    // 1. Hồ sơ khám
+    if (records.length > 0) {
+      html += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px 0; color: #2A5A44;">📁 Hồ Sơ Khám Bệnh (${records.length})</h4>
+          <table class="portal-table" style="margin-bottom: 0;">
+            <thead>
+              <tr><th>Mã hồ sơ</th><th>Thú cưng</th><th>Chủ nuôi</th><th>Chẩn đoán</th><th>Ngày khám</th><th>Bác sĩ</th></tr>
+            </thead>
+            <tbody>
+              ${records.map(r => `
+                <tr>
+                  <td><strong>${r.recordCode}</strong></td>
+                  <td>${r.petName} (${r.petSpecies || "Thú cưng"})</td>
+                  <td>${r.ownerName || "—"} (${r.ownerPhone || "—"})</td>
+                  <td><strong>${r.confirmedDiagnosis || r.title}</strong></td>
+                  <td>${r.date || r.dateISO}</td>
+                  <td><span style="color: #2A5A44; font-weight: 600;">${r.veterinarian || "Bác sĩ"}</span></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // 2. Phiếu khám
+    if (diagnoses.length > 0) {
+      html += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px 0; color: #2A5A44;">📋 Phiếu Khám Lâm Sàng (${diagnoses.length})</h4>
+          <table class="portal-table" style="margin-bottom: 0;">
+            <thead>
+              <tr><th>Mã phiếu</th><th>Bác sĩ (Mã BS)</th><th>Thú cưng</th><th>Khách hàng</th><th>Chẩn đoán</th><th>Điều trị</th></tr>
+            </thead>
+            <tbody>
+              ${diagnoses.map(d => `
+                <tr>
+                  <td><strong>${d.diagnosisCode}</strong></td>
+                  <td><span style="background: #DEF7EC; color: #03543F; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11.5px;">${d.id_bac_sy || "bs00001"}</span> ${d.doctorName || ""}</td>
+                  <td>${d.petName}</td>
+                  <td>${d.customerName || "—"} (${d.customerPhone || "—"})</td>
+                  <td><strong>${d.confirmedDiagnosis || d.category}</strong></td>
+                  <td><small style="color: #555;">${d.treatmentPlan || "—"}</small></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // 3. Đơn thuốc
+    if (prescriptions.length > 0) {
+      html += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px 0; color: #2A5A44;">💊 Đơn Thuốc (${prescriptions.length})</h4>
+          <table class="portal-table" style="margin-bottom: 0;">
+            <thead>
+              <tr><th>Mã đơn</th><th>Bé cưng</th><th>Số loại thuốc</th><th>Ngày kê</th><th>Ghi chú</th></tr>
+            </thead>
+            <tbody>
+              ${prescriptions.map(p => `
+                <tr>
+                  <td><strong>${p.prescriptionCode}</strong></td>
+                  <td>${p.petName}</td>
+                  <td><strong>${(p.medicines || []).length}</strong> loại thuốc</td>
+                  <td>${p.date || "—"}</td>
+                  <td><small style="color: #666;">${p.notes || "—"}</small></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // 4. Thú cưng & Khách hàng
+    if (pets.length > 0 || customers.length > 0) {
+      html += `
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          ${pets.length > 0 ? `
+            <div style="flex: 1; min-width: 280px;">
+              <h4 style="margin: 0 0 10px 0; color: #2A5A44;">🐾 Thú Cưng (${pets.length})</h4>
+              <ul style="padding-left: 20px; line-height: 1.8;">
+                ${pets.map(p => `<li><strong>${p.name}</strong> (${p.species || "Thú cưng"} ${p.breed ? "- " + p.breed : ""})</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+          ${customers.length > 0 ? `
+            <div style="flex: 1; min-width: 280px;">
+              <h4 style="margin: 0 0 10px 0; color: #2A5A44;">👤 Khách Hàng (${customers.length})</h4>
+              <ul style="padding-left: 20px; line-height: 1.8;">
+                ${customers.map(c => `<li><strong>${c.name || c.fullName}</strong> - SĐT: ${c.phone || "Chưa có"}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+  } catch (err) {
+    container.innerHTML = `<div style="text-align: center; color: #c53030; padding: 30px;">Lỗi: ${err.message}</div>`;
+  }
+}
+
 // Khởi tạo Dashboard Bác sĩ
 document.addEventListener("DOMContentLoaded", async () => {
   const currentUser = checkDoctorAuth();
@@ -258,8 +451,76 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (targetTab === "tabDoctorAppts") loadDoctorAppointments();
       else if (targetTab === "tabDoctorDiagnoses") loadDoctorDiagnoses();
       else if (targetTab === "tabDoctorRecords") loadDoctorMedicalRecords();
+      else if (targetTab === "tabDoctorLookup") {
+        const input = document.getElementById("docLookupInput");
+        if (input && input.value.trim()) executeDoctorLookup(input.value.trim());
+      }
     });
   });
+
+  // Sự kiện Modal hoàn thành ca khám
+  const closeBtn = document.getElementById("btnCloseCompleteModal");
+  const cancelBtn = document.getElementById("btnCancelCompleteModal");
+  if (closeBtn) closeBtn.addEventListener("click", closeCompleteModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closeCompleteModal);
+
+  const formComplete = document.getElementById("formCompleteAppt");
+  if (formComplete) {
+    formComplete.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const targetId = document.getElementById("completeTargetId").value;
+      const diagnosis = document.getElementById("completeDiagnosisInput").value.trim();
+      const treatmentPlan = document.getElementById("completeTreatmentInput").value.trim();
+
+      const submitBtn = document.getElementById("btnSubmitCompleteAppt");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang xử lý...";
+      }
+
+      try {
+        const user = getCurrentUser();
+        const res = await fetch(`${API_BASE_URL}/doctor/appointments/${encodeURIComponent(targetId)}/complete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": user.id || user._id,
+          },
+          body: JSON.stringify({ diagnosis, treatmentPlan }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Không thể xác nhận hoàn thành.");
+
+        alert(`✓ Thành công!\nCa khám [${targetId}] đã được hoàn thành và chuyển trực tiếp vào Hồ Sơ Khám & Phiếu Khám Bệnh.`);
+        closeCompleteModal();
+
+        // Tải lại dữ liệu các tab
+        await loadDoctorAppointments();
+        await loadDoctorDiagnoses();
+        await loadDoctorMedicalRecords();
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "✓ Hoàn Thành & Chuyển Hồ Sơ";
+        }
+      }
+    });
+  }
+
+  // Tra cứu thông tin Bác sĩ (Tab 4)
+  const lookupInput = document.getElementById("docLookupInput");
+  const lookupBtn = document.getElementById("btnDocLookupExecute");
+  if (lookupBtn && lookupInput) {
+    lookupBtn.addEventListener("click", () => {
+      executeDoctorLookup(lookupInput.value.trim());
+    });
+    lookupInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") executeDoctorLookup(lookupInput.value.trim());
+    });
+  }
 
   // Bộ lọc Tab 1 (Lịch hẹn cá nhân)
   const monthInput = document.getElementById("docFilterMonth");

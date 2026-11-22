@@ -233,10 +233,58 @@ const cancelGrooming = async (req, res) => {
   }
 };
 
+// 6. Lấy danh sách khách hàng và thú cưng để phục vụ Form đặt lịch Grooming (GET /api/grooming-meta/customers)
+const getGroomingCustomers = async (req, res) => {
+  try {
+    const Pet = require("../models/pet");
+    const User = require("../models/user");
+
+    const pets = await Pet.find({}).lean();
+    const userIds = [...new Set(pets.map((p) => String(p.ownerId)))];
+
+    const users = await User.find({
+      $or: [{ _id: { $in: userIds } }, { role_id: 4 }, { role: "customer" }],
+    })
+      .select("name fullName username phone email")
+      .lean();
+
+    const customers = users.map((u) => {
+      const uPets = pets
+        .filter((p) => String(p.ownerId) === String(u._id))
+        .map((p) => ({
+          id: String(p._id),
+          name: p.name,
+          species: p.species || "Chó",
+          breed: p.breed || "",
+          weight: p.weight || "",
+        }));
+      return {
+        id: String(u._id),
+        name: u.name || u.fullName || u.username || "Khách hàng",
+        phone: u.phone || "",
+        email: u.email || "",
+        pets: uPets,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      customers,
+    });
+  } catch (error) {
+    console.error("Lỗi lấy danh sách khách hàng grooming:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi máy chủ khi lấy danh sách khách hàng.",
+    });
+  }
+};
+
 module.exports = {
   createGrooming,
   getGroomings,
   getGroomingById,
   changeStatus,
   cancelGrooming,
+  getGroomingCustomers,
 };
