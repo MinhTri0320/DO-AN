@@ -1,8 +1,23 @@
+const mongoose = require("mongoose");
 const Grooming = require("../models/grooming");
+const { getCallerInfo } = require("./invoicesC");
+
+function normalizeDateISO(dateStr) {
+  if (!dateStr) return "";
+  const s = String(dateStr).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const parts = s.split("/");
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  const d = new Date(s);
+  return !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : s;
+}
 
 // 1. Tạo mới lịch chăm sóc Grooming (POST /api/grooming)
 const createGrooming = async (req, res) => {
   try {
+    const body = req.body || {};
     const {
       customerId,
       petId,
@@ -15,7 +30,7 @@ const createGrooming = async (req, res) => {
       id_bac_sy,
       groomerName,
       skipPastCheck,
-    } = req.body;
+    } = body;
 
     if (!customerId || !petId || !serviceName || !date || !startTime) {
       return res.status(400).json({
@@ -53,36 +68,46 @@ const createGrooming = async (req, res) => {
   }
 };
 
-// 2. Lấy danh sách lịch grooming theo ngày hoặc khoảng ngày (GET /api/grooming)
+// 2. Lấy danh sách lịch grooming theo ngày hoặc khoảng ngày kết hợp các bộ lọc (GET /api/grooming)
 const getGroomings = async (req, res) => {
   try {
     const { date, fromDate, toDate, startDate, endDate, customerId, petId, status, id_bac_sy } = req.query;
+    const caller = await getCallerInfo(req);
 
     const from = fromDate || startDate;
     const to = toDate || endDate;
 
-    let groomings = [];
+    const filter = { isDeleted: false };
 
     if (from && to) {
-      groomings = await Grooming.findByDateRange(from, to).lean();
+      filter.dateISO = { $gte: normalizeDateISO(from), $lte: normalizeDateISO(to) };
+    } else if (from) {
+      filter.dateISO = { $gte: normalizeDateISO(from) };
+    } else if (to) {
+      filter.dateISO = { $lte: normalizeDateISO(to) };
     } else if (date) {
-      groomings = await Grooming.findByDate(date).lean();
-    } else if (customerId) {
-      groomings = await Grooming.findByCustomer(customerId, status).lean();
-    } else if (petId) {
-      groomings = await Grooming.findByPet(petId, status).lean();
-    } else {
-      // Mặc định lấy danh sách tất cả các lịch chưa xóa, sắp xếp theo ngày và giờ tăng dần
-      const filter = { isDeleted: false };
-      if (status) filter.status = status;
-      if (id_bac_sy) filter.id_bac_sy = id_bac_sy;
-
-      groomings = await Grooming.find(filter)
-        .populate("customerId", "name phone")
-        .populate("petId", "name species breed")
-        .sort({ dateISO: 1, startMinutes: 1 })
-        .lean();
+      filter.dateISO = normalizeDateISO(date);
     }
+
+    if (status) filter.status = status;
+    if (id_bac_sy) filter.id_bac_sy = id_bac_sy;
+
+    // Nếu caller là khách hàng (role_id === 4) thì ép chỉ xem lịch của chính mình
+    if (caller && caller.role_id === 4) {
+      filter.customerId = caller.id;
+    } else if (customerId && mongoose.Types.ObjectId.isValid(customerId)) {
+      filter.customerId = customerId;
+    }
+
+    if (petId && mongoose.Types.ObjectId.isValid(petId)) {
+      filter.petId = petId;
+    }
+
+    const groomings = await Grooming.find(filter)
+      .populate("customerId", "name phone")
+      .populate("petId", "name species breed weight avatar")
+      .sort({ dateISO: 1, startMinutes: 1, startTime: 1 })
+      .lean();
 
     // Nếu ngày đó không có lịch hẹn -> Trả về thông báo "Chưa có lịch hẹn" theo đúng yêu cầu đề bài
     if (groomings.length === 0) {
@@ -148,8 +173,17 @@ const getGroomingById = async (req, res) => {
 // pending -> in_progress -> completed, hoặc -> cancelled. KHÔNG CHO CHUYỂN NGƯỢC
 const changeStatus = async (req, res) => {
   try {
+    const caller = await getCallerInfo(req);
+    if (caller && caller.role_id === 4) {
+      return res.status(403).json({
+        success: false,
+        message: "Chỉ nhân viên mới có quyền cập nhật trạng thái dịch vụ.",
+      });
+    }
+
     const { id } = req.params;
-    const { status: newStatus } = req.body;
+    const body = req.body || {};
+    const { status: newStatus } = body;
 
     if (!newStatus) {
       return res.status(400).json({
@@ -194,6 +228,7 @@ const changeStatus = async (req, res) => {
 // Lịch cancelled không còn bị tính vào việc kiểm tra trùng giờ
 const cancelGrooming = async (req, res) => {
   try {
+    const caller = await getCallerInfo(req);
     const { id } = req.params;
     const grooming = await Grooming.findOne({
       $or: [
@@ -207,6 +242,13 @@ const cancelGrooming = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Không tìm thấy lịch chăm sóc để hủy.",
+      });
+    }
+
+    if (caller && caller.role_id === 4 && String(grooming.customerId) !== caller.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Bạn chỉ có quyền hủy lịch chăm sóc của chính mình.",
       });
     }
 
@@ -238,12 +280,51 @@ const getGroomingCustomers = async (req, res) => {
   try {
     const Pet = require("../models/pet");
     const User = require("../models/user");
+    const caller = await getCallerInfo(req);
+
+    // Nếu caller là khách hàng (role_id === 4), chỉ trả thông tin + thú cưng của chính khách đó
+    if (caller && caller.role_id === 4) {
+      const [user, uPets] = await Promise.all([
+        User.findById(caller.id).select("name fullName username phone email").lean(),
+        Pet.find({ ownerId: caller.id }).lean(),
+      ]);
+
+      const customers = user
+        ? [
+            {
+              id: String(user._id),
+              name: user.name || user.fullName || user.username || "Khách hàng",
+              phone: user.phone || "",
+              email: user.email || "",
+              pets: uPets.map((p) => ({
+                id: String(p._id),
+                name: p.name,
+                species: p.species || "Chó",
+                breed: p.breed || "",
+                weight: p.weight || "",
+              })),
+            },
+          ]
+        : [];
+
+      return res.status(200).json({
+        success: true,
+        customers,
+      });
+    }
 
     const pets = await Pet.find({}).lean();
-    const userIds = [...new Set(pets.map((p) => String(p.ownerId)))];
+    const userIds = [
+      ...new Set(
+        pets
+          .map((p) => String(p.ownerId || ""))
+          .filter((id) => mongoose.Types.ObjectId.isValid(id))
+      ),
+    ];
 
     const users = await User.find({
-      $or: [{ _id: { $in: userIds } }, { role_id: 4 }, { role: "customer" }],
+      isDeleted: { $ne: true },
+      $or: [{ _id: { $in: userIds } }, { role_id: 4 }, { role: "pet_owner" }],
     })
       .select("name fullName username phone email")
       .lean();

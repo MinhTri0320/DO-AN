@@ -10,20 +10,22 @@
 import { getCurrentUser, updateCurrentUser } from "./auth.js";
 import { escapeHTML } from "./storage.js";
 import { apiGetUserProfile, apiUpdateProfile } from "./api.js";
+import { normalizePhone } from "./validators.js";
 
 function showToast(message, type = "success") {
- let toast = document.getElementById("profileToast");
- if (!toast) {
- toast = document.createElement("div");
- toast.id = "profileToast";
- toast.className = "toast-notice";
- document.body.appendChild(toast);
- }
- toast.className = `toast-notice ${type} show`;
- toast.innerHTML = `<span>✓</span> <span>${escapeHTML(message)}</span>`;
- setTimeout(() => {
- toast.classList.remove("show");
- }, 3200);
+  let toast = document.getElementById("profileToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "profileToast";
+    toast.className = "toast-notice";
+    document.body.appendChild(toast);
+  }
+  const icon = type === "error" ? "⚠️" : type === "info" ? "ℹ️" : "✓";
+  toast.className = `toast-notice ${type} show`;
+  toast.innerHTML = `<span>${icon}</span> <span>${escapeHTML(message)}</span>`;
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3200);
 }
 
 export function initCustomerProfilePage() {
@@ -123,61 +125,89 @@ export function initCustomerProfilePage() {
  const currentUser = getCurrentUser() || user;
  const userId = currentUser.id || currentUser._id || currentUser.email;
 
- const updatedData = {
- id: userId,
- name: (form.elements.fullName.value || "").trim(),
- phone: (form.elements.phone.value || "").trim(),
- email: (form.elements.email.value || "").trim(),
- dob: form.elements.dob ? form.elements.dob.value : "",
- gender: selectedGender ? selectedGender.value : "other",
- address: {
- houseNumber: (form.elements.houseNumber?.value || "").trim(),
- street: (form.elements.street?.value || "").trim(),
- ward: (form.elements.ward?.value || "").trim(),
- district: (form.elements.district?.value || "").trim(),
- city: "TP. Đà Nẵng",
- },
- };
+  const updatedData = {
+    id: userId,
+    name: (form.elements.fullName.value || "").trim(),
+    phone: normalizePhone(form.elements.phone.value || ""),
+    email: (form.elements.email.value || "").trim(),
+    dob: form.elements.dob ? form.elements.dob.value : "",
+    gender: selectedGender ? selectedGender.value : "other",
+    address: {
+      houseNumber: (
+        form.elements.houseNumber
+          ? form.elements.houseNumber.value
+          : currentUser?.address?.houseNumber || ""
+      ).trim(),
+      street: (form.elements.street?.value || "").trim(),
+      ward: (form.elements.ward?.value || "").trim(),
+      district: (form.elements.district?.value || "").trim(),
+      city: "TP. Đà Nẵng",
+    },
+  };
 
- if (!updatedData.name) {
- alert("Vui lòng nhập họ và tên của bạn.");
- form.elements.fullName?.focus();
- return;
- }
+  if (!updatedData.name) {
+    alert("Vui lòng nhập họ và tên của bạn.");
+    form.elements.fullName?.focus();
+    return;
+  }
 
- if (!updatedData.phone) {
- alert("Vui lòng nhập số điện thoại liên hệ.");
- form.elements.phone?.focus();
- return;
- }
+  if (!updatedData.phone) {
+    alert("Vui lòng nhập số điện thoại liên hệ.");
+    form.elements.phone?.focus();
+    return;
+  }
 
- const submitBtn = form.querySelector('button[type="submit"]');
- const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
- if (submitBtn) {
- submitBtn.disabled = true;
- submitBtn.innerHTML = `<span>⏳</span> <span>Đang lưu...</span>`;
- }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span>⏳</span> <span>Đang lưu...</span>`;
+  }
 
- try {
- // 1. Gửi fetch API cập nhật hồ sơ tới BackEnd/MongoDB
- const apiResult = await apiUpdateProfile(updatedData, userId);
- const finalUser = (apiResult && typeof apiResult === "object") ? { ...updatedData, ...apiResult } : updatedData;
+  try {
+    // 1. Gửi fetch API cập nhật hồ sơ tới BackEnd/MongoDB
+    const apiResult = await apiUpdateProfile(updatedData, userId);
 
- // 2. Lưu vào auth & localStorage đồng bộ
- const saved = updateCurrentUser(finalUser);
- updateSidebarCard(saved);
- showToast("Cập nhật thông tin hồ sơ lên cơ sở dữ liệu thành công!");
- } catch (err) {
- console.warn("[CustomerProfile] Lỗi khi lưu profile tới BackEnd, fallback cục bộ:", err);
- const saved = updateCurrentUser(updatedData);
- updateSidebarCard(saved);
- showToast("Đã lưu thông tin hồ sơ (chế độ cục bộ)!");
- } finally {
- if (submitBtn) {
- submitBtn.disabled = false;
- submitBtn.innerHTML = originalBtnHtml;
- }
- }
+    if (apiResult === null) {
+      // BackEnd offline -> chỉ lúc này mới fallback lưu cục bộ
+      const saved = updateCurrentUser(updatedData);
+      updateSidebarCard(saved);
+      showToast("Đã lưu thông tin hồ sơ (chế độ cục bộ)!", "info");
+      return;
+    }
+
+    const finalUser =
+      apiResult && typeof apiResult === "object"
+        ? {
+            ...updatedData,
+            ...apiResult,
+            address: {
+              ...(updatedData.address || {}),
+              ...(apiResult.address || {}),
+            },
+          }
+        : updatedData;
+
+    // 2. Lưu vào auth & localStorage đồng bộ
+    const saved = updateCurrentUser(finalUser);
+    updateSidebarCard(saved);
+    showToast("Cập nhật thông tin hồ sơ lên cơ sở dữ liệu thành công!", "success");
+  } catch (err) {
+    if (err instanceof TypeError) {
+      console.warn("[CustomerProfile] BackEnd offline, fallback cục bộ:", err);
+      const saved = updateCurrentUser(updatedData);
+      updateSidebarCard(saved);
+      showToast("Đã lưu thông tin hồ sơ (chế độ cục bộ)!", "info");
+    } else {
+      console.error("[CustomerProfile] Lỗi từ máy chủ khi cập nhật hồ sơ:", err);
+      showToast(err.message || "Không thể cập nhật hồ sơ. Vui lòng thử lại.", "error");
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnHtml;
+    }
+  }
  });
 
  // Nút Hủy khôi phục lại giá trị hiện tại

@@ -5,11 +5,25 @@
  ============================================================ */
 
 export function isValidEmail(value) {
- return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+export function normalizePhone(value) {
+  let cleaned = String(value || "")
+    .trim()
+    .replace(/[\s.\-()]+/g, "");
+
+  if (cleaned.startsWith("+84")) {
+    cleaned = "0" + cleaned.slice(3);
+  } else if (/^84\d{9}$/.test(cleaned)) {
+    cleaned = "0" + cleaned.slice(2);
+  }
+
+  return cleaned;
 }
 
 export function isValidPhone(value) {
- return /^(0|\+84)\d{9,10}$/.test(value.replace(/\s/g, ""));
+  return /^0\d{9}$/.test(normalizePhone(value));
 }
 
 // fieldWrap là thẻ <label data-field="..."> bọc quanh input + .field-error

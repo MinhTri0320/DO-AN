@@ -212,11 +212,18 @@ paymentSchema.statics.processPayment = async function ({
  * 1. Truy vấn lịch sử Payment theo hóa đơn (invoiceId hoặc invoiceCode)
  */
 paymentSchema.statics.findByInvoice = function (invoiceIdOrCode) {
-  return this.find({
-    $or: [{ invoiceId: invoiceIdOrCode }, { invoiceCode: invoiceIdOrCode }],
-    isDeleted: false,
-  })
-    .populate("customerId", "fullName username phone email")
+  const query = mongoose.Types.ObjectId.isValid(invoiceIdOrCode)
+    ? {
+        $or: [{ invoiceId: invoiceIdOrCode }, { invoiceCode: invoiceIdOrCode }],
+        isDeleted: false,
+      }
+    : {
+        invoiceCode: invoiceIdOrCode,
+        isDeleted: false,
+      };
+
+  return this.findOne(query)
+    .populate("customerId", "name phone")
     .sort({ paidAt: -1 });
 };
 

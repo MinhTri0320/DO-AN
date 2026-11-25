@@ -1,26 +1,39 @@
 const Medicine = require("../models/medicine");
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // 1. Lấy danh sách thuốc (GET /api/medicines)
-// Hỗ trợ tìm kiếm theo tên, lọc theo trạng thái kho (Hết hàng, Hết hạn, Còn hàng)
+// Hỗ trợ tìm kiếm theo tên, lọc kết hợp đồng thời theo trạng thái kho (Hết hàng, Hết hạn, Còn hàng)
 const getMedicines = async (req, res) => {
   try {
     const { search, stockStatus } = req.query;
-    let medicines = [];
+    const now = new Date();
+    const filter = { isDeleted: false };
 
-    if (search && search.trim()) {
-      medicines = await Medicine.findByName(search).lean();
-    } else if (stockStatus === "Hết hàng") {
-      medicines = await Medicine.findOutOfStock().lean();
-    } else if (stockStatus === "Hết hạn") {
-      medicines = await Medicine.findExpired().lean();
-    } else if (stockStatus === "Còn hàng") {
-      medicines = await Medicine.findAvailable().lean();
-    } else {
-      medicines = await Medicine.find({ isDeleted: false }).sort({ name: 1 }).lean();
+    if (search && String(search).trim()) {
+      const regex = new RegExp(escapeRegex(String(search).trim()), "i");
+      filter.$or = [
+        { name: regex },
+        { activeIngredient: regex },
+        { medicineCode: regex },
+      ];
     }
 
+    if (stockStatus === "Hết hàng") {
+      filter.quantity = { $lte: 0 };
+    } else if (stockStatus === "Hết hạn") {
+      filter.expiryDate = { $lt: now };
+    } else if (stockStatus === "Còn hàng") {
+      filter.quantity = { $gt: 0 };
+      filter.expiryDate = { $gte: now };
+    }
+
+    const sortOrder = stockStatus === "Hết hạn" ? { expiryDate: 1 } : { name: 1 };
+    const medicines = await Medicine.find(filter).sort(sortOrder).lean();
+
     // Gắn thêm nhãn stockStatus (Hết hàng, Hết hạn, Còn hàng)
-    const now = new Date();
     const enrichedMedicines = medicines.map((m) => {
       let status = "Còn hàng";
       if (m.expiryDate && new Date(m.expiryDate) < now) {
@@ -96,6 +109,7 @@ const getMedicineById = async (req, res) => {
 // 3. Thêm mới thuốc vào kho (POST /api/medicines)
 const createMedicine = async (req, res) => {
   try {
+    const body = req.body || {};
     const {
       name,
       activeIngredient,
@@ -105,7 +119,7 @@ const createMedicine = async (req, res) => {
       expiryDate,
       description,
       manufacturer,
-    } = req.body;
+    } = body;
 
     if (!name || !unit || price === undefined || quantity === undefined || !expiryDate) {
       return res.status(400).json({
@@ -165,32 +179,63 @@ const createMedicine = async (req, res) => {
 const updateMedicine = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = req.body || {};
+    const body = req.body || {};
 
-    if (data.price !== undefined) {
-      const priceNum = Number(data.price);
+    const allowedFields = [
+      "name",
+      "activeIngredient",
+      "unit",
+      "price",
+      "quantity",
+      "expiryDate",
+      "description",
+      "manufacturer",
+    ];
+    const updateData = {};
+
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        updateData[field] = body[field];
+      }
+    }
+
+    if (updateData.price !== undefined) {
+      const priceNum = Number(updateData.price);
       if (isNaN(priceNum) || priceNum <= 0) {
         return res.status(400).json({
           success: false,
           message: "Giá thuốc phải là số lớn hơn 0!",
         });
       }
-      data.price = priceNum;
+      updateData.price = priceNum;
     }
 
-    if (data.quantity !== undefined) {
-      const qtyNum = Number(data.quantity);
+    if (updateData.quantity !== undefined) {
+      const qtyNum = Number(updateData.quantity);
       if (isNaN(qtyNum) || qtyNum < 0) {
         return res.status(400).json({
           success: false,
           message: "Số lượng tồn kho không được âm (>= 0)!",
         });
       }
-      data.quantity = qtyNum;
+      updateData.quantity = qtyNum;
     }
 
-    if (data.expiryDate) {
-      data.expiryDate = new Date(data.expiryDate);
+    if (updateData.expiryDate !== undefined) {
+      const parsedDate = new Date(updateData.expiryDate);
+      if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({
+          success: false,
+          message: "Hạn dùng (expiryDate) không hợp lệ!",
+        });
+      }
+      updateData.expiryDate = parsedDate;
+    }
+
+    for (const strField of ["name", "activeIngredient", "unit", "description", "manufacturer"]) {
+      if (typeof updateData[strField] === "string") {
+        updateData[strField] = updateData[strField].trim();
+      }
     }
 
     const updated = await Medicine.findOneAndUpdate(
@@ -201,8 +246,8 @@ const updateMedicine = async (req, res) => {
         ],
         isDeleted: false,
       },
-      { $set: data },
-      { new: true }
+      { $set: updateData },
+      { new: true, runValidators: true }
     );
 
     if (!updated) {

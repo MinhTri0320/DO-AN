@@ -59,6 +59,8 @@ const medicalRecordSchema = new mongoose.Schema(
     petName: { type: String, trim: true, default: "Bé cưng" },
     petSpecies: { type: String, trim: true, default: "Chó" },
     petBreed: { type: String, trim: true },
+    ownerName: { type: String, trim: true, default: "" },
+    ownerPhone: { type: String, trim: true, default: "" },
     date: { type: String, required: true, trim: true },      // Định dạng DD/MM/YYYY hoặc chuỗi ngày
     dateISO: { type: String, trim: true, index: true },      // Định dạng YYYY-MM-DD
     title: { type: String, required: true, trim: true },
@@ -74,6 +76,8 @@ const medicalRecordSchema = new mongoose.Schema(
       index: true,
     },
     veterinarian: { type: String, trim: true, default: "BS. CKI. Nguyễn Văn Hùng" },
+    id_bac_sy: { type: String, trim: true, index: true },
+    doctorPhone: { type: String, trim: true },
     clinicBranch: {
       type: String,
       trim: true,
@@ -84,11 +88,13 @@ const medicalRecordSchema = new mongoose.Schema(
     symptoms: [{ type: String, trim: true }],
     preliminaryDiagnosis: { type: String, trim: true },
     confirmedDiagnosis: { type: String, trim: true },
+    treatmentPlan: { type: String, trim: true, default: "" },
     testResults: [testResultSchema],
     prescription: [prescriptionItemSchema],
     doctorAdvice: { type: String, trim: true },
     nextAppointment: { type: String, trim: true },
     totalCost: { type: String, trim: true, default: "250.000đ" },
+    notes: { type: String, trim: true, default: "" },
     isDeleted: { type: Boolean, default: false, index: true },
   },
   { timestamps: true }

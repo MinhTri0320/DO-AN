@@ -124,9 +124,22 @@
         font-weight: 600;
       }
       .status-pending { background: #FEF08A; color: #854D0E; }
+      .status-confirmed { background: #DBEAFE; color: #1E40AF; }
       .status-in_progress { background: #BAE6FD; color: #0369A1; }
       .status-completed { background: #BBF7D0; color: #166534; }
       .status-cancelled { background: #FEE2E2; color: #991B1B; }
+      .btn-action-small {
+        padding: 5px 12px;
+        border-radius: 6px;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .btn-action-small:hover {
+        opacity: 0.9;
+      }
       .invoice-tag {
         display: inline-block;
         padding: 3px 8px;
@@ -149,9 +162,66 @@
         font-size: 13.5px;
         background: #FDFBF9;
         outline: none;
+        box-sizing: border-box;
       }
       .admin-input:focus, .admin-select:focus {
         border-color: #B5835A;
+      }
+      .popup-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(30, 20, 10, 0.65);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+      }
+      .popup-card {
+        background: #FFF;
+        width: 90%;
+        max-width: 540px;
+        border-radius: 18px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        animation: modalSlideUp 0.25s ease;
+      }
+      @keyframes modalSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .popup-header {
+        background: linear-gradient(135deg, #2A5A44 0%, #448968 100%);
+        color: #FFF;
+        padding: 16px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .popup-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-family: "Lora", serif;
+        color: #F0FDF4;
+      }
+      .popup-body {
+        padding: 20px 24px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #E6D8CD;
+        font-size: 13.5px;
+      }
+      .info-row strong {
+        color: #2A5A44;
+      }
+      .popup-footer {
+        padding: 14px 24px 20px;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
       }
     </style>
   </head>
@@ -250,7 +320,7 @@
           <div class="portal-toolbar">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 13.5px; font-weight: 700; color: #2A5A44;">Bác sĩ phụ trách:</span>
-              <span id="docDiagDoctorIdBadge" style="background: #DEF7EC; color: #03543F; padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 13px;">Mã BS: bs00001</span>
+              <span id="docDiagDoctorIdBadge" style="background: #DEF7EC; color: #03543F; padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 13px;">Mã BS: —</span>
             </div>
             <div style="margin-left: auto; font-size: 13.5px; color: #666;">
               Tổng phiếu khám: <strong id="docDiagnosesCount">0</strong>
@@ -355,21 +425,6 @@
               <button type="submit" id="btnSubmitCompleteAppt" class="pill-btn" style="background: #16A34A; color: #fff; font-weight: 700;">✓ Hoàn Thành &amp; Chuyển Hồ Sơ</button>
             </div>
           </form>
-        </div>
-      </div>
-            <thead>
-              <tr>
-                <th>Mã bệnh án</th>
-                <th>Ngày khám</th>
-                <th>Thú cưng</th>
-                <th>Chẩn đoán xác định</th>
-                <th>Hướng điều trị</th>
-              </tr>
-            </thead>
-            <tbody id="docRecordsTableBody">
-              <tr><td colspan="5" style="text-align: center; color: #888; padding: 30px;">Đang tải hồ sơ khám...</td></tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </main>

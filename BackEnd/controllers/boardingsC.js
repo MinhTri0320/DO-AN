@@ -4,6 +4,48 @@ const Cage = require("../models/cage");
 const Pet = require("../models/pet");
 const User = require("../models/user");
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function parseEndDate(dateVal) {
+  if (typeof dateVal === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateVal.trim())) {
+    const d = new Date(dateVal.trim());
+    d.setUTCHours(23, 59, 59, 999);
+    return d;
+  }
+  return new Date(dateVal);
+}
+
+function attachBoardingAliases(b) {
+  if (!b) return b;
+  return {
+    ...b,
+    id: b.id || (b._id ? String(b._id) : ""),
+    totalFee: b.totalAmount,
+    checkoutHealthNote: b.checkOutHealthNote,
+    code: b.boardingCode,
+    pricePerDay: b.dailyPrice,
+  };
+}
+
+function attachCageAliases(c) {
+  if (!c) return c;
+  const s = (c.size || "").toLowerCase();
+  let sizeLabel = "Vừa (5kg - 15kg)";
+  if (s === "nhỏ" || s === "small") sizeLabel = "Nhỏ (Dưới 5kg)";
+  else if (s === "lớn" || s === "large") sizeLabel = "Lớn (Trên 15kg)";
+  return {
+    ...c,
+    id: c.id || (c._id ? String(c._id) : ""),
+    code: c.cageCode,
+    price: c.pricePerDay,
+    dailyPrice: c.pricePerDay,
+    description: c.notes,
+    sizeLabel,
+  };
+}
+
 /**
  * 1. CHECK-IN THÚ CƯNG VÀO LƯU CHUỒNG (POST /api/boardings/check-in)
  * Nghiệp vụ đáp ứng Sprint 4 - Task 2: Pet Check-in
@@ -19,6 +61,7 @@ const User = require("../models/user");
  */
 const checkIn = async (req, res) => {
   try {
+    const body = req.body || {};
     const {
       customerId,
       petId,
@@ -28,7 +71,7 @@ const checkIn = async (req, res) => {
       belongings,
       healthNote,
       notes,
-    } = req.body;
+    } = body;
 
     // 1. Kiểm tra các trường thông tin bắt buộc
     if (!customerId) {
@@ -152,12 +195,14 @@ const getAvailableCages = async (req, res) => {
 
     const cages = await Cage.find(filter)
       .sort({ pricePerDay: 1, cageCode: 1 })
-      .lean({ virtuals: true });
+      .lean();
+
+    const mappedCages = cages.map(attachCageAliases);
 
     return res.status(200).json({
       success: true,
-      count: cages.length,
-      cages,
+      count: mappedCages.length,
+      cages: mappedCages,
     });
   } catch (error) {
     console.error("Lỗi lấy danh sách chuồng trống:", error);
@@ -216,7 +261,7 @@ const getBoardingById = async (req, res) => {
       ],
       isDeleted: false,
     })
-      .populate("customerId", "fullName name phone email")
+      .populate("customerId", "name phone")
       .populate("petId", "name species breed weight")
       .populate("cageId", "cageCode size pricePerDay status")
       .lean();
@@ -230,7 +275,7 @@ const getBoardingById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      boarding,
+      boarding: attachBoardingAliases(boarding),
     });
   } catch (error) {
     console.error("Lỗi lấy chi tiết lưu chuồng:", error);
@@ -252,7 +297,8 @@ const getBoardingById = async (req, res) => {
  */
 const checkOut = async (req, res) => {
   try {
-    const id = req.params.id || req.body.boardingId || req.body.id || req.body.boardingCode;
+    const body = req.body || {};
+    const id = req.params.id || body.boardingId || body.id || body.boardingCode;
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -298,9 +344,16 @@ const checkOut = async (req, res) => {
       checkOutHealthNote,
       checkoutHealthNote,
       notes,
-    } = req.body;
+    } = body;
 
     const finalCheckOutDate = actualCheckOutDate ? new Date(actualCheckOutDate) : new Date();
+    if (isNaN(finalCheckOutDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Ngày trả thực tế (actualCheckOutDate) không hợp lệ!",
+      });
+    }
+
     const finalHealthNote = String(
       checkOutHealthNote || checkoutHealthNote || "Bé khỏe mạnh, tinh thần hoạt bát khi bàn giao cho chủ nuôi."
     ).trim();
@@ -365,12 +418,12 @@ const getHistory = async (req, res) => {
     if (fromDate || toDate) {
       filter.actualCheckOutDate = {};
       if (fromDate) filter.actualCheckOutDate.$gte = new Date(fromDate);
-      if (toDate) filter.actualCheckOutDate.$lte = new Date(toDate);
+      if (toDate) filter.actualCheckOutDate.$lte = parseEndDate(toDate);
     }
 
     // Tìm kiếm theo từ khóa
     if (search && String(search).trim() !== "") {
-      const searchRegex = new RegExp(String(search).trim(), "i");
+      const searchRegex = new RegExp(escapeRegex(String(search).trim()), "i");
       const searchConditions = [
         { petName: searchRegex },
         { customerName: searchRegex },
@@ -390,12 +443,14 @@ const getHistory = async (req, res) => {
 
     const history = await Boarding.find(filter)
       .sort({ actualCheckOutDate: -1, updatedAt: -1 })
-      .lean({ virtuals: true });
+      .lean();
+
+    const mappedHistory = history.map(attachBoardingAliases);
 
     return res.status(200).json({
       success: true,
-      count: history.length,
-      history,
+      count: mappedHistory.length,
+      history: mappedHistory,
     });
   } catch (error) {
     console.error("Lỗi lấy lịch sử lưu chuồng:", error);

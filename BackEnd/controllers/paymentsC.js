@@ -1,10 +1,33 @@
+const mongoose = require("mongoose");
 const Payment = require("../models/payment");
 const Invoice = require("../models/invoice");
+const { getCallerInfo } = require("./invoicesC");
 
 // 1. Thực hiện thanh toán cho hóa đơn (POST /api/payments)
 // Kiểm tra: Hóa đơn unpaid, số tiền khớp 100%, chặn thanh toán lại, chuyển hóa đơn sang paid
 const processPayment = async (req, res) => {
   try {
+    const caller = await getCallerInfo(req);
+    if (!caller) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập với tài khoản Lễ tân/Quản trị để thực hiện thanh toán.",
+      });
+    }
+    if (caller.role_id === 4) {
+      return res.status(403).json({
+        success: false,
+        message: "Khách hàng không có quyền tự chốt thanh toán hóa đơn. Vui lòng liên hệ Lễ tân.",
+      });
+    }
+    if (![1, 3].includes(caller.role_id)) {
+      return res.status(403).json({
+        success: false,
+        message: "Chỉ Lễ tân hoặc Quản trị viên mới có quyền chốt thanh toán hóa đơn.",
+      });
+    }
+
+    const body = req.body || {};
     const {
       invoiceId,
       amount,
@@ -12,7 +35,8 @@ const processPayment = async (req, res) => {
       cashier,
       transactionRef,
       notes,
-    } = req.body;
+      note,
+    } = body;
 
     if (!invoiceId || amount === undefined || !paymentMethod) {
       return res.status(400).json({
@@ -29,13 +53,13 @@ const processPayment = async (req, res) => {
     }
 
     // Gọi hàm static processPayment trong Model Payment (đã bao gồm chặn thanh toán lại, so sánh số tiền chuẩn)
-    const newPayment = await Payment.processPayment({
+    const { payment: newPayment, invoice: updatedInvoice } = await Payment.processPayment({
       invoiceId,
       amount: Number(amount),
       paymentMethod,
-      cashier: cashier || "Thu ngân PawnCare",
+      cashier: cashier || caller.name || "Thu ngân PawnCare",
       transactionRef: transactionRef || "",
-      notes: notes || "",
+      notes: notes || note || "",
       paidAt: new Date(),
     });
 
@@ -43,6 +67,7 @@ const processPayment = async (req, res) => {
       success: true,
       message: `Thanh toán thành công cho hóa đơn! Mã giao dịch: [${newPayment.paymentCode}]. Hóa đơn đã chuyển sang trạng thái "paid".`,
       payment: newPayment,
+      invoice: updatedInvoice,
     });
   } catch (error) {
     console.error("Lỗi xử lý thanh toán:", error.message);
@@ -60,7 +85,13 @@ const getPayments = async (req, res) => {
     const filter = { isDeleted: false };
 
     if (paymentMethod) filter.paymentMethod = paymentMethod;
-    if (invoiceId) filter.invoiceId = invoiceId;
+    if (invoiceId) {
+      if (mongoose.Types.ObjectId.isValid(invoiceId)) {
+        filter.invoiceId = invoiceId;
+      } else {
+        filter.invoiceCode = invoiceId;
+      }
+    }
 
     const payments = await Payment.find(filter)
       .populate("invoiceId", "invoiceCode totalAmount status")

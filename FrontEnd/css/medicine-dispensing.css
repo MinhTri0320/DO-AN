@@ -6,6 +6,11 @@
    3. Prescription dispensing (chọn đơn, kiểm tra tồn kho, hạn dùng, chặn cấp lặp)
    ============================================================ */
 
+/* Bảo đảm .profile-main không bị tràn ngang khi chứa bảng rộng */
+#medicineDispensingPage .profile-main {
+  min-width: 0;
+}
+
 /* ===== NAVIGATION TABS GIỮA KHO THUỐC & CẤP THUỐC ===== */
 .med-feature-tabs {
   display: flex;
@@ -16,6 +21,7 @@
   border-radius: var(--radius-pill);
   padding: 6px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
 .med-tab-btn {
@@ -48,9 +54,15 @@
 /* ===== KPI STATS CARDS ===== */
 .med-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-bottom: 24px;
+}
+
+@media (max-width: 560px) {
+  .med-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .med-stat-card {
@@ -172,7 +184,7 @@
   background: #ffffff;
   border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: var(--shadow-sm);
 }
 
@@ -300,6 +312,13 @@
   flex-direction: column;
 }
 
+.med-modal-card > form {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
 .med-modal-header {
   background: var(--accent-gradient);
   color: #ffffff;
@@ -312,7 +331,7 @@
 .med-modal-header h3 {
   margin: 0;
   font-size: 18px;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   color: #ffffff;
 }
 
@@ -414,4 +433,41 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ===== TOAST THÔNG BÁO GÓC DƯỚI PHẢI ===== */
+.grooming-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1.5px solid #A7F3D0;
+  border-left: 6px solid #10B981;
+  border-radius: 14px;
+  padding: 14px 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999999;
+  font-size: 14px;
+  font-weight: 600;
+  max-width: 420px;
+  line-height: 1.45;
+  animation: modalSlideUp 0.28s ease;
+}
+
+.grooming-toast.error {
+  background: #FEF2F2;
+  color: #991B1B;
+  border-color: #FCA5A5;
+  border-left-color: #DC2626;
+}
+
+.grooming-toast.warning {
+  background: #FFFBEB;
+  color: #92400E;
+  border-color: #FCD34D;
+  border-left-color: #F59E0B;
 }

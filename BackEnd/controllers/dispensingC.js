@@ -1,11 +1,15 @@
+const mongoose = require("mongoose");
 const Dispensing = require("../models/dispensing");
 const Medicine = require("../models/medicine");
 const Prescription = require("../models/prescription");
+const Pet = require("../models/pet");
+const User = require("../models/user");
 
 // 1. Cấp thuốc theo đơn (POST /api/dispensing)
 // Kiểm tra tồn kho, hạn dùng, chặn cấp lặp, tự động trừ quantity và lưu lịch sử cấp
 const dispensePrescription = async (req, res) => {
   try {
+    const body = req.body || {};
     const {
       prescriptionId,
       prescriptionCode,
@@ -17,7 +21,8 @@ const dispensePrescription = async (req, res) => {
       customerId,
       customerName,
       notes,
-    } = req.body;
+      note,
+    } = body;
 
     const presId = prescriptionId || prescriptionCode;
     if (!presId) {
@@ -33,20 +38,23 @@ const dispensePrescription = async (req, res) => {
     let targetCustomerId = customerId || "";
     let targetCustomerName = customerName || "Khách hàng";
 
+    const presIdStr = String(presId).trim();
+    const rxOrConditions = [{ prescriptionCode: presIdStr }];
+    if (mongoose.Types.ObjectId.isValid(presIdStr)) {
+      rxOrConditions.unshift({ _id: presIdStr });
+    }
+
     // Nếu không truyền items từ client, tự động đọc đơn thuốc từ Model Prescription (Sprint 3)
     if (!itemsToDispense || !Array.isArray(itemsToDispense) || itemsToDispense.length === 0) {
       const rx = await Prescription.findOne({
-        $or: [
-          { _id: presId.match(/^[0-9a-fA-F]{24}$/) ? presId : null },
-          { prescriptionCode: presId },
-        ],
+        $or: rxOrConditions,
         isDeleted: false,
       }).lean();
 
       if (!rx) {
         return res.status(404).json({
           success: false,
-          message: `Không tìm thấy đơn thuốc [${presId}] trong hệ thống để cấp thuốc.`,
+          message: `Không tìm thấy đơn thuốc [${presIdStr}] trong hệ thống để cấp thuốc.`,
         });
       }
 
@@ -68,15 +76,43 @@ const dispensePrescription = async (req, res) => {
       if (itemsToDispense.length === 0) {
         return res.status(400).json({
           success: false,
-          message: `Đơn thuốc [${presId}] không có danh mục thuốc nào để cấp phát.`,
+          message: `Đơn thuốc [${presIdStr}] không có danh mục thuốc nào để cấp phát.`,
         });
+      }
+    }
+
+    // Nếu chưa có targetCustomerId hợp lệ, tự tìm Pet theo petId/petName để lấy ownerId và tên chủ nuôi
+    if (!targetCustomerId || !mongoose.Types.ObjectId.isValid(targetCustomerId)) {
+      let foundPet = null;
+      if (targetPetId && mongoose.Types.ObjectId.isValid(targetPetId)) {
+        foundPet = await Pet.findById(targetPetId).lean();
+      }
+      if (!foundPet && targetPetName && targetPetName !== "Bé cưng") {
+        foundPet = await Pet.findOne({ name: targetPetName }).lean();
+      }
+      if (foundPet && foundPet.ownerId) {
+        targetCustomerId = String(foundPet.ownerId);
+        if (!targetPetId) {
+          targetPetId = String(foundPet._id);
+        }
+      }
+    }
+
+    if (
+      targetCustomerId &&
+      mongoose.Types.ObjectId.isValid(targetCustomerId) &&
+      (!customerName || targetCustomerName === "Khách hàng")
+    ) {
+      const owner = await User.findById(targetCustomerId).select("name phone").lean();
+      if (owner && owner.name) {
+        targetCustomerName = owner.name;
       }
     }
 
     // Gọi hàm static dispensePrescription trong Model Dispensing
     // (đã bao gồm: 1. Chặn cấp lặp, 2. Kiểm tra hết hạn, 3. Kiểm tra tồn kho, 4. Trừ kho nguyên tử)
     const newDispensing = await Dispensing.dispensePrescription({
-      prescriptionId: presId,
+      prescriptionId: presIdStr,
       items: itemsToDispense,
       dispensedBy: dispensedBy || "Dược sĩ PawnCare",
       dispensedAt: dispensedAt || new Date(),
@@ -84,17 +120,12 @@ const dispensePrescription = async (req, res) => {
       petName: targetPetName,
       customerId: targetCustomerId,
       customerName: targetCustomerName,
-      notes: notes || "",
+      notes: notes || note || "",
     });
 
     // Cập nhật trạng thái đơn thuốc nếu tìm thấy trong Prescription
     await Prescription.findOneAndUpdate(
-      {
-        $or: [
-          { _id: presId.match(/^[0-9a-fA-F]{24}$/) ? presId : null },
-          { prescriptionCode: presId },
-        ],
-      },
+      { $or: rxOrConditions },
       {
         $set: {
           dispensed: true,

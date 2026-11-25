@@ -611,32 +611,23 @@ export function initMedicalRecordPage() {
  const symptomsStr = (recordForm.elements.modalSymptoms.value || "").trim();
  const symptoms = symptomsStr ? symptomsStr.split(",").map((s) => s.trim()).filter(Boolean) : ["Sức khỏe bình thường"];
 
- const recordData = {
- id: recordId,
- recordCode: recordId,
- petId: pId,
- petName: pet.name || "Bé cưng",
- petSpecies: pet.species || "Chó",
- petBreed: pet.breed || "Chưa rõ",
- date: recordForm.elements.modalDate.value || "Hôm nay",
- category: recordForm.elements.modalCategory.value || "Khám tổng quát",
- status: recordForm.elements.modalStatus.value || "Đã hoàn thành",
- veterinarian: recordForm.elements.modalDoctor.value || "Bác sĩ PawnCare",
- clinicBranch: "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
- title: recordForm.elements.modalTitle.value || "Khám sức khỏe",
- reason: recordForm.elements.modalReason.value || "Kiểm tra định kỳ",
- symptoms: symptoms,
- preliminaryDiagnosis: "Chẩn đoán lâm sàng",
- confirmedDiagnosis: recordForm.elements.modalConfirmedDiag.value || "Khỏe mạnh",
- vitalSigns: {
- temperature: recordForm.elements.modalTemp.value || "38.5",
- weight: recordForm.elements.modalWeight.value || "5.0",
+ const records = getStoredMedicalRecords();
+ const matchId = editingRecordId || recordId;
+ const idx = records.findIndex((r) => (r.id || r.recordCode) === matchId);
+ const existingRecord = editingRecordId && idx >= 0 ? records[idx] : null;
+
+ const defaultVitalSigns = {
  heartRate: "110",
  respiratoryRate: "24",
  mucousMembranes: "Hồng hào",
  hydration: "Bình thường",
- },
- prescription: [
+ };
+ const existingVitalSigns = existingRecord?.vitalSigns || {};
+ const preservedPrescription = existingRecord
+ ? Array.isArray(existingRecord.prescription)
+ ? existingRecord.prescription
+ : []
+ : [
  {
  name: "Thuốc bổ & Kháng viêm dịu nhẹ",
  active: "Vitamin tổng hợp",
@@ -644,17 +635,41 @@ export function initMedicalRecordPage() {
  duration: "5 ngày",
  notes: "Uống sau ăn",
  },
- ],
+ ];
+
+ const recordData = {
+ ...(existingRecord || {}),
+ id: recordId,
+ recordCode: recordId,
+ petId: pId,
+ petName: pet.name || existingRecord?.petName || "Bé cưng",
+ petSpecies: pet.species || existingRecord?.petSpecies || "Chó",
+ petBreed: pet.breed || existingRecord?.petBreed || "Chưa rõ",
+ date: recordForm.elements.modalDate.value || "Hôm nay",
+ category: recordForm.elements.modalCategory.value || "Khám tổng quát",
+ status: recordForm.elements.modalStatus.value || "Đã hoàn thành",
+ veterinarian: recordForm.elements.modalDoctor.value || "Bác sĩ PawnCare",
+ clinicBranch: existingRecord?.clinicBranch || "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+ title: recordForm.elements.modalTitle.value || "Khám sức khỏe",
+ reason: recordForm.elements.modalReason.value || "Kiểm tra định kỳ",
+ symptoms: symptoms,
+ preliminaryDiagnosis: existingRecord?.preliminaryDiagnosis || "Chẩn đoán lâm sàng",
+ confirmedDiagnosis: recordForm.elements.modalConfirmedDiag.value || "Khỏe mạnh",
+ vitalSigns: {
+ ...defaultVitalSigns,
+ ...existingVitalSigns,
+ temperature: recordForm.elements.modalTemp.value || existingVitalSigns.temperature || "38.5",
+ weight: recordForm.elements.modalWeight.value || existingVitalSigns.weight || "5.0",
+ },
+ prescription: preservedPrescription,
  doctorAdvice: recordForm.elements.modalAdvice.value || "Chăm sóc bé cưng và giữ ấm.",
  nextAppointment: recordForm.elements.modalNextAppointment.value || "",
  totalCost: recordForm.elements.modalCost.value || "250.000đ",
- createdAt: Date.now(),
+ createdAt: existingRecord?.createdAt || Date.now(),
  isEditing: Boolean(editingRecordId),
  };
 
- const records = getStoredMedicalRecords();
- const idx = records.findIndex((r) => (r.id || r.recordCode) === recordId);
- if (idx>= 0) {
+ if (idx >= 0) {
  records[idx] = { ...records[idx], ...recordData };
  } else {
  records.unshift(recordData);
@@ -673,15 +688,17 @@ export function initMedicalRecordPage() {
  });
  }
 
- function confirmDeleteRecord(recordId) {
+ async function confirmDeleteRecord(recordId) {
  if (confirm("Bạn có chắc chắn muốn xóa hồ sơ bệnh án này không? Thao tác không thể hoàn tác.")) {
  let records = getStoredMedicalRecords();
- records = records.filter((r) => r.id !== recordId);
+ records = records.filter((r) => (r.id || r.recordCode) !== recordId);
  setStoredMedicalRecords(records);
 
  try {
- apiDeleteMedicalRecord(recordId);
- } catch (e) {}
+ await apiDeleteMedicalRecord(recordId);
+ } catch (e) {
+ console.warn("[MedicalRecord] Lỗi khi xóa bệnh án trên server:", e);
+ }
 
  renderAll();
  showToast("Đã xóa hồ sơ bệnh án.", "info");
@@ -788,7 +805,7 @@ export function initMedicalRecordPage() {
 
  <div style="margin-bottom:16px;">
  <p><strong>1. Lý do thăm khám:</strong> ${escapeHTML(target.reason)}</p>
- <p><strong>2. Triệu chứng lâm sàng:</strong> ${(target.symptoms || []).join(", ")}</p>
+ <p><strong>2. Triệu chứng lâm sàng:</strong> ${(target.symptoms || []).map(escapeHTML).join(", ")}</p>
  <p style="margin-top:6px;"><strong>3. Chẩn đoán xác định:</strong> <span style="font-weight:700; color:#4E2A14;">${escapeHTML(target.confirmedDiagnosis || target.title)}</span></p>
  </div>
 

@@ -4,7 +4,8 @@
    Hiển thị 3 cột/dòng: role_id_cu, tên người dùng, role_id_moi + update
    ============================================================ */
 
-import { getCurrentUser, logoutUser } from "./auth.js";
+import { getCurrentUser, logoutUser, updateCurrentUser } from "./auth.js";
+import { escapeHTML } from "./storage.js";
 import { API_BASE_URL } from "./config.js";
 
 let rolesList = [
@@ -88,7 +89,7 @@ async function fetchUsers() {
     renderUsersTable(allUsers);
   } catch (err) {
     console.error("Lỗi fetchUsers:", err);
-    tbody.innerHTML = `<tr><td colspan="3" class="empty-state" style="color: #c53030;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3" class="empty-state" style="color: #c53030;">${escapeHTML(err.message || "Không thể tải danh sách người dùng.")}</td></tr>`;
   }
 }
 
@@ -109,21 +110,29 @@ function renderUsersTable(users) {
       const optionsHtml = rolesList
         .map(
           (r) =>
-            `<option value="${r.role_id}" ${r.role_id === roleId ? "selected" : ""}>
-              ${r.role_id} - ${r.name}
+            `<option value="${Number(r.role_id)}" ${Number(r.role_id) === roleId ? "selected" : ""}>
+              ${Number(r.role_id)} - ${escapeHTML(r.name || "")}
             </option>`
         )
         .join("");
 
+      const safeUserId = escapeHTML(String(u._id || u.id || ""));
+      const safeName = escapeHTML(u.name || "Chưa đặt tên");
+      const safePhone = u.phone ? escapeHTML(String(u.phone)) : "";
+      const safeDoctorCode = u.id_bac_sy ? escapeHTML(String(u.id_bac_sy)) : "";
+      const safeRoleName = escapeHTML(roleName);
+
       return `
-        <tr data-user-id="${u._id || u.id}">
+        <tr data-user-id="${safeUserId}">
           <td>
             <span class="role-badge role-${roleId}">
-              ${roleId} - ${roleName}
+              ${roleId} - ${safeRoleName}
             </span>
           </td>
           <td>
-            <div class="user-name-cell">${u.name || "Chưa đặt tên"}</div>
+            <div class="user-name-cell">${safeName}</div>
+            ${safePhone ? `<div style="font-size: 12.5px; color: #7a6555; margin-top: 2px;">📞 ${safePhone}</div>` : ""}
+            ${safeDoctorCode ? `<div style="font-size: 12px; color: #03543F; font-weight: 600; margin-top: 2px;">🩺 Mã BS: ${safeDoctorCode}</div>` : ""}
           </td>
           <td>
             <div class="action-cell">
@@ -150,7 +159,7 @@ function renderUsersTable(users) {
 async function handleUpdateRole(e) {
   const btn = e.currentTarget;
   const tr = btn.closest("tr");
-  const userId = tr.dataset.userId;
+  const targetUserId = tr.dataset.userId;
   const select = tr.querySelector(".select-role-new");
   const newRoleId = Number(select.value);
 
@@ -161,7 +170,7 @@ async function handleUpdateRole(e) {
   btn.textContent = "Đang lưu...";
 
   try {
-    const res = await fetch(`${API_BASE_URL}/admin/users/${userId}/role`, {
+    const res = await fetch(`${API_BASE_URL}/admin/users/${encodeURIComponent(targetUserId)}/role`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -173,6 +182,35 @@ async function handleUpdateRole(e) {
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.message || "Cập nhật phân quyền thất bại.");
+    }
+
+    // Nếu Admin tự thay đổi vai trò của chính mình sang role khác Admin (role_id !== 1)
+    const isSelf = String(targetUserId) === String(currentUser.id || currentUser._id);
+    if (isSelf && Number(newRoleId) !== 1) {
+      const idToRole = {
+        1: "admin",
+        2: "doctor",
+        3: "receptionist",
+        4: "pet_owner",
+      };
+      const nextRoleId = Number(data.user?.role_id) || newRoleId;
+      const nextRole = data.user?.role || idToRole[nextRoleId] || "pet_owner";
+      const patch = {
+        role_id: nextRoleId,
+        role: nextRole,
+      };
+      if (data.user?.id_bac_sy !== undefined) {
+        patch.id_bac_sy = data.user.id_bac_sy;
+      }
+      updateCurrentUser(patch);
+      showAlert(
+        data.message || "Đã cập nhật vai trò của bạn. Đang chuyển về trang chủ...",
+        "success"
+      );
+      setTimeout(() => {
+        window.location.href = "./index.html";
+      }, 800);
+      return;
     }
 
     showAlert(data.message || "Cập nhật phân quyền thành công!", "success");

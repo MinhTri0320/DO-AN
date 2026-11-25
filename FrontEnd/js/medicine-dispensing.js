@@ -18,12 +18,32 @@ import { getCurrentUser } from "./auth.js";
 import { escapeHTML } from "./storage.js";
 import { API_BASE_URL } from "./config.js";
 
-let allMedicines = [];
+let masterMedicines = [];
+let filteredMedicines = [];
 let allPrescriptions = [];
 let currentSearchMed = "";
 let currentStockFilter = "";
 let currentSearchPres = "";
 let selectedPrescription = null;
+
+// Helper xác định trạng thái tồn kho của một loại thuốc
+function getMedicineStockStatus(m) {
+  if (m.isExpired || (m.expiryDate && new Date(m.expiryDate) < new Date())) {
+    return "Hết hạn";
+  }
+  if (m.isOutOfStock || Number(m.quantity) <= 0) {
+    return "Hết hàng";
+  }
+  return "Còn hàng";
+}
+
+// Helper format ngày local YYYY-MM-DD
+function formatLocalDate(dateObj) {
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const d = String(dateObj.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 // Helper format tiền tệ VNĐ
 function formatVND(amount) {
@@ -50,7 +70,7 @@ function showToast(message, type = "success") {
   }, 3500);
 }
 
-// 1. TẢI DANH MỤC THUỐC
+// 1. TẢI TOÀN BỘ DANH MỤC THUỐC (masterMedicines) & LỌC HIỂN THỊ (filteredMedicines)
 async function loadMedicines() {
   const tbody = document.getElementById("medTableBody");
   if (!tbody) return;
@@ -58,22 +78,45 @@ async function loadMedicines() {
   tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--ink-faint);">⏳ Đang tải kho thuốc...</td></tr>`;
 
   try {
-    const params = {};
-    if (currentSearchMed) params.search = currentSearchMed;
-    if (currentStockFilter) params.stockStatus = currentStockFilter;
-
-    const res = await apiGetMedicines(params);
-    allMedicines = res?.medicines || [];
+    // Luôn tải toàn bộ kho chưa lọc để KPI & kiểm tra cấp thuốc luôn chính xác
+    const res = await apiGetMedicines({});
+    if (!res || res.success === false) {
+      throw new Error(res?.message || "Không thể tải dữ liệu kho thuốc.");
+    }
+    masterMedicines = res.medicines || [];
 
     updateMedicineKPIs();
-    renderMedicineTable();
+    applyMedicineFilters();
   } catch (err) {
     console.error("Lỗi tải danh mục thuốc:", err);
     tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 30px;">Lỗi tải dữ liệu: ${escapeHTML(err.message)}</td></tr>`;
   }
 }
 
-// 2. CẬP NHẬT KPI KHO THUỐC
+// Lọc từ masterMedicines ra filteredMedicines để hiển thị bảng mà không làm sai lệch KPI
+function applyMedicineFilters() {
+  let list = masterMedicines.slice();
+
+  if (currentSearchMed) {
+    const term = currentSearchMed.toLowerCase();
+    list = list.filter(
+      (m) =>
+        (m.name && m.name.toLowerCase().includes(term)) ||
+        (m.activeIngredient && m.activeIngredient.toLowerCase().includes(term)) ||
+        (m.medicineCode && m.medicineCode.toLowerCase().includes(term)) ||
+        (m.description && m.description.toLowerCase().includes(term))
+    );
+  }
+
+  if (currentStockFilter) {
+    list = list.filter((m) => getMedicineStockStatus(m) === currentStockFilter);
+  }
+
+  filteredMedicines = list;
+  renderMedicineTable();
+}
+
+// 2. CẬP NHẬT KPI KHO THUỐC (LUÔN TÍNH TỪ TOÀN BỘ KHO masterMedicines)
 function updateMedicineKPIs() {
   const statTotal = document.getElementById("statTotalMeds");
   const statInStock = document.getElementById("statInStockMeds");
@@ -84,28 +127,29 @@ function updateMedicineKPIs() {
   let outOfStockCount = 0;
   let expiredCount = 0;
 
-  allMedicines.forEach((m) => {
-    if (m.isExpired) {
+  masterMedicines.forEach((m) => {
+    const status = getMedicineStockStatus(m);
+    if (status === "Hết hạn") {
       expiredCount++;
-    } else if (m.isOutOfStock || m.quantity <= 0) {
+    } else if (status === "Hết hàng") {
       outOfStockCount++;
     } else {
       inStockCount++;
     }
   });
 
-  if (statTotal) statTotal.textContent = allMedicines.length;
+  if (statTotal) statTotal.textContent = masterMedicines.length;
   if (statInStock) statInStock.textContent = inStockCount;
   if (statOutOfStock) statOutOfStock.textContent = outOfStockCount;
   if (statExpired) statExpired.textContent = expiredCount;
 }
 
-// 3. RENDER BẢNG DANH MỤC THUỐC
+// 3. RENDER BẢNG DANH MỤC THUỐC (HIỂN THỊ filteredMedicines)
 function renderMedicineTable() {
   const tbody = document.getElementById("medTableBody");
   if (!tbody) return;
 
-  if (allMedicines.length === 0) {
+  if (filteredMedicines.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--ink-faint);">Không tìm thấy loại thuốc nào phù hợp.</td></tr>`;
     return;
   }
@@ -113,12 +157,13 @@ function renderMedicineTable() {
   const user = getCurrentUser();
   const canEdit = user && [1, 2, 3].includes(Number(user.role_id));
 
-  tbody.innerHTML = allMedicines
+  tbody.innerHTML = filteredMedicines
     .map((m) => {
+      const stockStatus = getMedicineStockStatus(m);
       let statusTag = `<span class="stock-tag available">✓ Còn hàng</span>`;
-      if (m.isExpired) {
+      if (stockStatus === "Hết hạn") {
         statusTag = `<span class="stock-tag expired">🚫 Hết hạn</span>`;
-      } else if (m.isOutOfStock || m.quantity <= 0) {
+      } else if (stockStatus === "Hết hàng") {
         statusTag = `<span class="stock-tag out-of-stock">⚠️ Hết hàng</span>`;
       }
 
@@ -142,12 +187,12 @@ function renderMedicineTable() {
           </td>
           <td>
             <span>${expDateStr}</span>
-            ${m.isExpired ? `<br/><small style="color: #D97706; font-weight: 600;">(Đã quá hạn)</small>` : ""}
+            ${stockStatus === "Hết hạn" ? `<br/><small style="color: #D97706; font-weight: 600;">(Đã quá hạn)</small>` : ""}
           </td>
           <td>${statusTag}</td>
           <td>
-            ${canEdit ? `<button type="button" class="btn-med-act btn-med-edit" data-id="${m._id}">✏️ Sửa</button>` : ""}
-            ${canEdit ? `<button type="button" class="btn-med-act btn-med-delete" data-id="${m._id}" data-name="${escapeHTML(m.name)}">🗑️ Xóa</button>` : ""}
+            ${canEdit ? `<button type="button" class="btn-med-act btn-med-edit" data-id="${escapeHTML(m._id)}">✏️ Sửa</button>` : ""}
+            ${canEdit ? `<button type="button" class="btn-med-act btn-med-delete" data-id="${escapeHTML(m._id)}" data-name="${escapeHTML(m.name)}">🗑️ Xóa</button>` : ""}
           </td>
         </tr>
       `;
@@ -158,7 +203,7 @@ function renderMedicineTable() {
   tbody.querySelectorAll(".btn-med-edit").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-id");
-      const med = allMedicines.find((m) => String(m._id) === String(id));
+      const med = masterMedicines.find((m) => String(m._id) === String(id));
       if (med) openMedicineModal(med);
     });
   });
@@ -213,10 +258,10 @@ function openMedicineModal(med = null) {
     formUnit.value = "viên";
     formPrice.value = "";
     formQty.value = "50";
-    // Mặc định hạn dùng 1 năm sau
+    // Mặc định hạn dùng 1 năm sau (theo giờ local)
     const nextYear = new Date();
     nextYear.setFullYear(nextYear.getFullYear() + 1);
-    formExp.value = nextYear.toISOString().slice(0, 10);
+    formExp.value = formatLocalDate(nextYear);
     formDesc.value = "";
   }
 
@@ -285,18 +330,42 @@ async function loadPrescriptions() {
   const countEl = document.getElementById("prescriptionsCount");
   if (!tbody) return;
 
+  const user = getCurrentUser();
+  const callerId = user ? (user.id || user._id) : null;
+
+  if (!user || !callerId) {
+    allPrescriptions = [];
+    if (countEl) countEl.textContent = "0";
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: #DC2626;">⚠️ Vui lòng <a href="./login.html" style="color: #1E429F; font-weight: 600;">đăng nhập</a> bằng tài khoản Lễ tân / Quản trị viên để xem và cấp thuốc theo đơn.</td></tr>`;
+    return;
+  }
+
   tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--ink-faint);">⏳ Đang tải đơn thuốc sau khám...</td></tr>`;
 
   try {
     const params = new URLSearchParams();
     if (currentSearchPres) params.append("search", currentSearchPres);
 
-    const user = getCurrentUser();
-    const callerId = user ? (user.id || user._id) : "6b02d69ab16ab5c38159c4ed";
     const headers = { "x-user-id": callerId };
 
     const res = await fetch(`${API_BASE_URL}/receptionist/prescriptions?${params.toString()}`, { headers });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      allPrescriptions = [];
+      if (countEl) countEl.textContent = "0";
+
+      if (res.status === 403) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #B45309; padding: 30px; font-weight: 600;">🔒 Chức năng cấp thuốc chỉ dành cho Lễ tân / Quản trị viên.</td></tr>`;
+        return;
+      }
+      if (res.status === 401) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #DC2626; padding: 30px;">⚠️ Phiên đăng nhập không hợp lệ. Vui lòng <a href="./login.html" style="color: #1E429F; font-weight: 600;">đăng nhập lại</a>.</td></tr>`;
+        return;
+      }
+
+      throw new Error(data.message || `Không thể tải danh sách đơn thuốc (HTTP ${res.status}).`);
+    }
 
     allPrescriptions = data.prescriptions || [];
     if (countEl) countEl.textContent = allPrescriptions.length;
@@ -304,6 +373,8 @@ async function loadPrescriptions() {
     renderPrescriptionsTable();
   } catch (err) {
     console.error("Lỗi tải đơn thuốc:", err);
+    allPrescriptions = [];
+    if (countEl) countEl.textContent = "0";
     tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #DC2626; padding: 30px;">Lỗi: ${escapeHTML(err.message)}</td></tr>`;
   }
 }
@@ -327,8 +398,8 @@ function renderPrescriptionsTable() {
       const isDispensed = Boolean(p.isDispensed || p.dispensing);
 
       const statusHtml = isDispensed
-        ? `<span class="stock-tag available">✓ Đã cấp [${p.dispensing?.dispensingCode || "DISP"}]</span><br/>
-           <small style="color: var(--ink-faint);">${p.dispensing?.dispensedBy || "Dược sĩ"} • ${p.dispensing?.dispensedAt ? new Date(p.dispensing.dispensedAt).toLocaleTimeString("vi-VN") : ""}</small>`
+        ? `<span class="stock-tag available">✓ Đã cấp [${escapeHTML(p.dispensing?.dispensingCode || "DISP")}]</span><br/>
+           <small style="color: var(--ink-faint);">${escapeHTML(p.dispensing?.dispensedBy || "Dược sĩ")} • ${p.dispensing?.dispensedAt ? new Date(p.dispensing.dispensedAt).toLocaleTimeString("vi-VN") : ""}</small>`
         : `<span class="stock-tag expired">⏳ Chờ cấp thuốc</span>`;
 
       // Nút cấp thuốc (chặn cấp lặp nếu đã cấp)
@@ -378,8 +449,12 @@ function openDispenseModal(pres) {
   const itemsContainer = document.getElementById("dispenseItemsListContainer");
   const alertContainer = document.getElementById("dispenseAlertContainer");
   const btnExecute = document.getElementById("btnExecuteDispense");
+  const noteInput = document.getElementById("dispenseNoteInput");
 
   if (!modal) return;
+
+  // Xóa trắng ghi chú cũ mỗi khi mở Modal cấp thuốc
+  if (noteInput) noteInput.value = "";
 
   presCodeEl.textContent = pres.prescriptionCode;
   petNameEl.textContent = `${pres.petName} (${pres.petSpecies || ""})`;
@@ -389,17 +464,19 @@ function openDispenseModal(pres) {
   alertContainer.innerHTML = "";
   btnExecute.disabled = false;
 
-  // Kiểm tra từng thuốc trong đơn với kho allMedicines
+  // Kiểm tra từng thuốc trong đơn với toàn bộ kho masterMedicines (không bị ảnh hưởng bởi bộ lọc Tab 1)
   const medsInPres = pres.medicines || [];
   let hasStockError = false;
   let errorMessages = [];
 
   const itemsHtml = medsInPres
     .map((item) => {
-      const reqQty = Number(item.quantity) || 1;
-      // Tìm trong kho theo tên
-      const matched = allMedicines.find(
-        (m) => m.name.toLowerCase().trim() === item.name.toLowerCase().trim()
+      const qtyMatch = String(item.quantity || "").match(/\d+/);
+      const parsedQty = qtyMatch ? parseInt(qtyMatch[0], 10) : 1;
+      const reqQty = parsedQty > 0 ? parsedQty : 1;
+      // Tìm trong toàn bộ kho theo tên
+      const matched = masterMedicines.find(
+        (m) => m.name.toLowerCase().trim() === String(item.name || "").toLowerCase().trim()
       );
 
       let statusBadge = "";
@@ -407,12 +484,12 @@ function openDispenseModal(pres) {
         hasStockError = true;
         errorMessages.push(`Thuốc [${item.name}] chưa được tạo trong kho dược!`);
         statusBadge = `<span class="stock-tag out-of-stock">Chưa có trong kho</span>`;
-      } else if (matched.isExpired) {
+      } else if (getMedicineStockStatus(matched) === "Hết hạn") {
         hasStockError = true;
         const expStr = matched.expiryDate ? new Date(matched.expiryDate).toLocaleDateString("vi-VN") : "";
         errorMessages.push(`Thuốc [${item.name}] đã hết hạn dùng vào ngày ${expStr}! Không thể cấp!`);
         statusBadge = `<span class="stock-tag expired">Đã hết hạn (${expStr})</span>`;
-      } else if (matched.quantity < reqQty) {
+      } else if (Number(matched.quantity) < reqQty) {
         hasStockError = true;
         errorMessages.push(`Thuốc [${item.name}] không đủ tồn kho (Cần: ${reqQty}, Còn: ${matched.quantity})!`);
         statusBadge = `<span class="stock-tag out-of-stock">Thiếu tồn kho (Còn ${matched.quantity})</span>`;
@@ -420,10 +497,12 @@ function openDispenseModal(pres) {
         statusBadge = `<span class="stock-tag available">✓ Đủ tồn kho (Còn ${matched.quantity})</span>`;
       }
 
+      const displayUnit = item.unit || matched?.unit || "viên";
+
       return `
         <div class="dispense-item-row">
           <div>
-            <strong>${escapeHTML(item.name)}</strong> - Yêu cầu: <strong>${reqQty}</strong> ${escapeHTML(item.unit || "viên")}
+            <strong>${escapeHTML(item.name)}</strong> - Yêu cầu: <strong>${reqQty}</strong> ${escapeHTML(displayUnit)}
             ${item.dosage ? `<br/><small style="color: var(--ink-faint);">${escapeHTML(item.dosage)}</small>` : ""}
           </div>
           <div>${statusBadge}</div>
@@ -460,7 +539,8 @@ async function handleExecuteDispense() {
   if (!selectedPrescription) return;
 
   const user = getCurrentUser();
-  const note = document.getElementById("dispenseNoteInput").value.trim();
+  const noteInput = document.getElementById("dispenseNoteInput");
+  const note = noteInput ? noteInput.value.trim() : "";
   const btn = document.getElementById("btnExecuteDispense");
 
   btn.disabled = true;
@@ -471,7 +551,7 @@ async function handleExecuteDispense() {
     const dispensePayload = {
       prescriptionCode: selectedPrescription.prescriptionCode,
       dispensedBy: user ? (user.name || "Dược sĩ Lễ tân") : "Dược sĩ Lễ tân",
-      note: note || "Cấp theo đơn sau khám",
+      notes: note || "Cấp theo đơn sau khám",
     };
 
     const res = await apiDispensePrescription(dispensePayload);
@@ -480,17 +560,42 @@ async function handleExecuteDispense() {
       throw new Error(res?.message || "Cấp thuốc không thành công.");
     }
 
-    // 2. Tự động lập hóa đơn từ phiếu cấp thuốc (Dispensing)
+    // 2. Tự động lập hóa đơn từ phiếu cấp thuốc (Dispensing) và kiểm tra kết quả rõ ràng
     const dispensingId = res.dispensing?._id;
+    let invoiceCreated = false;
+    let invoiceErrorMsg = "";
+    let createdInvoiceCode = "";
+
     if (dispensingId) {
       try {
-        await apiCreateInvoiceFromDispensing(dispensingId);
+        const invRes = await apiCreateInvoiceFromDispensing(dispensingId);
+        if (invRes && invRes.success) {
+          invoiceCreated = true;
+          createdInvoiceCode = invRes.invoice?.invoiceCode || "";
+        } else {
+          invoiceErrorMsg = invRes?.message || "Máy chủ không trả về xác nhận tạo hóa đơn.";
+        }
       } catch (invErr) {
         console.warn("Lỗi xuất hóa đơn tự động:", invErr);
+        invoiceErrorMsg = invErr?.message || "Không thể lập hóa đơn tự động.";
       }
+    } else {
+      invoiceErrorMsg = "Thiếu mã phiếu cấp thuốc (dispensingId).";
     }
 
-    showToast(`Đã cấp thuốc thành công cho đơn [${selectedPrescription.prescriptionCode}] và tự động trừ kho!`, "success");
+    if (invoiceCreated) {
+      const invSuffix = createdInvoiceCode ? ` và lập hóa đơn [${createdInvoiceCode}]` : " và tự động lập hóa đơn";
+      showToast(
+        `Đã cấp thuốc cho đơn [${selectedPrescription.prescriptionCode}], trừ kho${invSuffix} thành công!`,
+        "success"
+      );
+    } else {
+      showToast(
+        `Đã cấp thuốc & trừ kho cho đơn [${selectedPrescription.prescriptionCode}], nhưng tạo hóa đơn tự động thất bại: ${invoiceErrorMsg}`,
+        "warning"
+      );
+    }
+
     closeDispenseModal();
 
     // Tải lại cả kho thuốc và danh sách đơn thuốc để cập nhật số lượng tồn kho giảm đúng!
@@ -540,12 +645,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Tải danh mục thuốc ban đầu
   await loadMedicines();
 
-  // Tìm kiếm thuốc
+  // Tìm kiếm thuốc (lọc trên filteredMedicines, giữ nguyên masterMedicines & KPI)
   const searchInput = document.getElementById("searchMedInput");
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       currentSearchMed = e.target.value.trim();
-      loadMedicines();
+      applyMedicineFilters();
     });
   }
 
@@ -554,7 +659,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (stockFilter) {
     stockFilter.addEventListener("change", (e) => {
       currentStockFilter = e.target.value;
-      loadMedicines();
+      applyMedicineFilters();
     });
   }
 
@@ -587,21 +692,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Ẩn nút thêm thuốc nếu không có quyền
+  // Ẩn nút thêm thuốc nếu không có quyền (tái sử dụng biến btnOpenAdd ở trên)
   const currentUser = getCurrentUser();
   const canEditMeds = currentUser && [1, 2, 3].includes(Number(currentUser.role_id));
-  const btnOpenAdd = document.getElementById("btnOpenAddMedModal");
   if (btnOpenAdd && !canEditMeds) btnOpenAdd.style.display = "none";
-
-  // Sidebar logout handler
-  const sidebarLogout = document.getElementById("sidebarLogoutLink");
-  if (sidebarLogout) {
-    sidebarLogout.addEventListener("click", (e) => {
-      e.preventDefault();
-      import("./auth.js").then(({ logoutUser }) => {
-        logoutUser();
-        window.location.href = "./index.html";
-      });
-    });
-  }
 });

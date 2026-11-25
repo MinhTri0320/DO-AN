@@ -132,6 +132,10 @@ dispensingSchema.pre("save", function () {
   }
 });
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // =====================================================================
 //  CÁC PHƯƠNG THỨC NGHIỆP VỤ CẤP THUỐC (DATABASE BUSINESS LOGIC - TRÍ)
 // =====================================================================
@@ -174,19 +178,26 @@ dispensingSchema.statics.dispensePrescription = async function ({
     throw new Error("Danh sách thuốc cấp không được để trống!");
   }
 
-  // 2. Kiểm tra tồn kho & hạn dùng của từng thuốc trong đơn
+  // 2. Kiểm tra tồn kho & hạn dùng của từng thuốc trong đơn (gom nhóm cộng dồn số lượng theo medicineId)
   const now = new Date();
   const checkedMedicines = [];
+  const medicineCache = new Map();
+  const requestedByMedId = new Map();
   let calculatedTotal = 0;
 
   for (const item of items) {
-    const reqQty = Number(item.quantity) || 1;
+    const reqQty = item.quantity !== undefined ? Number(item.quantity) : 1;
+    if (isNaN(reqQty) || reqQty < 1) {
+      throw new Error(`Số lượng cấp cho thuốc "${item.medicineName || "chưa rõ"}" phải lớn hơn hoặc bằng 1!`);
+    }
+
     const medQuery = { isDeleted: false };
 
-    if (item.medicineId && String(item.medicineId).match(/^[0-9a-fA-F]{24}$/)) {
+    if (item.medicineId && mongoose.Types.ObjectId.isValid(item.medicineId)) {
       medQuery._id = item.medicineId;
     } else {
-      medQuery.name = new RegExp(`^${item.medicineName ? item.medicineName.trim() : ""}$`, "i");
+      const trimmedName = item.medicineName ? String(item.medicineName).trim() : "";
+      medQuery.name = new RegExp(`^${escapeRegex(trimmedName)}$`, "i");
     }
 
     const medicine = await Medicine.findOne(medQuery);
@@ -201,10 +212,15 @@ dispensingSchema.statics.dispensePrescription = async function ({
       throw new Error(`Thuốc "${medicine.name}" đã hết hạn sử dụng (${expStr}), không thể cấp phát!`);
     }
 
-    // Kiểm tra số lượng tồn kho
-    if (medicine.quantity < reqQty) {
+    const medIdStr = String(medicine._id);
+    medicineCache.set(medIdStr, medicine);
+    const totalRequestedForMed = (requestedByMedId.get(medIdStr) || 0) + reqQty;
+    requestedByMedId.set(medIdStr, totalRequestedForMed);
+
+    // Kiểm tra số lượng tồn kho (tính tổng dồn nếu đơn có nhiều dòng cùng 1 thuốc)
+    if (medicine.quantity < totalRequestedForMed) {
       throw new Error(
-        `Thuốc "${medicine.name}" không đủ số lượng tồn kho (hiện còn ${medicine.quantity} ${medicine.unit}, đơn yêu cầu ${reqQty} ${medicine.unit})!`
+        `Thuốc "${medicine.name}" không đủ số lượng tồn kho (hiện còn ${medicine.quantity} ${medicine.unit}, tổng yêu cầu ${totalRequestedForMed} ${medicine.unit})!`
       );
     }
 
@@ -226,35 +242,50 @@ dispensingSchema.statics.dispensePrescription = async function ({
     });
   }
 
-  // 3. Tự động trừ tồn kho (quantity) của từng thuốc
-  for (const check of checkedMedicines) {
-    await Medicine.updateOne(
-      { _id: check.medicineDoc._id },
-      { $inc: { quantity: -check.itemData.quantity } }
-    );
+  // 3. Tự động trừ tồn kho (quantity) theo từng thuốc đã gom nhóm & rollback nếu lưu thất bại
+  const deducted = [];
+  try {
+    for (const [medIdStr, totalQty] of requestedByMedId.entries()) {
+      await Medicine.updateOne(
+        { _id: medIdStr },
+        { $inc: { quantity: -totalQty } }
+      );
+      deducted.push({ medicineId: medIdStr, quantity: totalQty });
+    }
+
+    // 4. Lưu bản ghi lượt cấp thuốc (Dispensing)
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const dispensingCode = `DISP-${new Date().getFullYear()}-${randomNum}`;
+
+    const newDispensing = await this.create({
+      dispensingCode,
+      prescriptionId,
+      prescriptionCode: prescriptionId,
+      petId,
+      petName,
+      customerId,
+      customerName,
+      items: checkedMedicines.map((c) => c.itemData),
+      dispensedBy,
+      dispensedAt: new Date(dispensedAt),
+      totalAmount: calculatedTotal,
+      status: "dispensed",
+      notes,
+    });
+
+    return newDispensing;
+  } catch (err) {
+    // Rollback lại tồn kho cho những thuốc đã trừ
+    for (const item of deducted) {
+      await Medicine.updateOne(
+        { _id: item.medicineId },
+        { $inc: { quantity: item.quantity } }
+      ).catch((rollbackErr) => {
+        console.error(`Lỗi rollback tồn kho cho thuốc ${item.medicineId}:`, rollbackErr.message);
+      });
+    }
+    throw err;
   }
-
-  // 4. Lưu bản ghi lượt cấp thuốc (Dispensing)
-  const randomNum = Math.floor(100 + Math.random() * 900);
-  const dispensingCode = `DISP-${new Date().getFullYear()}-${randomNum}`;
-
-  const newDispensing = await this.create({
-    dispensingCode,
-    prescriptionId,
-    prescriptionCode: prescriptionId,
-    petId,
-    petName,
-    customerId,
-    customerName,
-    items: checkedMedicines.map((c) => c.itemData),
-    dispensedBy,
-    dispensedAt: new Date(dispensedAt),
-    totalAmount: calculatedTotal,
-    status: "dispensed",
-    notes,
-  });
-
-  return newDispensing;
 };
 
 // =====================================================================

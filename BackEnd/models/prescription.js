@@ -65,6 +65,9 @@ const prescriptionSchema = new mongoose.Schema(
     doctorAdvice: { type: String, trim: true },               // Lời dặn dò của bác sĩ
     totalCost: { type: String, trim: true, default: "0đ" },
     notes: { type: String, trim: true },
+    dispensed: { type: Boolean, default: false },
+    dispensedAt: { type: Date, default: null },
+    dispensingCode: { type: String, trim: true, default: "" },
     isDeleted: { type: Boolean, default: false, index: true },
   },
   { timestamps: true }

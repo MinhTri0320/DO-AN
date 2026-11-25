@@ -5,6 +5,7 @@ const campaignRegistrationSchema = new mongoose.Schema(
     campaignId: { type: String, required: true, trim: true, maxlength: 100 },
     name: { type: String, required: true, trim: true, maxlength: 120 },
     phone: { type: String, required: true, trim: true, maxlength: 20 },
+    email: { type: String, required: true, trim: true, lowercase: true },
     userId: { type: String, trim: true, maxlength: 100 },
     reminderSentAt: { type: Date, default: null },
   },

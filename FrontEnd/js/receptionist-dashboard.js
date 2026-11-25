@@ -13,6 +13,28 @@ import { getCurrentUser, logoutUser } from "./auth.js";
 import { API_BASE_URL } from "./config.js";
 import { escapeHTML } from "./storage.js";
 
+const esc = (v) => escapeHTML(v == null ? "" : String(v));
+const escAttr = (v) => esc(v).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+function getLookupStatusBadge(status) {
+  if (status === "Hoàn thành" || status === "completed") {
+    return { cls: "status-completed", label: "Hoàn thành" };
+  }
+  if (status === "Đã xác nhận") {
+    return { cls: "status-confirmed", label: "Đã xác nhận" };
+  }
+  if (status === "in_progress" || status === "Đang làm") {
+    return { cls: "status-confirmed", label: "Đang làm" };
+  }
+  if (status === "Đã hủy" || status === "cancelled") {
+    return { cls: "status-cancelled", label: "Đã hủy" };
+  }
+  return {
+    cls: "status-pending",
+    label: status === "pending" || !status ? "Chờ xác nhận" : status,
+  };
+}
+
 let doctorListCache = [];
 
 function checkReceptionistAuth() {
@@ -72,16 +94,19 @@ async function loadInvoices(status = "") {
     tbody.innerHTML = list
       .map((inv) => {
         const isPaid = inv.status === "paid";
+        const customerName = inv.customerName || inv.customerId?.name || "Khách hàng";
+        const customerPhone = inv.customerPhone || inv.customerId?.phone || "";
+        const customerLabel = customerPhone ? `${customerName} (${customerPhone})` : customerName;
         const actionBtn = isPaid
           ? `<span style="color: #15803D; font-size: 12px; font-weight: 600;">✓ Đã thu tiền</span>`
-          : `<button class="btn-action-small btn-pay" data-invoice-id="${inv._id}" data-amount="${inv.totalAmount}">Thanh toán</button>`;
+          : `<button type="button" class="btn-action-small btn-pay" data-invoice-id="${escAttr(inv._id)}" data-invoice-code="${escAttr(inv.invoiceCode)}" data-customer="${escAttr(customerLabel)}" data-amount="${inv.totalAmount || 0}">Thanh toán</button>`;
 
         return `
           <tr>
-            <td><strong>${inv.invoiceCode}</strong></td>
+            <td><strong>${esc(inv.invoiceCode)}</strong></td>
             <td>
-              ${inv.customerName || inv.customerId?.name || "Khách hàng"}<br/>
-              <small style="color: #666;">${inv.customerPhone || inv.customerId?.phone || ""}</small>
+              ${esc(customerName)}<br/>
+              <small style="color: #666;">${esc(customerPhone)}</small>
             </td>
             <td><strong style="color: #1E429F;">${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ</strong></td>
             <td>
@@ -97,40 +122,108 @@ async function loadInvoices(status = "") {
       .join("");
 
     tbody.querySelectorAll(".btn-pay").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const invId = btn.dataset.invoiceId;
-        const amount = Number(btn.dataset.amount);
-        const method = confirm(`Xác nhận thanh toán ${(amount).toLocaleString("vi-VN")}đ bằng TIỀN MẶT? (Chọn Cancel nếu Chuyển khoản)`) ? "cash" : "transfer";
-
-        try {
-          btn.disabled = true;
-          btn.textContent = "Đang xử lý...";
-          const payRes = await fetch(`${API_BASE_URL}/payments`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-user-id": user.id || user._id,
-            },
-            body: JSON.stringify({
-              invoiceId: invId,
-              amount: amount,
-              paymentMethod: method,
-              cashier: user.name || "Lễ tân",
-            }),
-          });
-          const payData = await payRes.json();
-          if (!payRes.ok) throw new Error(payData.message || "Thanh toán thất bại.");
-          alert(payData.message || "Thanh toán thành công!");
-          loadInvoices(status);
-        } catch (err) {
-          alert("Lỗi thanh toán: " + err.message);
-          btn.disabled = false;
-          btn.textContent = "Thanh toán";
-        }
+      btn.addEventListener("click", () => {
+        openPaymentModal({
+          invoiceId: btn.dataset.invoiceId,
+          invoiceCode: btn.dataset.invoiceCode,
+          customer: btn.dataset.customer,
+          amount: Number(btn.dataset.amount) || 0,
+        });
       });
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
+  }
+}
+
+// Modal Thanh Toán hóa đơn (#modalRecepPayment)
+function openPaymentModal({ invoiceId, invoiceCode, customer, amount }) {
+  const modal = document.getElementById("modalRecepPayment");
+  if (!modal) return;
+
+  document.getElementById("recepPayInvoiceId").value = invoiceId || "";
+  document.getElementById("recepPayAmountRaw").value = String(amount || 0);
+  document.getElementById("recepPayInvoiceCode").textContent = invoiceCode || "—";
+  document.getElementById("recepPayCustomer").textContent = customer || "Khách hàng";
+  document.getElementById("recepPayAmountDisplay").textContent = `${Number(amount || 0).toLocaleString("vi-VN")} đ`;
+
+  const cashRadio = modal.querySelector('input[name="recepPayMethod"][value="cash"]');
+  if (cashRadio) cashRadio.checked = true;
+
+  const notesInput = document.getElementById("recepPayNotes");
+  if (notesInput) notesInput.value = "";
+
+  modal.style.display = "flex";
+}
+
+function closePaymentModal() {
+  const modal = document.getElementById("modalRecepPayment");
+  if (modal) modal.style.display = "none";
+}
+
+function initPaymentModal() {
+  const modal = document.getElementById("modalRecepPayment");
+  const closeBtn = document.getElementById("btnCloseRecepPayModal");
+  const cancelBtn = document.getElementById("btnCancelRecepPayModal");
+  const form = document.getElementById("formRecepPayment");
+
+  if (!modal) return;
+
+  if (closeBtn) closeBtn.addEventListener("click", closePaymentModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closePaymentModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closePaymentModal();
+  });
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+
+      const invoiceId = document.getElementById("recepPayInvoiceId").value;
+      const amount = Number(document.getElementById("recepPayAmountRaw").value) || 0;
+      const checkedMethod = form.querySelector('input[name="recepPayMethod"]:checked');
+      const paymentMethod = checkedMethod ? checkedMethod.value : "cash";
+      const notes = (document.getElementById("recepPayNotes")?.value || "").trim();
+
+      const submitBtn = document.getElementById("btnSubmitRecepPayment");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang xử lý...";
+      }
+
+      try {
+        const payRes = await fetch(`${API_BASE_URL}/payments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": user.id || user._id,
+          },
+          body: JSON.stringify({
+            invoiceId,
+            amount,
+            paymentMethod,
+            cashier: user.name || "Lễ tân",
+            notes,
+          }),
+        });
+        const payData = await payRes.json().catch(() => ({}));
+        if (!payRes.ok) throw new Error(payData.message || "Thanh toán thất bại.");
+
+        closePaymentModal();
+        alert(payData.message || "Thanh toán thành công!");
+        const statusFilter = document.getElementById("recepInvoiceStatusFilter");
+        await loadInvoices(statusFilter ? statusFilter.value : "");
+      } catch (err) {
+        alert("Lỗi thanh toán: " + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "✓ Xác nhận thu tiền";
+        }
+      }
+    });
   }
 }
 
@@ -179,33 +272,44 @@ async function loadAppointments(search = "", customStatus = null) {
             (inv) => `
             <div style="margin-bottom: 3px;">
               <span class="invoice-tag ${inv.status === "paid" ? "paid" : ""}">
-                ${inv.invoiceCode} - ${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ (${inv.status === "paid" ? "Đã TT" : "Chưa TT"})
+                ${esc(inv.invoiceCode)} - ${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ (${inv.status === "paid" ? "Đã TT" : "Chưa TT"})
               </span>
             </div>`
           )
           .join("") || '<span style="color: #999; font-size: 12px;">Chưa xuất HĐ</span>';
 
+        const itemDataAttr = escAttr(JSON.stringify(item));
+        let statusHtml = "";
+        if (item.status === "Chờ xác nhận" || item.status === "pending") {
+          statusHtml = `<span class="status-pill status-pending status-clickable btn-open-confirm" data-item='${itemDataAttr}' title="Nhấp để Duyệt hoặc Hủy đơn khám">Chờ xác nhận 👆</span>`;
+        } else if (item.status === "Đã xác nhận" || item.status === "in_progress" || item.status === "Đang làm") {
+          const confirmedLabel = item.status === "Đã xác nhận" ? "Đã xác nhận" : "Đang làm";
+          statusHtml = `<span class="status-pill status-confirmed status-clickable btn-open-confirm" data-item='${itemDataAttr}' title="Nhấp để phân công lại bác sĩ hoặc hủy lịch">${confirmedLabel}</span>`;
+        } else if (item.status === "Hoàn thành" || item.status === "completed") {
+          statusHtml = `<span class="status-pill status-completed">✓ Hoàn thành</span>`;
+        } else if (item.status === "Đã hủy" || item.status === "cancelled") {
+          statusHtml = `<span class="status-pill status-cancelled">Đã hủy</span>`;
+        } else {
+          statusHtml = `<span class="status-pill status-pending">${esc(item.status || "Chờ xác nhận")}</span>`;
+        }
+
         return `
           <tr>
             <td>
-              <strong>${item.date}</strong><br/>
-              <span style="color: #1E429F; font-weight: 700;">${item.time || "--:--"}</span>
+              <strong>${esc(item.date)}</strong><br/>
+              <span style="color: #1E429F; font-weight: 700;">${esc(item.time || "--:--")}</span>
             </td>
             <td>
-              <strong>${item.serviceName}</strong><br/>
-              <small style="color: #888;">${item.typeName}</small>
+              <strong>${esc(item.serviceName)}</strong><br/>
+              <small style="color: #888;">${esc(item.typeName)}</small>
             </td>
-            <td><strong>${item.petName}</strong></td>
+            <td><strong>${esc(item.petName)}</strong></td>
             <td>
-              ${item.customerName}<br/>
-              <small style="color: #666;">${item.customerPhone}</small>
+              ${esc(item.customerName)}<br/>
+              <small style="color: #666;">${esc(item.customerPhone)}</small>
             </td>
-            <td><small style="color: #555;">${item.doctorName}</small></td>
-            <td>
-              <span class="status-pill status-pending status-clickable btn-open-confirm" data-item='${JSON.stringify(item).replace(/'/g, "&#39;")}' title="Nhấp để Duyệt hoặc Hủy đơn khám">
-                Chờ xác nhận 👆
-              </span>
-            </td>
+            <td><small style="color: #555;">${esc(item.doctorName)}</small></td>
+            <td>${statusHtml}</td>
             <td>${invoicesHtml}</td>
           </tr>
         `;
@@ -215,12 +319,12 @@ async function loadAppointments(search = "", customStatus = null) {
     // Gắn sự kiện click mở pop-up xác nhận phiếu khám
     tbody.querySelectorAll(".btn-open-confirm").forEach((el) => {
       el.addEventListener("click", () => {
-        const item = JSON.parse(el.dataset.item.replace(/&#39;/g, "'"));
+        const item = JSON.parse(el.dataset.item);
         openConfirmPopup(item);
       });
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
   }
 }
 
@@ -242,7 +346,7 @@ function openConfirmPopup(item) {
   if (doctorListCache.length > 0) {
     selectDoc.innerHTML = `<option value="">-- Chọn Bác sĩ phụ trách ca khám --</option>` +
       doctorListCache
-        .map((d) => `<option value="${d.id_bac_sy}">BS. ${d.name} (${d.id_bac_sy}) - ${d.specialty || "Thú y"}</option>`)
+        .map((d) => `<option value="${escAttr(d.id_bac_sy)}">BS. ${esc(d.name)} (${esc(d.id_bac_sy)}) - ${esc(d.specialty || "Thú y")}</option>`)
         .join("");
   } else {
     selectDoc.innerHTML = `<option value="">Chưa có dữ liệu bác sĩ trong hệ thống</option>`;
@@ -287,32 +391,32 @@ async function loadPrescriptions(search = "") {
     tbody.innerHTML = list
       .map((p) => {
         const medListHtml = (p.medicines || [])
-          .map((m) => `• <strong>${m.name}</strong> (${m.quantity || "1"}): ${m.dosage || ""}`)
+          .map((m) => `• <strong>${esc(m.name)}</strong> (${esc(m.quantity || "1")}): ${esc(m.dosage || "")}`)
           .join("<br/>") || '<span style="color: #999;">Không có thuốc</span>';
 
         const dispenseAction = p.isDispensed
-          ? `<span style="color: #166534; font-weight: 600; font-size: 12px;">✓ Đã cấp [${p.dispensing.dispensingCode}]</span>`
-          : `<button class="btn-action-small btn-dispense" data-pres-code="${p.prescriptionCode}">Cấp thuốc &amp; Xuất HĐ</button>`;
+          ? `<span style="color: #166534; font-weight: 600; font-size: 12px;">✓ Đã cấp [${esc(p.dispensing?.dispensingCode || "DISP")}]</span>`
+          : `<button type="button" class="btn-action-small btn-dispense" data-pres-code="${escAttr(p.prescriptionCode)}">Cấp thuốc &amp; Xuất HĐ</button>`;
 
         const invoiceHtml = p.invoice
           ? `<span class="invoice-tag ${p.invoice.status === "paid" ? "paid" : ""}">
-              ${p.invoice.invoiceCode} - ${(p.invoice.totalAmount || 0).toLocaleString("vi-VN")}đ (${p.invoice.status === "paid" ? "Đã TT" : "Chưa TT"})
+              ${esc(p.invoice.invoiceCode)} - ${(p.invoice.totalAmount || 0).toLocaleString("vi-VN")}đ (${p.invoice.status === "paid" ? "Đã TT" : "Chưa TT"})
             </span>`
           : '<span style="color: #888; font-size: 12px;">Chưa lập hóa đơn</span>';
 
         return `
           <tr>
             <td>
-              <strong>${p.prescriptionCode}</strong><br/>
-              <small style="color: #777;">${p.date}</small>
+              <strong>${esc(p.prescriptionCode)}</strong><br/>
+              <small style="color: #777;">${esc(p.date)}</small>
             </td>
             <td>
-              <strong>${p.petName}</strong><br/>
-              <small style="color: #888;">${p.petSpecies}</small>
+              <strong>${esc(p.petName)}</strong><br/>
+              <small style="color: #888;">${esc(p.petSpecies)}</small>
             </td>
             <td>
-              <strong>${p.diagnosis}</strong><br/>
-              <small style="color: #555;">${p.veterinarian}</small>
+              <strong>${esc(p.diagnosis)}</strong><br/>
+              <small style="color: #555;">${esc(p.veterinarian)}</small>
             </td>
             <td style="font-size: 12.5px;">${medListHtml}</td>
             <td>${dispenseAction}</td>
@@ -347,10 +451,16 @@ async function loadPrescriptions(search = "") {
 
           const dispensingId = dispData.dispensing?._id;
           if (dispensingId) {
-            await fetch(`${API_BASE_URL}/invoices/from-dispensing/${dispensingId}`, {
+            const invRes = await fetch(`${API_BASE_URL}/invoices/from-dispensing/${dispensingId}`, {
               method: "POST",
               headers: { "x-user-id": user.id || user._id },
             });
+            const invData = await invRes.json().catch(() => ({}));
+            if (!invRes.ok) {
+              alert("Đã cấp thuốc thành công nhưng lập hóa đơn tự động thất bại: " + (invData.message || invRes.status));
+              loadPrescriptions(search);
+              return;
+            }
           }
 
           alert("Cấp thuốc thành công và đã xuất hóa đơn tiền thuốc!");
@@ -363,7 +473,7 @@ async function loadPrescriptions(search = "") {
       });
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
   }
 }
 
@@ -405,15 +515,15 @@ async function loadPharmacy(search = "", stockStatus = "") {
         const expDateStr = m.expiryDate ? new Date(m.expiryDate).toLocaleDateString("vi-VN") : "--/--/----";
 
         return `
-          <tr data-med-id="${m._id}">
+          <tr data-med-id="${escAttr(m._id)}">
             <td>
-              <strong>${m.name}</strong><br/>
-              <small style="color: #888;">${m.medicineCode || ""} ${m.activeIngredient ? `(${m.activeIngredient})` : ""}</small>
+              <strong>${esc(m.name)}</strong><br/>
+              <small style="color: #888;">${esc(m.medicineCode || "")} ${m.activeIngredient ? `(${esc(m.activeIngredient)})` : ""}</small>
             </td>
-            <td>${m.unit}</td>
+            <td>${esc(m.unit)}</td>
             <td><strong style="color: #1E429F;">${(m.price || 0).toLocaleString("vi-VN")}đ</strong></td>
             <td>
-              <strong>${m.quantity}</strong> ${m.unit}
+              <strong>${esc(m.quantity)}</strong> ${esc(m.unit)}
               ${m.isOutOfStock ? `<br/><span class="stock-badge-out">Hết hàng</span>` : ""}
             </td>
             <td>
@@ -422,8 +532,8 @@ async function loadPharmacy(search = "", stockStatus = "") {
             </td>
             <td>${statusBadge}</td>
             <td>
-              <button class="btn-action-small btn-edit-med" data-json='${JSON.stringify(m).replace(/'/g, "&#39;")}'>Sửa</button>
-              <button class="btn-action-small btn-delete-med" data-id="${m._id}" data-name="${m.name}">Xóa</button>
+              <button type="button" class="btn-action-small btn-edit-med" data-json="${escAttr(JSON.stringify(m))}">Sửa</button>
+              <button type="button" class="btn-action-small btn-delete-med" data-id="${escAttr(m._id)}" data-name="${escAttr(m.name)}">Xóa</button>
             </td>
           </tr>
         `;
@@ -432,7 +542,7 @@ async function loadPharmacy(search = "", stockStatus = "") {
 
     tbody.querySelectorAll(".btn-edit-med").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const m = JSON.parse(btn.dataset.json.replace(/&#39;/g, "'"));
+        const m = JSON.parse(btn.dataset.json);
         openMedicineForm(m);
       });
     });
@@ -444,7 +554,10 @@ async function loadPharmacy(search = "", stockStatus = "") {
         if (!confirm(`Bạn có chắc chắn muốn xóa thuốc "${medName}" khỏi kho không?`)) return;
 
         try {
-          const delRes = await fetch(`${API_BASE_URL}/medicines/${medId}`, { method: "DELETE" });
+          const delRes = await fetch(`${API_BASE_URL}/medicines/${encodeURIComponent(medId)}`, {
+            method: "DELETE",
+            headers: { "x-user-id": user.id || user._id },
+          });
           const delData = await delRes.json();
           if (!delRes.ok) throw new Error(delData.message || "Xóa thuốc thất bại.");
           alert(delData.message || "Đã xóa thuốc thành công!");
@@ -455,7 +568,7 @@ async function loadPharmacy(search = "", stockStatus = "") {
       });
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
   }
 }
 
@@ -528,12 +641,15 @@ function initCreateInvoiceModal() {
 
     // Tải danh sách khách hàng nếu chưa có
     try {
-      const res = await fetch(`${API_BASE_URL}/grooming-meta/customers`);
+      const user = getCurrentUser();
+      const res = await fetch(`${API_BASE_URL}/grooming-meta/customers`, {
+        headers: user ? { "x-user-id": user.id || user._id } : {},
+      });
       const data = await res.json();
       recepCustomersCache = data.customers || [];
       if (customerSelect) {
         customerSelect.innerHTML = `<option value="">-- Chọn khách hàng --</option>` +
-          recepCustomersCache.map(c => `<option value="${c.id}">${escapeHTML(c.name)} (${c.phone || "Chưa có SĐT"})</option>`).join("");
+          recepCustomersCache.map(c => `<option value="${escAttr(c.id)}">${esc(c.name)} (${esc(c.phone || "Chưa có SĐT")})</option>`).join("");
       }
     } catch (e) {
       console.warn("Không thể nạp khách hàng:", e);
@@ -556,7 +672,7 @@ function initCreateInvoiceModal() {
         petSelect.innerHTML = `<option value="">-- Khách này chưa có thú cưng --</option>`;
       } else {
         petSelect.innerHTML = `<option value="">-- Chọn thú cưng --</option>` +
-          cust.pets.map(p => `<option value="${p.id}">${escapeHTML(p.name)} (${p.species || "Thú cưng"})</option>`).join("");
+          cust.pets.map(p => `<option value="${escAttr(p.id)}">${esc(p.name)} (${esc(p.species || "Thú cưng")})</option>`).join("");
       }
     });
   }
@@ -606,7 +722,14 @@ function initCreateInvoiceModal() {
         alert(`✓ Thành công!\n${data.message}`);
         closeModal();
         form.reset();
-        await loadInvoices();
+        if (petSelect) {
+          petSelect.innerHTML = `<option value="">-- Chọn khách hàng trước --</option>`;
+        }
+        if (totalPreview) {
+          totalPreview.textContent = "0 đ";
+        }
+        const statusFilter = document.getElementById("recepInvoiceStatusFilter");
+        await loadInvoices(statusFilter ? statusFilter.value : "");
       } catch (err) {
         alert("Lỗi lập hóa đơn: " + err.message);
       } finally {
@@ -669,9 +792,9 @@ async function executeReceptionistLookup(query) {
             <tbody>
               ${invoices.map(inv => `
                 <tr>
-                  <td><strong>${inv.invoiceCode}</strong></td>
-                  <td>${inv.customerName || "—"}</td>
-                  <td>${inv.customerPhone || "—"}</td>
+                  <td><strong>${esc(inv.invoiceCode)}</strong></td>
+                  <td>${esc(inv.customerName || "—")}</td>
+                  <td>${esc(inv.customerPhone || "—")}</td>
                   <td><strong style="color: #1E429F;">${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ</strong></td>
                   <td><span class="invoice-tag ${inv.status === "paid" ? "paid" : ""}">${inv.status === "paid" ? "Đã thanh toán" : "Chưa thanh toán"}</span></td>
                   <td><small style="color: #666;">${new Date(inv.createdAt).toLocaleString("vi-VN")}</small></td>
@@ -693,24 +816,57 @@ async function executeReceptionistLookup(query) {
               <tr><th>Mã lịch</th><th>Dịch vụ</th><th>Thú cưng</th><th>Khách hàng</th><th>Thời gian</th><th>Trạng thái</th></tr>
             </thead>
             <tbody>
-              ${appointments.map(a => `
+              ${appointments.map(a => {
+                const badge = getLookupStatusBadge(a.status);
+                return `
                 <tr>
-                  <td><strong>${a.bookingCode}</strong></td>
-                  <td>${a.serviceName}</td>
-                  <td>${a.petName}</td>
-                  <td>${a.ownerName} (${a.ownerPhone})</td>
-                  <td>${a.date} - ${a.time}</td>
-                  <td><span class="status-pill status-${a.status === 'Đã xác nhận' ? 'completed' : 'pending'}">${a.status}</span></td>
+                  <td><strong>${esc(a.bookingCode)}</strong></td>
+                  <td>${esc(a.serviceName)}</td>
+                  <td>${esc(a.petName)}</td>
+                  <td>${esc(a.ownerName)} (${esc(a.ownerPhone)})</td>
+                  <td>${esc(a.date)} - ${esc(a.time)}</td>
+                  <td><span class="status-pill ${badge.cls}">${esc(badge.label)}</span></td>
                 </tr>
-              `).join("")}
-              ${groomings.map(g => `
+              `;
+              }).join("")}
+              ${groomings.map(g => {
+                const badge = getLookupStatusBadge(g.status);
+                return `
                 <tr>
-                  <td><strong>${g.groomingCode}</strong></td>
-                  <td>${g.serviceName}</td>
-                  <td>${g.petName}</td>
-                  <td>${g.customerName} (${g.customerPhone})</td>
-                  <td>${g.date} - ${g.startTime}</td>
-                  <td><span class="status-pill status-${g.status === 'completed' ? 'completed' : 'pending'}">${g.status}</span></td>
+                  <td><strong>${esc(g.groomingCode)}</strong></td>
+                  <td>${esc(g.serviceName)}</td>
+                  <td>${esc(g.petName)}</td>
+                  <td>${esc(g.customerName)} (${esc(g.customerPhone)})</td>
+                  <td>${esc(g.date)} - ${esc(g.startTime)}</td>
+                  <td><span class="status-pill ${badge.cls}">${esc(badge.label)}</span></td>
+                </tr>
+              `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // 3. Đơn thuốc
+    if (prescriptions.length > 0) {
+      html += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px 0; color: #1E429F;">💊 Đơn Thuốc (${prescriptions.length})</h4>
+          <table class="portal-table" style="margin-bottom: 0;">
+            <thead>
+              <tr><th>Mã đơn</th><th>Thú cưng</th><th>Chẩn đoán</th><th>Bác sĩ kê</th><th>Số loại thuốc</th><th>Ngày kê</th><th>Ghi chú</th></tr>
+            </thead>
+            <tbody>
+              ${prescriptions.map(p => `
+                <tr>
+                  <td><strong>${esc(p.prescriptionCode)}</strong></td>
+                  <td>${esc(p.petName || "Bé cưng")}${p.petSpecies ? ` (${esc(p.petSpecies)})` : ""}</td>
+                  <td>${esc(p.diagnosis || "—")}</td>
+                  <td>${esc(p.veterinarian || "—")}</td>
+                  <td><strong>${(p.medicines || []).length}</strong> loại thuốc</td>
+                  <td>${esc(p.date || "—")}</td>
+                  <td><small style="color: #666;">${esc(p.notes || p.doctorAdvice || "—")}</small></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -719,7 +875,7 @@ async function executeReceptionistLookup(query) {
       `;
     }
 
-    // 3. Khách hàng & Thú cưng
+    // 4. Khách hàng & Thú cưng
     if (customers.length > 0 || pets.length > 0) {
       html += `
         <div style="display: flex; gap: 20px; flex-wrap: wrap;">
@@ -727,7 +883,7 @@ async function executeReceptionistLookup(query) {
             <div style="flex: 1; min-width: 280px;">
               <h4 style="margin: 0 0 10px 0; color: #1E429F;">👤 Khách Hàng (${customers.length})</h4>
               <ul style="padding-left: 20px; line-height: 1.8;">
-                ${customers.map(c => `<li><strong>${c.name || c.fullName}</strong> - SĐT: ${c.phone || "Chưa có"}</li>`).join("")}
+                ${customers.map(c => `<li><strong>${esc(c.name || c.fullName)}</strong> - SĐT: ${esc(c.phone || "Chưa có")}</li>`).join("")}
               </ul>
             </div>
           ` : ""}
@@ -735,7 +891,7 @@ async function executeReceptionistLookup(query) {
             <div style="flex: 1; min-width: 280px;">
               <h4 style="margin: 0 0 10px 0; color: #1E429F;">🐾 Thú Cưng (${pets.length})</h4>
               <ul style="padding-left: 20px; line-height: 1.8;">
-                ${pets.map(p => `<li><strong>${p.name}</strong> (${p.species || "Thú cưng"} ${p.breed ? "- " + p.breed : ""})</li>`).join("")}
+                ${pets.map(p => `<li><strong>${esc(p.name)}</strong> (${esc(p.species || "Thú cưng")}${p.breed ? " - " + esc(p.breed) : ""})</li>`).join("")}
               </ul>
             </div>
           ` : ""}
@@ -745,7 +901,7 @@ async function executeReceptionistLookup(query) {
 
     container.innerHTML = html;
   } catch (err) {
-    container.innerHTML = `<div style="text-align: center; color: #c53030; padding: 30px;">Lỗi: ${err.message}</div>`;
+    container.innerHTML = `<div style="text-align: center; color: #c53030; padding: 30px;">Lỗi: ${esc(err.message)}</div>`;
   }
 }
 
@@ -779,11 +935,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       const activeContent = document.getElementById(targetTab);
       if (activeContent) activeContent.style.display = "block";
 
-      if (targetTab === "tabRecepInvoices") loadInvoices();
-      else if (targetTab === "tabRecepAppts") loadAppointments();
-      else if (targetTab === "tabRecepPrescriptions") loadPrescriptions();
-      else if (targetTab === "tabRecepPharmacy") loadPharmacy();
-      else if (targetTab === "tabRecepLookup") {
+      if (targetTab === "tabRecepInvoices") {
+        const statusEl = document.getElementById("recepInvoiceStatusFilter");
+        loadInvoices(statusEl ? statusEl.value : "");
+      } else if (targetTab === "tabRecepAppts") {
+        const searchEl = document.getElementById("recepApptSearch");
+        const statusEl = document.getElementById("recepApptStatusFilter");
+        loadAppointments(searchEl ? searchEl.value.trim() : "", statusEl ? statusEl.value : "");
+      } else if (targetTab === "tabRecepPrescriptions") {
+        const presSearchEl = document.getElementById("recepPrescriptionSearch");
+        loadPrescriptions(presSearchEl ? presSearchEl.value.trim() : "");
+      } else if (targetTab === "tabRecepPharmacy") {
+        const pharmSearchEl = document.getElementById("pharmacySearch");
+        const pharmStockEl = document.getElementById("pharmacyStockFilter");
+        loadPharmacy(pharmSearchEl ? pharmSearchEl.value.trim() : "", pharmStockEl ? pharmStockEl.value : "");
+      } else if (targetTab === "tabRecepLookup") {
         const input = document.getElementById("recepLookupInput");
         if (input && input.value.trim()) executeReceptionistLookup(input.value.trim());
       }
@@ -798,7 +964,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Khởi tạo Modal Lập Hóa Đơn Mới
+  // Khởi tạo Modal Thanh Toán Hóa Đơn & Modal Lập Hóa Đơn Mới
+  initPaymentModal();
   initCreateInvoiceModal();
 
   // Tab 2: Tìm kiếm & Lọc trạng thái lịch khám
@@ -873,7 +1040,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         alert(data.message || "Đã duyệt đơn khám và phân công bác sĩ thành công!");
         closeConfirmPopup();
-        loadAppointments();
+        loadAppointments(apptSearch ? apptSearch.value.trim() : "", apptStatusFilter ? apptStatusFilter.value : "");
       } catch (err) {
         alert("Lỗi: " + err.message);
       } finally {
@@ -914,7 +1081,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         alert(data.message || "Đã hủy đơn khám thành công.");
         closeConfirmPopup();
-        loadAppointments();
+        loadAppointments(apptSearch ? apptSearch.value.trim() : "", apptStatusFilter ? apptStatusFilter.value : "");
       } catch (err) {
         alert("Lỗi: " + err.message);
       } finally {
@@ -992,12 +1159,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         btnSaveMed.disabled = true;
         btnSaveMed.textContent = "Đang lưu...";
 
+        const user = getCurrentUser() || currentUser;
         const method = id ? "PUT" : "POST";
-        const url = id ? `${API_BASE_URL}/medicines/${id}` : `${API_BASE_URL}/medicines`;
+        const url = id ? `${API_BASE_URL}/medicines/${encodeURIComponent(id)}` : `${API_BASE_URL}/medicines`;
 
         const res = await fetch(url, {
           method,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": user.id || user._id,
+          },
           body: JSON.stringify(body),
         });
 
@@ -1006,7 +1177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         alert(data.message || "Lưu thuốc thành công!");
         document.getElementById("medicineFormPanel").style.display = "none";
-        loadPharmacy();
+        loadPharmacy(pharmSearch ? pharmSearch.value.trim() : "", pharmStockFilter ? pharmStockFilter.value : "");
       } catch (err) {
         alert("Lỗi lưu thuốc: " + err.message);
       } finally {

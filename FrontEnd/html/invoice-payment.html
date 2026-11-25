@@ -162,7 +162,6 @@
         <section class="profile-main">
           <div class="profile-header">
             <div class="profile-header-left">
-              <span class="section-badge">💳 SPRINT 4: INVOICE &amp; PAYMENT</span>
               <h1>Quản Lý Hóa Đơn &amp; Ghi Nhận Thanh Toán</h1>
               <p>Lập hóa đơn từ thuốc đã cấp, theo dõi trạng thái unpaid/paid, thu tiền mặt hoặc chuyển khoản chính xác 100%.</p>
             </div>
@@ -393,6 +392,97 @@
             <button type="button" class="pill-btn" id="btnCancelPayModal" style="background: #9CA3AF; color: #fff;">Hủy bỏ</button>
             <button type="submit" class="pill-btn" id="btnSubmitPayment" style="background: #16A34A; color: #fff; font-weight: 700;">
               ✓ Xác Nhận Thu Tiền &amp; Đổi Sang Paid
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL LẬP HÓA ĐƠN MỚI (CREATE INVOICE) -->
+    <div id="createInvoiceModal" class="payment-modal-overlay">
+      <div class="payment-modal-card" style="max-width: 580px;">
+        <div class="payment-modal-header" style="background: linear-gradient(135deg, #1E429F 0%, #3B82F6 100%);">
+          <h3>➕ Lập Hóa Đơn Mới</h3>
+          <button type="button" id="btnCloseCreateInvModal" style="background:none; border:none; color:#FFF; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+        <form id="createInvoiceForm">
+          <div class="payment-modal-body">
+            <div id="createInvoiceAlertBox" style="display: none;" class="payment-alert"></div>
+
+            <div class="med-form-grid">
+              <div class="med-form-group full-width">
+                <label for="createInvCustomer">Khách hàng *</label>
+                <select id="createInvCustomer" class="med-form-input" required>
+                  <option value="">-- Đang tải danh sách khách hàng... --</option>
+                </select>
+              </div>
+
+              <div class="med-form-group full-width">
+                <label for="createInvPet">Thú cưng (không bắt buộc)</label>
+                <select id="createInvPet" class="med-form-input" disabled>
+                  <option value="">-- Chọn khách hàng trước --</option>
+                </select>
+              </div>
+
+              <div class="med-form-group full-width">
+                <label for="createInvItemName">Tên dịch vụ / Thuốc *</label>
+                <input
+                  type="text"
+                  id="createInvItemName"
+                  class="med-form-input"
+                  placeholder="Ví dụ: Khám tổng quát, Tắm Spa Poodle, Amoxicillin 250mg..."
+                  required
+                />
+              </div>
+
+              <div class="med-form-group">
+                <label for="createInvItemQty">Số lượng *</label>
+                <input
+                  type="number"
+                  id="createInvItemQty"
+                  class="med-form-input"
+                  min="1"
+                  value="1"
+                  required
+                />
+              </div>
+
+              <div class="med-form-group">
+                <label for="createInvItemPrice">Đơn giá (VNĐ) *</label>
+                <input
+                  type="number"
+                  id="createInvItemPrice"
+                  class="med-form-input"
+                  min="1"
+                  step="1"
+                  placeholder="150000"
+                  required
+                />
+              </div>
+
+              <div class="med-form-group full-width">
+                <label for="createInvNotes">Ghi chú hóa đơn</label>
+                <input
+                  type="text"
+                  id="createInvNotes"
+                  class="med-form-input"
+                  placeholder="Ghi chú thêm về dịch vụ, thuốc hoặc lần khám..."
+                />
+              </div>
+            </div>
+
+            <div class="payment-summary-box" style="margin-bottom: 0;">
+              <div class="payment-summary-row">
+                <span>Tổng tiền tạm tính (Backend sẽ xác nhận lại):</span>
+                <strong id="createInvTotalPreview" style="color: #1E429F; font-size: 18px;">0 đ</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="med-modal-footer">
+            <button type="button" class="pill-btn" id="btnCancelCreateInvModal" style="background: #9CA3AF; color: #fff;">Hủy bỏ</button>
+            <button type="submit" class="pill-btn" id="btnSubmitCreateInvoice" style="background: #1E429F; color: #fff; font-weight: 700;">
+              ✓ Tạo Hóa Đơn (unpaid)
             </button>
           </div>
         </form>

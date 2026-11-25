@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Appointment = require("../models/appointment");
 const Grooming = require("../models/grooming");
 const Invoice = require("../models/invoice");
@@ -6,17 +7,35 @@ const Dispensing = require("../models/dispensing");
 const Doctor = require("../models/doctor");
 const User = require("../models/user");
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function normalizeDateFormats(dateStr) {
+  const s = String(dateStr || "").trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y, m, d] = s.split("-");
+    return { dateISO: s, dateVN: `${d}/${m}/${y}` };
+  }
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const [d, m, y] = s.split("/");
+    return { dateISO: `${y}-${m}-${d}`, dateVN: s };
+  }
+  return { dateISO: s, dateVN: s };
+}
+
 /**
  * Helper xác thực Lễ tân (role_id = 3 hoặc role = 'receptionist', hoặc admin)
  */
 async function verifyReceptionistCaller(req) {
+  const body = req.body || {};
   const callerId =
     req.headers["x-user-id"] ||
     req.headers["user-id"] ||
     req.query.userId ||
-    req.body.userId;
+    body.userId;
 
-  if (callerId) {
+  if (callerId && mongoose.Types.ObjectId.isValid(callerId)) {
     try {
       const user = await User.findById(callerId).lean();
       if (user && (user.role_id === 3 || user.role === "receptionist" || user.role_id === 1 || user.role === "admin")) {
@@ -33,7 +52,6 @@ async function verifyReceptionistCaller(req) {
 }
 
 // 1. Lấy tất cả lịch khám của khách hàng kèm thông tin Hóa đơn (GET /api/receptionist/appointments)
-// Mặc định CHỈ HIỂN THỊ CÁC CA CHỜ XÁC NHẬN (pending / Chờ xác nhận), loại bỏ các ca đã duyệt hoặc đã hủy
 const getAllAppointmentsWithInvoices = async (req, res) => {
   try {
     const auth = await verifyReceptionistCaller(req);
@@ -46,28 +64,51 @@ const getAllAppointmentsWithInvoices = async (req, res) => {
     const filterAppointment = {};
     const filterGrooming = { isDeleted: false };
 
-    // Nếu người dùng chọn trạng thái cụ thể
+    // Map bộ lọc status thông minh cho cả 2 bảng (Appointment & Grooming)
     if (status) {
-      filterAppointment.status = status;
-      filterGrooming.status = status;
+      const s = String(status).trim();
+      if (s === "pending" || s === "Chờ xác nhận") {
+        filterAppointment.status = { $in: ["Chờ xác nhận", "pending"] };
+        filterGrooming.status = { $in: ["pending"] };
+      } else if (s === "Đã xác nhận" || s === "in_progress") {
+        filterAppointment.status = { $in: ["Đã xác nhận"] };
+        filterGrooming.status = { $in: ["in_progress"] };
+      } else if (s === "Hoàn thành" || s === "completed") {
+        filterAppointment.status = { $in: ["Hoàn thành", "completed"] };
+        filterGrooming.status = { $in: ["completed"] };
+      } else if (s === "Đã hủy" || s === "cancelled") {
+        filterAppointment.status = { $in: ["Đã hủy"] };
+        filterGrooming.status = { $in: ["cancelled"] };
+      } else {
+        filterAppointment.status = s;
+        filterGrooming.status = s;
+      }
     } else if (showAll === "false") {
       // Chỉ khi người dùng yêu cầu rõ ràng "chỉ xem chờ duyệt"
       filterAppointment.status = { $in: ["Chờ xác nhận", "pending"] };
-      filterGrooming.status = { $in: ["pending", "Chờ xác nhận"] };
+      filterGrooming.status = { $in: ["pending"] };
     }
     // Mặc định hoặc showAll="true": hiển thị tất cả các ca để Lễ tân theo dõi được hóa đơn và trạng thái!
 
     if (date) {
-      filterAppointment.date = date;
-      filterGrooming.date = date;
+      const { dateISO, dateVN } = normalizeDateFormats(date);
+      const dateValues = [...new Set([String(date).trim(), dateISO, dateVN].filter(Boolean))];
+      filterAppointment.$and = filterAppointment.$and || [];
+      filterAppointment.$and.push({
+        $or: [{ date: { $in: dateValues } }, { dateISO: { $in: dateValues } }],
+      });
+      filterGrooming.$and = filterGrooming.$and || [];
+      filterGrooming.$and.push({
+        $or: [{ date: { $in: dateValues } }, { dateISO: { $in: dateValues } }],
+      });
     } else if (month) {
-      const monthPrefix = new RegExp(`^${month}`);
+      const monthPrefix = new RegExp(`^${escapeRegex(month)}`);
       filterAppointment.dateISO = monthPrefix;
       filterGrooming.dateISO = monthPrefix;
     }
 
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), "i");
+    if (search && String(search).trim()) {
+      const regex = new RegExp(escapeRegex(String(search).trim()), "i");
       filterAppointment.$or = [
         { ownerName: regex },
         { ownerPhone: regex },
@@ -87,23 +128,24 @@ const getAllAppointmentsWithInvoices = async (req, res) => {
       Grooming.find(filterGrooming).sort({ dateISO: -1, startMinutes: 1 }).lean(),
     ]);
 
-    // Tìm hóa đơn khớp theo SĐT khách hàng hoặc Customer ID
+    // Tìm hóa đơn khớp theo SĐT khách hàng hoặc Customer ID (lọc chỉ giữ ObjectId hợp lệ)
     const allPhones = [...new Set([
       ...appointments.map((a) => a.ownerPhone).filter(Boolean),
       ...groomings.map((g) => g.customerPhone).filter(Boolean),
     ])];
-    const allCustomerIds = [...new Set([
+    const validCustomerIds = [...new Set([
       ...appointments.map((a) => String(a.userId || a.ownerId || "")).filter(Boolean),
       ...groomings.map((g) => String(g.customerId || "")).filter(Boolean),
-    ])];
+    ])].filter((id) => mongoose.Types.ObjectId.isValid(id));
 
-    const invoices = await Invoice.find({
-      $or: [
-        { customerPhone: { $in: allPhones } },
-        { customerId: { $in: allCustomerIds } },
-      ],
-      isDeleted: false,
-    }).lean();
+    const invoiceOr = [];
+    if (allPhones.length > 0) invoiceOr.push({ customerPhone: { $in: allPhones } });
+    if (validCustomerIds.length > 0) invoiceOr.push({ customerId: { $in: validCustomerIds } });
+
+    const invoices =
+      invoiceOr.length > 0
+        ? await Invoice.find({ $or: invoiceOr, isDeleted: false }).lean()
+        : [];
 
     const invoiceByPhoneMap = new Map();
     invoices.forEach((inv) => {
@@ -150,7 +192,9 @@ const getAllAppointmentsWithInvoices = async (req, res) => {
         dateISO: a.dateISO,
         time: a.time,
         status: a.status,
-        doctorName: a.notes?.includes("BS") ? a.notes : (a.id_bac_sy ? `BS. [${a.id_bac_sy}]` : "Chưa phân công"),
+        doctorName:
+          a.doctorName ||
+          (a.notes?.includes("BS") ? a.notes : (a.id_bac_sy ? `BS. [${a.id_bac_sy}]` : "Chưa phân công")),
         invoices: uniqueInvoices,
       };
     });
@@ -209,8 +253,8 @@ const getPrescriptionsWithDispensings = async (req, res) => {
     const { search } = req.query;
     const filter = { isDeleted: false };
 
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), "i");
+    if (search && String(search).trim()) {
+      const regex = new RegExp(escapeRegex(String(search).trim()), "i");
       filter.$or = [
         { prescriptionCode: regex },
         { petName: regex },
@@ -227,6 +271,8 @@ const getPrescriptionsWithDispensings = async (req, res) => {
 
     const dispensings = await Dispensing.find({
       prescriptionCode: { $in: presCodes },
+      isDeleted: false,
+      status: "dispensed",
     }).lean();
 
     const dispensingMap = new Map();
@@ -302,7 +348,8 @@ const confirmOrCancelAppointment = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { action, type, id_bac_sy, cancelReason } = req.body;
+    const body = req.body || {};
+    const { action, type, id_bac_sy, cancelReason } = body;
 
     if (!["confirm", "cancel"].includes(action)) {
       return res.status(400).json({
@@ -330,7 +377,13 @@ const confirmOrCancelAppointment = async (req, res) => {
     }
 
     if (type === "grooming") {
-      const grooming = await Grooming.findById(id);
+      let grooming = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        grooming = await Grooming.findById(id);
+      }
+      if (!grooming) {
+        grooming = await Grooming.findOne({ groomingCode: id, isDeleted: false });
+      }
       if (!grooming) {
         return res.status(404).json({ success: false, message: "Không tìm thấy lịch spa/grooming." });
       }
@@ -347,7 +400,9 @@ const confirmOrCancelAppointment = async (req, res) => {
         });
       } else {
         grooming.status = "cancelled";
-        grooming.cancelledReason = cancelReason || "Lễ tân hủy đơn khám";
+        if (cancelReason) {
+          grooming.note = grooming.note ? `${grooming.note} | [Lý do hủy: ${cancelReason}]` : `[Lý do hủy: ${cancelReason}]`;
+        }
         await grooming.save();
         return res.status(200).json({
           success: true,
@@ -355,8 +410,11 @@ const confirmOrCancelAppointment = async (req, res) => {
         });
       }
     } else {
-      // type === "appointment" hoặc tìm theo ID
-      let appointment = await Appointment.findById(id);
+      // type === "appointment" hoặc tìm theo ID / bookingCode
+      let appointment = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        appointment = await Appointment.findById(id);
+      }
       if (!appointment) {
         appointment = await Appointment.findOne({ bookingCode: id });
       }
@@ -369,6 +427,7 @@ const confirmOrCancelAppointment = async (req, res) => {
         appointment.status = "Đã xác nhận";
         appointment.id_bac_sy = doctor.id_bac_sy;
         appointment.doctorPhone = doctor.phone;
+        appointment.doctorName = doctor.name;
         const noteDoctor = `[BS phụ trách: ${doctor.name} - ${doctor.id_bac_sy}]`;
         if (!appointment.notes || !appointment.notes.includes(doctor.id_bac_sy)) {
           appointment.notes = appointment.notes ? `${appointment.notes} | ${noteDoctor}` : noteDoctor;
@@ -380,8 +439,9 @@ const confirmOrCancelAppointment = async (req, res) => {
         });
       } else {
         appointment.status = "Đã hủy";
+        appointment.slotReserved = false;
         appointment.cancelledAt = new Date();
-        appointment.cancelReason = cancelReason || "Lễ tân hủy đơn khám";
+        appointment.cancelReason = cancelReason || "Lễ tân hủy đơn";
         appointment.cancelledBy = "staff";
         await appointment.save();
         return res.status(200).json({
@@ -414,7 +474,7 @@ const lookupReceptionistInfo = async (req, res) => {
       });
     }
 
-    const regex = new RegExp(queryStr, "i");
+    const regex = new RegExp(escapeRegex(queryStr), "i");
     const Pet = require("../models/pet");
 
     // 1. Tra cứu Khách hàng
@@ -469,8 +529,10 @@ const lookupReceptionistInfo = async (req, res) => {
       $or: [
         { prescriptionCode: regex },
         { petName: regex },
-        { diagnosisCode: regex },
+        { diagnosis: regex },
+        { recordCode: regex },
       ],
+      isDeleted: false,
     }).sort({ createdAt: -1 }).lean();
 
     return res.status(200).json({

@@ -7,6 +7,7 @@ const petSchema = new mongoose.Schema(
     breed: { type: String, trim: true },
     gender: { type: String, enum: ["male", "female"] },
     birthDate: { type: Date },
+    ageText: { type: String, trim: true, default: "" },
     weight: { type: Number, min: 0 }, 
     vaccinated: { type: Boolean, default: false },
     sterilized: { type: Boolean, default: false },
@@ -18,9 +19,11 @@ const petSchema = new mongoose.Schema(
 );
 
 petSchema.virtual("age").get(function () {
+  if (this.ageText && this.ageText.trim()) return this.ageText.trim();
   if (!this.birthDate) return null;
   return Math.floor((Date.now() - this.birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
 });
 petSchema.set("toJSON", { virtuals: true });
+petSchema.set("toObject", { virtuals: true });
 
-module.exports = mongoose.model("Pet", petSchema, "pets");
+module.exports = mongoose.models.Pet || mongoose.model("Pet", petSchema, "pets");

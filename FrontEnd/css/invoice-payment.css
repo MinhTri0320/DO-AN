@@ -6,17 +6,22 @@
    3. Nhãn trạng thái unpaid/paid, nút thanh toán, thông báo lỗi
    ============================================================ */
 
+/* Bảo đảm .profile-main không bị tràn ngang khi chứa bảng rộng */
+#invoicePaymentPage .profile-main {
+  min-width: 0;
+}
+
 /* ===== KPI STATS CARDS ===== */
 .invoice-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 560px) {
   .invoice-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 
@@ -138,7 +143,7 @@
   background: #ffffff;
   border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: var(--shadow-sm);
 }
 
@@ -256,10 +261,20 @@
   background: #ffffff;
   width: 90%;
   max-width: 540px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   border-radius: 18px;
   box-shadow: 0 20px 45px rgba(0,0,0,0.3);
   overflow: hidden;
   animation: modalSlideUp 0.25s ease;
+}
+
+.payment-modal-card > form {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .payment-modal-header {
@@ -269,17 +284,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .payment-modal-header h3 {
   margin: 0;
   font-size: 18px;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   color: #ffffff;
 }
 
 .payment-modal-body {
   padding: 22px 24px;
+  overflow-y: auto;
 }
 
 .payment-summary-box {
@@ -371,4 +388,117 @@
 .invoice-detail-items td {
   padding: 10px 14px;
   border-bottom: 1px solid #F0EAE4;
+}
+
+/* ===== FORM & FOOTER DÙNG CHUNG TRONG MODAL HÓA ĐƠN / THANH TOÁN ===== */
+.med-modal-footer {
+  padding: 14px 24px 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.med-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 520px) {
+  .med-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.med-form-group {
+  margin-bottom: 14px;
+}
+
+.med-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.med-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.med-form-input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--line);
+  font-size: 13.5px;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--surface-alt);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.med-form-input:focus {
+  border-color: var(--caramel);
+  background: #ffffff;
+}
+
+.med-form-input:disabled {
+  background: #F3F4F6;
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== TOAST THÔNG BÁO GÓC DƯỚI PHẢI ===== */
+.grooming-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1.5px solid #A7F3D0;
+  border-left: 6px solid #10B981;
+  border-radius: 14px;
+  padding: 14px 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999999;
+  font-size: 14px;
+  font-weight: 600;
+  max-width: 420px;
+  line-height: 1.45;
+  animation: modalSlideUp 0.28s ease;
+}
+
+.grooming-toast.error {
+  background: #FEF2F2;
+  color: #991B1B;
+  border-color: #FCA5A5;
+  border-left-color: #DC2626;
+}
+
+.grooming-toast.warning {
+  background: #FFFBEB;
+  color: #92400E;
+  border-color: #FCD34D;
+  border-left-color: #F59E0B;
 }

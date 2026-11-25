@@ -133,6 +133,9 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       }
       .status-pending { background: #FEF08A; color: #854D0E; border: 1px solid #FDE047; }
+      .status-confirmed { background: #DBEAFE; color: #1E40AF; border: 1px solid #93C5FD; }
+      .status-completed { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+      .status-cancelled { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
       .invoice-tag {
         display: inline-block;
         padding: 3px 8px;
@@ -598,6 +601,62 @@
             ✓ Duyệt đơn khám
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== MODAL THANH TOÁN HÓA ĐƠN ===== -->
+    <div id="modalRecepPayment" class="popup-overlay">
+      <div class="popup-card" style="max-width: 500px;">
+        <div class="popup-header" style="background: linear-gradient(135deg, #15803D 0%, #16A34A 100%);">
+          <h3>💳 Xác Nhận Thanh Toán Hóa Đơn</h3>
+          <button type="button" id="btnCloseRecepPayModal" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;">✕</button>
+        </div>
+        <form id="formRecepPayment">
+          <div class="popup-body">
+            <input type="hidden" id="recepPayInvoiceId" />
+            <input type="hidden" id="recepPayAmountRaw" />
+
+            <div class="info-row">
+              <span>Mã hóa đơn:</span>
+              <strong id="recepPayInvoiceCode">—</strong>
+            </div>
+            <div class="info-row">
+              <span>Khách hàng:</span>
+              <strong id="recepPayCustomer">—</strong>
+            </div>
+            <div class="info-row">
+              <span>Tổng tiền phải thu:</span>
+              <strong id="recepPayAmountDisplay" style="color: #15803D; font-size: 16px;">0 đ</strong>
+            </div>
+
+            <div style="margin-top: 16px;">
+              <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 13.5px; color: #1E429F;">
+                Phương thức thanh toán (*):
+              </label>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <label style="flex: 1; min-width: 170px; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1.5px solid #E6D8CD; border-radius: 10px; background: #FDFBF9; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #4A3324;">
+                  <input type="radio" name="recepPayMethod" value="cash" checked />
+                  <span>💵 Tiền mặt (cash)</span>
+                </label>
+                <label style="flex: 1; min-width: 170px; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1.5px solid #E6D8CD; border-radius: 10px; background: #FDFBF9; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #4A3324;">
+                  <input type="radio" name="recepPayMethod" value="transfer" />
+                  <span>🏦 Chuyển khoản (transfer)</span>
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px;">
+              <label for="recepPayNotes" style="display: block; font-weight: 600; font-size: 13px; color: #666; margin-bottom: 4px;">
+                Ghi chú giao dịch:
+              </label>
+              <input type="text" id="recepPayNotes" class="admin-input" style="width: 100%; box-sizing: border-box;" placeholder="Ví dụ: Khách chuyển khoản / Thu tiền mặt tại quầy..." />
+            </div>
+          </div>
+          <div class="popup-footer">
+            <button type="button" id="btnCancelRecepPayModal" class="pill-btn" style="background: #9CA3AF; color: #fff;">Hủy bỏ</button>
+            <button type="submit" id="btnSubmitRecepPayment" class="pill-btn" style="background: #16A34A; color: #fff; font-weight: 700;">✓ Xác nhận thu tiền</button>
+          </div>
+        </form>
       </div>
     </div>
 

@@ -12,6 +12,9 @@ import { getCurrentUser, logoutUser } from "./auth.js";
 import { API_BASE_URL } from "./config.js";
 import { escapeHTML } from "./storage.js";
 
+const esc = (v) => escapeHTML(v == null ? "" : String(v));
+const escAttr = (v) => esc(v).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
 function checkDoctorAuth() {
   const user = getCurrentUser();
   if (!user || (Number(user.role_id) !== 2 && user.role !== "doctor")) {
@@ -24,8 +27,8 @@ function checkDoctorAuth() {
   if (greetingEl) greetingEl.textContent = `BS: ${user.name}`;
 
   const badgeEl = document.getElementById("doctorCodeBadge");
-  if (badgeEl && user.id_bac_sy) {
-    badgeEl.innerHTML = `Mã BS: <strong>${user.id_bac_sy}</strong>`;
+  if (badgeEl) {
+    badgeEl.innerHTML = `Mã BS: <strong>${esc(user.id_bac_sy || "—")}</strong>`;
   }
   return user;
 }
@@ -36,7 +39,7 @@ async function loadDoctorAppointments(filter = {}) {
   if (!user) return;
 
   const tbody = document.getElementById("docApptsTableBody");
-  tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch hẹn...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Đang tải lịch hẹn...</td></tr>`;
 
   try {
     const params = new URLSearchParams();
@@ -56,20 +59,23 @@ async function loadDoctorAppointments(filter = {}) {
     if (countEl) countEl.textContent = list.length;
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Chưa có ca hẹn nào trong khoảng thời gian này.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888; padding: 30px;">Chưa có ca hẹn nào trong khoảng thời gian này.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = list
       .map((item) => {
         let statusClass = "status-pending";
-        let statusLabel = item.status || "Chờ";
-        if (item.status === "in_progress" || item.status === "Đang làm") {
+        let statusLabel = "Chờ xác nhận";
+        if (item.status === "completed" || item.status === "Hoàn thành") {
+          statusClass = "status-completed";
+          statusLabel = "Hoàn thành";
+        } else if (item.status === "Đã xác nhận") {
+          statusClass = "status-confirmed";
+          statusLabel = "Đã xác nhận";
+        } else if (item.status === "in_progress" || item.status === "Đang làm") {
           statusClass = "status-in_progress";
           statusLabel = "Đang làm";
-        } else if (item.status === "completed" || item.status === "Đã xác nhận") {
-          statusClass = "status-completed";
-          statusLabel = "Đã xác nhận";
         } else if (item.status === "cancelled" || item.status === "Đã hủy") {
           statusClass = "status-cancelled";
           statusLabel = "Đã hủy";
@@ -80,14 +86,14 @@ async function loadDoctorAppointments(filter = {}) {
             (inv) => `
             <div style="margin-bottom: 3px;">
               <span class="invoice-tag ${inv.status === "paid" ? "paid" : ""}">
-                ${inv.invoiceCode} - ${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ (${inv.status === "paid" ? "Đã TT" : "Chưa TT"})
+                ${esc(inv.invoiceCode)} - ${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ (${inv.status === "paid" ? "Đã TT" : "Chưa TT"})
               </span>
             </div>`
           )
           .join("") || '<span style="color: #999; font-size: 12px;">Chưa có HĐ</span>';
 
-        let isCompleted = item.status === "completed" || item.status === "Hoàn thành";
-        let isCancelled = item.status === "cancelled" || item.status === "Đã hủy";
+        const isCompleted = item.status === "completed" || item.status === "Hoàn thành";
+        const isCancelled = item.status === "cancelled" || item.status === "Đã hủy";
 
         let actionHtml = "";
         if (isCompleted) {
@@ -95,25 +101,25 @@ async function loadDoctorAppointments(filter = {}) {
         } else if (isCancelled) {
           actionHtml = `<span style="color: #999; font-size: 12px;">Đã hủy</span>`;
         } else {
-          actionHtml = `<button type="button" class="btn-action-small btn-complete-appt" data-id="${item.code || item.id}" data-pet="${escapeHTML(item.petName)}" data-service="${escapeHTML(item.serviceName)}" style="background: #16A34A; color: #fff; font-weight: 700; cursor: pointer;">✓ Hoàn thành</button>`;
+          actionHtml = `<button type="button" class="btn-action-small btn-complete-appt" data-id="${escAttr(item.code || item.id)}" data-pet="${escAttr(item.petName)}" data-service="${escAttr(item.serviceName)}" style="background: #16A34A; color: #fff; font-weight: 700; cursor: pointer;">✓ Hoàn thành</button>`;
         }
 
         return `
           <tr>
             <td>
-              <strong>${item.date}</strong><br/>
-              <span style="color: #2A5A44; font-weight: 700;">${item.startTime || "--:--"}</span>
+              <strong>${esc(item.date)}</strong><br/>
+              <span style="color: #2A5A44; font-weight: 700;">${esc(item.startTime || "--:--")}</span>
             </td>
             <td>
-              <strong>${item.serviceName}</strong><br/>
+              <strong>${esc(item.serviceName)}</strong><br/>
               <small style="color: #888;">${item.type === "grooming" ? "Spa / Grooming" : "Khám thú y"}</small>
             </td>
-            <td><strong>${item.petName}</strong></td>
+            <td><strong>${esc(item.petName)}</strong></td>
             <td>
-              ${item.customerName}<br/>
-              <small style="color: #666;">${item.customerPhone}</small>
+              ${esc(item.customerName)}<br/>
+              <small style="color: #666;">${esc(item.customerPhone)}</small>
             </td>
-            <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+            <td><span class="status-pill ${statusClass}">${esc(statusLabel)}</span></td>
             <td>${invoicesHtml}</td>
             <td>${actionHtml}</td>
           </tr>
@@ -131,7 +137,7 @@ async function loadDoctorAppointments(filter = {}) {
       });
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
   }
 }
 
@@ -161,8 +167,8 @@ async function loadDoctorDiagnoses() {
   if (!user) return;
 
   const badgeEl = document.getElementById("docDiagDoctorIdBadge");
-  if (badgeEl && user.id_bac_sy) {
-    badgeEl.textContent = `Mã BS: ${user.id_bac_sy}`;
+  if (badgeEl) {
+    badgeEl.textContent = `Mã BS: ${user.id_bac_sy || "—"}`;
   }
 
   const tbody = document.getElementById("docDiagnosesTableBody");
@@ -184,7 +190,7 @@ async function loadDoctorDiagnoses() {
     if (countEl) countEl.textContent = list.length;
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Chưa có phiếu khám nào gắn với mã bác sĩ [${user.id_bac_sy || "này"}].</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Chưa có phiếu khám nào gắn với mã bác sĩ [${esc(user.id_bac_sy || "này")}].</td></tr>`;
       return;
     }
 
@@ -195,32 +201,34 @@ async function loadDoctorDiagnoses() {
             (inv) => `
             <div style="margin-bottom: 3px;">
               <span class="invoice-tag ${inv.status === "paid" ? "paid" : ""}">
-                ${inv.invoiceCode} - ${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ (${inv.status === "paid" ? "Đã TT" : "Chưa TT"})
+                ${esc(inv.invoiceCode)} - ${(inv.totalAmount || 0).toLocaleString("vi-VN")}đ (${inv.status === "paid" ? "Đã TT" : "Chưa TT"})
               </span>
             </div>`
           )
           .join("") || '<span style="color: #999; font-size: 12px;">Chưa lập HĐ</span>';
 
         const vitals = d.vitalSigns || {};
-        const vitalsStr = `T: ${vitals.temperature || "--"}°C | W: ${vitals.weight || "--"}kg | HR: ${vitals.heartRate || "--"}`;
+        const vitalsStr = `T: ${esc(vitals.temperature ?? "--")}°C | W: ${esc(vitals.weight ?? "--")}kg | HR: ${esc(vitals.heartRate ?? "--")}`;
+        const doctorCode = d.id_bac_sy || user.id_bac_sy || "—";
+        const doctorDisplayName = d.doctorName || d.veterinarian || user.name || "";
 
         return `
           <tr>
             <td>
-              <strong>${d.diagnosisCode}</strong><br/>
-              <small style="color: #777;">${d.date || ""}</small>
+              <strong>${esc(d.diagnosisCode)}</strong><br/>
+              <small style="color: #777;">${esc(d.date || "")}</small>
             </td>
             <td>
-              <span style="background: #DEF7EC; color: #03543F; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">${d.id_bac_sy || user.id_bac_sy || "bs00001"}</span><br/>
-              <small style="color: #666;">${d.doctorName || user.name}</small>
+              <span style="background: #DEF7EC; color: #03543F; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">${esc(doctorCode)}</span><br/>
+              <small style="color: #666;">${esc(doctorDisplayName)}</small>
             </td>
             <td>
-              <strong>${d.petName || "Bé cưng"}</strong> (${d.petSpecies || "Thú cưng"})<br/>
-              <small style="color: #666;">Chủ: ${d.customerName || "Khách"} - ${d.customerPhone || ""}</small>
+              <strong>${esc(d.petName || "Bé cưng")}</strong> (${esc(d.petSpecies || "Thú cưng")})<br/>
+              <small style="color: #666;">Chủ: ${esc(d.customerName || "Khách")} - ${esc(d.customerPhone || "")}</small>
             </td>
             <td>
-              <strong style="color: #2A5A44;">${d.confirmedDiagnosis || d.category || "Khám tổng quát"}</strong><br/>
-              <span style="font-size: 12.5px; color: #666;">${d.treatmentPlan || "Đang theo dõi điều trị"}</span>
+              <strong style="color: #2A5A44;">${esc(d.confirmedDiagnosis || d.category || "Khám tổng quát")}</strong><br/>
+              <span style="font-size: 12.5px; color: #666;">${esc(d.treatmentPlan || d.doctorAdvice || "Đang theo dõi điều trị")}</span>
             </td>
             <td><small style="color: #555;">${vitalsStr}</small></td>
             <td>${invoicesHtml}</td>
@@ -229,7 +237,7 @@ async function loadDoctorDiagnoses() {
       })
       .join("");
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
   }
 }
 
@@ -265,20 +273,20 @@ async function loadDoctorMedicalRecords(search = "") {
       .map(
         (r) => `
         <tr>
-          <td><strong>${r.recordCode}</strong></td>
-          <td>${r.date || ""}<br/><small style="color: #888;">${r.veterinarian || ""}</small></td>
+          <td><strong>${esc(r.recordCode)}</strong></td>
+          <td>${esc(r.date || "")}<br/><small style="color: #888;">${esc(r.veterinarian || "")}</small></td>
           <td>
-            <strong>${r.petName}</strong><br/>
-            <small style="color: #777;">${r.petSpecies || ""}</small>
+            <strong>${esc(r.petName)}</strong><br/>
+            <small style="color: #777;">${esc(r.petSpecies || "")}</small>
           </td>
-          <td><span style="color: #2A5A44; font-weight: 700;">${r.confirmedDiagnosis || r.title || "Khám điều trị"}</span></td>
-          <td><small style="color: #555;">${r.treatmentPlan || "Theo dõi định kỳ"}</small></td>
+          <td><span style="color: #2A5A44; font-weight: 700;">${esc(r.confirmedDiagnosis || r.title || "Khám điều trị")}</span></td>
+          <td><small style="color: #555;">${esc(r.treatmentPlan || r.doctorAdvice || "Theo dõi định kỳ")}</small></td>
         </tr>
       `
       )
       .join("");
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #c53030; padding: 30px;">${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #c53030; padding: 30px;">${esc(err.message)}</td></tr>`;
   }
 }
 
@@ -292,7 +300,7 @@ async function executeDoctorLookup(query) {
     return;
   }
 
-  container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 20px;">⏳ Đang tra cứu thông tin cho "${escapeHTML(query)}"...</div>`;
+  container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 20px;">⏳ Đang tra cứu thông tin cho "${esc(query)}"...</div>`;
 
   try {
     const user = getCurrentUser();
@@ -306,11 +314,11 @@ async function executeDoctorLookup(query) {
     const totalFound = records.length + diagnoses.length + prescriptions.length + pets.length + customers.length;
 
     if (totalFound === 0) {
-      container.innerHTML = `<div style="text-align: center; color: #666; padding: 40px 20px;">Không tìm thấy thông tin nào phù hợp với từ khóa "<strong>${escapeHTML(query)}</strong>".</div>`;
+      container.innerHTML = `<div style="text-align: center; color: #666; padding: 40px 20px;">Không tìm thấy thông tin nào phù hợp với từ khóa "<strong>${esc(query)}</strong>".</div>`;
       return;
     }
 
-    let html = `<div style="margin-bottom: 16px; font-weight: 700; color: #2A5A44;">🔍 Kết quả tra cứu cho "${escapeHTML(query)}" (${totalFound} mục tìm thấy):</div>`;
+    let html = `<div style="margin-bottom: 16px; font-weight: 700; color: #2A5A44;">🔍 Kết quả tra cứu cho "${esc(query)}" (${totalFound} mục tìm thấy):</div>`;
 
     // 1. Hồ sơ khám
     if (records.length > 0) {
@@ -324,12 +332,12 @@ async function executeDoctorLookup(query) {
             <tbody>
               ${records.map(r => `
                 <tr>
-                  <td><strong>${r.recordCode}</strong></td>
-                  <td>${r.petName} (${r.petSpecies || "Thú cưng"})</td>
-                  <td>${r.ownerName || "—"} (${r.ownerPhone || "—"})</td>
-                  <td><strong>${r.confirmedDiagnosis || r.title}</strong></td>
-                  <td>${r.date || r.dateISO}</td>
-                  <td><span style="color: #2A5A44; font-weight: 600;">${r.veterinarian || "Bác sĩ"}</span></td>
+                  <td><strong>${esc(r.recordCode)}</strong></td>
+                  <td>${esc(r.petName)} (${esc(r.petSpecies || "Thú cưng")})</td>
+                  <td>${esc(r.ownerName || "—")} (${esc(r.ownerPhone || "—")})</td>
+                  <td><strong>${esc(r.confirmedDiagnosis || r.title || "—")}</strong></td>
+                  <td>${esc(r.date || r.dateISO || "—")}</td>
+                  <td><span style="color: #2A5A44; font-weight: 600;">${esc(r.veterinarian || "Bác sĩ")}</span></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -350,12 +358,12 @@ async function executeDoctorLookup(query) {
             <tbody>
               ${diagnoses.map(d => `
                 <tr>
-                  <td><strong>${d.diagnosisCode}</strong></td>
-                  <td><span style="background: #DEF7EC; color: #03543F; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11.5px;">${d.id_bac_sy || "bs00001"}</span> ${d.doctorName || ""}</td>
-                  <td>${d.petName}</td>
-                  <td>${d.customerName || "—"} (${d.customerPhone || "—"})</td>
-                  <td><strong>${d.confirmedDiagnosis || d.category}</strong></td>
-                  <td><small style="color: #555;">${d.treatmentPlan || "—"}</small></td>
+                  <td><strong>${esc(d.diagnosisCode)}</strong></td>
+                  <td><span style="background: #DEF7EC; color: #03543F; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11.5px;">${esc(d.id_bac_sy || "—")}</span> ${esc(d.doctorName || d.veterinarian || "")}</td>
+                  <td>${esc(d.petName)}</td>
+                  <td>${esc(d.customerName || "—")} (${esc(d.customerPhone || "—")})</td>
+                  <td><strong>${esc(d.confirmedDiagnosis || d.category || "—")}</strong></td>
+                  <td><small style="color: #555;">${esc(d.treatmentPlan || d.doctorAdvice || "—")}</small></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -376,11 +384,11 @@ async function executeDoctorLookup(query) {
             <tbody>
               ${prescriptions.map(p => `
                 <tr>
-                  <td><strong>${p.prescriptionCode}</strong></td>
-                  <td>${p.petName}</td>
+                  <td><strong>${esc(p.prescriptionCode)}</strong></td>
+                  <td>${esc(p.petName)}</td>
                   <td><strong>${(p.medicines || []).length}</strong> loại thuốc</td>
-                  <td>${p.date || "—"}</td>
-                  <td><small style="color: #666;">${p.notes || "—"}</small></td>
+                  <td>${esc(p.date || "—")}</td>
+                  <td><small style="color: #666;">${esc(p.notes || p.doctorAdvice || "—")}</small></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -397,7 +405,7 @@ async function executeDoctorLookup(query) {
             <div style="flex: 1; min-width: 280px;">
               <h4 style="margin: 0 0 10px 0; color: #2A5A44;">🐾 Thú Cưng (${pets.length})</h4>
               <ul style="padding-left: 20px; line-height: 1.8;">
-                ${pets.map(p => `<li><strong>${p.name}</strong> (${p.species || "Thú cưng"} ${p.breed ? "- " + p.breed : ""})</li>`).join("")}
+                ${pets.map(p => `<li><strong>${esc(p.name)}</strong> (${esc(p.species || "Thú cưng")}${p.breed ? " - " + esc(p.breed) : ""})</li>`).join("")}
               </ul>
             </div>
           ` : ""}
@@ -405,7 +413,7 @@ async function executeDoctorLookup(query) {
             <div style="flex: 1; min-width: 280px;">
               <h4 style="margin: 0 0 10px 0; color: #2A5A44;">👤 Khách Hàng (${customers.length})</h4>
               <ul style="padding-left: 20px; line-height: 1.8;">
-                ${customers.map(c => `<li><strong>${c.name || c.fullName}</strong> - SĐT: ${c.phone || "Chưa có"}</li>`).join("")}
+                ${customers.map(c => `<li><strong>${esc(c.name || c.fullName)}</strong> - SĐT: ${esc(c.phone || "Chưa có")}</li>`).join("")}
               </ul>
             </div>
           ` : ""}
@@ -415,7 +423,7 @@ async function executeDoctorLookup(query) {
 
     container.innerHTML = html;
   } catch (err) {
-    container.innerHTML = `<div style="text-align: center; color: #c53030; padding: 30px;">Lỗi: ${err.message}</div>`;
+    container.innerHTML = `<div style="text-align: center; color: #c53030; padding: 30px;">Lỗi: ${esc(err.message)}</div>`;
   }
 }
 
@@ -434,6 +442,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  const monthInput = document.getElementById("docFilterMonth");
+  const getApptMonthFilter = () => (monthInput?.value ? { month: monthInput.value } : {});
+
   // Chuyển Tab 3 chức năng
   const tabButtons = document.querySelectorAll(".tab-btn");
   const tabContents = document.querySelectorAll(".tab-content");
@@ -448,7 +459,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const activeContent = document.getElementById(targetTab);
       if (activeContent) activeContent.style.display = "block";
 
-      if (targetTab === "tabDoctorAppts") loadDoctorAppointments();
+      if (targetTab === "tabDoctorAppts") loadDoctorAppointments(getApptMonthFilter());
       else if (targetTab === "tabDoctorDiagnoses") loadDoctorDiagnoses();
       else if (targetTab === "tabDoctorRecords") loadDoctorMedicalRecords();
       else if (targetTab === "tabDoctorLookup") {
@@ -496,7 +507,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         closeCompleteModal();
 
         // Tải lại dữ liệu các tab
-        await loadDoctorAppointments();
+        await loadDoctorAppointments(getApptMonthFilter());
         await loadDoctorDiagnoses();
         await loadDoctorMedicalRecords();
       } catch (err) {
@@ -523,13 +534,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Bộ lọc Tab 1 (Lịch hẹn cá nhân)
-  const monthInput = document.getElementById("docFilterMonth");
   if (monthInput) {
     const now = new Date();
     const curMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     monthInput.value = curMonth;
     monthInput.addEventListener("change", () => {
-      loadDoctorAppointments({ month: monthInput.value });
+      loadDoctorAppointments(getApptMonthFilter());
     });
   }
 
@@ -537,14 +547,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (btnToday) {
     btnToday.addEventListener("click", () => {
       const now = new Date();
-      const todayStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
-      loadDoctorAppointments({ date: todayStr });
+      const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      if (monthInput) monthInput.value = "";
+      loadDoctorAppointments({ date: todayISO });
     });
   }
 
   const btnUpcoming = document.getElementById("btnDocApptsUpcoming");
   if (btnUpcoming) {
     btnUpcoming.addEventListener("click", () => {
+      if (monthInput) monthInput.value = "";
       loadDoctorAppointments({});
     });
   }
@@ -562,5 +574,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Tải dữ liệu ban đầu cho Tab 1
-  await loadDoctorAppointments();
+  await loadDoctorAppointments(getApptMonthFilter());
 });

@@ -204,7 +204,8 @@
     padding: 28px 20px;
   }
 
-  .pill-btn span {
-    display: none; /* mobile chỉ hiện icon để đỡ chật header */
+  .header-right-cluster .auth .pill-btn svg + span,
+  #authGuest .pill-btn svg + span {
+    display: none; /* mobile chỉ ẩn chữ của nút có icon SVG trong header để đỡ chật */
   }
 }

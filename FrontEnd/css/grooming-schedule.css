@@ -5,6 +5,11 @@
    - Hệ màu ấm áp Pawmily: Espresso, Caramel, Cream, Sage
    ============================================================ */
 
+/* Bảo đảm .profile-main không bị tràn ngang */
+#groomingSchedulePage .profile-main {
+  min-width: 0;
+}
+
 /* ===== TIÊU ĐỀ & THANH ĐIỀU HƯỚNG DỊCH VỤ ===== */
 .grooming-feature-tabs {
   display: flex;
@@ -52,7 +57,7 @@
 /* ===== KPI THỐNG KÊ TRẠNG THÁI GROOMING ===== */
 .grooming-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -118,38 +123,27 @@
   font-weight: 500;
 }
 
-/* ===== LAYOUT CHÍNH: 2 CỘT (FORM TẠO LỊCH + DANH SÁCH LỊCH) ===== */
+/* ===== LAYOUT CHÍNH: XẾP DỌC RỘNG THOÁNG TRONG .profile-main ===== */
 .grooming-main-grid {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 1fr;
   gap: 24px;
   align-items: start;
 }
 
-@media (max-width: 1024px) {
-  .grooming-main-grid {
-    grid-template-columns: 1fr;
-  }
-  .grooming-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
+@media (max-width: 560px) {
   .grooming-stats-grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* ===== CỘT TRÁI: FORM TẠO LỊCH HẸN ===== */
+/* ===== KHỐI FORM TẠO LỊCH HẸN ===== */
 .grooming-form-card {
   background: var(--card);
   border: 1.5px solid var(--line);
   border-radius: var(--radius-card);
   padding: 24px;
   box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 90px;
 }
 
 .card-title-row {
@@ -161,7 +155,7 @@
 
 .card-title-row h2 {
   font-size: 18px;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   color: var(--espresso);
   margin: 0;
 }
@@ -201,7 +195,7 @@
   color: var(--ink);
   background: var(--surface-alt);
   transition: all 0.2s var(--ease-pawmily);
-  font-family: var(--font-base);
+  font-family: var(--font-body);
   box-sizing: border-box;
 }
 
@@ -739,7 +733,7 @@
 
 .no-schedule-title {
   font-size: 18px;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   color: var(--espresso);
   margin-bottom: 6px;
   font-weight: 700;

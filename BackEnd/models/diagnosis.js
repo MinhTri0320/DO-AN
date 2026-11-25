@@ -67,6 +67,8 @@ const diagnosisSchema = new mongoose.Schema(
     petName: { type: String, trim: true, default: "Bé cưng" },
     petSpecies: { type: String, trim: true, default: "Chó" },
     petBreed: { type: String, trim: true, default: "Chưa rõ" },
+    customerName: { type: String, trim: true, default: "" },
+    customerPhone: { type: String, trim: true, default: "" },
     date: { type: String, required: true, trim: true },         // Ngày khám (DD/MM/YYYY)
     dateISO: { type: String, trim: true, index: true },         // YYYY-MM-DD phục vụ sắp xếp thời gian
     category: {
@@ -87,6 +89,7 @@ const diagnosisSchema = new mongoose.Schema(
       trim: true,
       default: "BS. CKI. Nguyễn Văn Hùng",
     },
+    doctorName: { type: String, trim: true, default: "" },
     id_bac_sy: {
       type: String,
       trim: true,

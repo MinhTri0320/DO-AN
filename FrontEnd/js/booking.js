@@ -11,12 +11,14 @@
 
 import { STORAGE_KEYS, getData, setData, escapeHTML } from "./storage.js";
 import { getCurrentUser } from "./auth.js";
-import { getPetsList, fetchPetsFromDatabase } from "./pet-profile.js";
+import { getPetsList, fetchPetsFromDatabase, savePetItem } from "./pet-profile.js";
 import { createNotification, renderNotifBadge } from "./notifications.js";
+import { normalizePhone } from "./validators.js";
 import {
- apiCreateAppointment,
- apiCancelAppointment,
- apiGetBookedSlots,
+  apiCreateAppointment,
+  apiCancelAppointment,
+  apiGetBookedSlots,
+  apiGetAppointments,
 } from "./api.js";
 
 export const SERVICES_CATALOG = [
@@ -88,74 +90,163 @@ const DEFAULT_APPOINTMENTS = [
  },
 ];
 
+function formatDateVNStatic(dateString) {
+  if (!dateString) return "";
+  const parts = String(dateString).split("-");
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return String(dateString);
+}
+
+function belongsToUser(a, user) {
+  if (!a || !user) return false;
+  const uid = user.id || user._id;
+  if (uid && a.userId && String(a.userId) === String(uid)) {
+    return true;
+  }
+  const userPhone = user.phone ? normalizePhone(user.phone) : "";
+  const apptPhone = a.ownerPhone ? normalizePhone(a.ownerPhone) : "";
+  if (userPhone && apptPhone && apptPhone === userPhone) {
+    return true;
+  }
+  if (
+    user.email &&
+    a.userEmail &&
+    String(a.userEmail).trim().toLowerCase() === String(user.email).trim().toLowerCase()
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function normalizeAppointmentItem(a) {
+  if (!a || typeof a !== "object") return null;
+  const code = a.bookingCode || a.id || (a._id ? String(a._id) : "");
+  return {
+    ...a,
+    id: code,
+    bookingCode: a.bookingCode || code,
+    ...(a._id ? { _id: String(a._id) } : {}),
+    ...(a.userId ? { userId: String(a.userId) } : {}),
+    serviceId: a.serviceId || "vet",
+    serviceName: a.serviceName || "Dịch vụ thú y",
+    serviceIcon: a.serviceIcon || "🩺",
+    petName: a.petName || "Bé cưng",
+    petSpecies: a.petSpecies || "Thú cưng",
+    petBreed: a.petBreed || "",
+    petAvatar: a.petAvatar || "../assets/img/golden.jpg",
+    date: a.date || (a.dateISO ? formatDateVNStatic(a.dateISO) : ""),
+    dateISO: a.dateISO || "",
+    time: a.time || "",
+    ownerName: a.ownerName || "",
+    ownerPhone: a.ownerPhone || "",
+    location: a.location || "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng",
+    status: a.status || "Chờ xác nhận",
+    feeDisplay: a.feeDisplay || "",
+    createdAt: a.createdAt || Date.now(),
+  };
+}
+
 export function getAppointments() {
- const existing = getData(STORAGE_KEYS.APPOINTMENTS, null);
- if (existing && Array.isArray(existing)) {
- // Lọc bỏ mockup demo cũ nếu có trong localStorage
- return existing.filter((a) => a.id !== "PC-202610-8821");
- }
- return [];
+  const existing = getData(STORAGE_KEYS.APPOINTMENTS, null);
+  if (existing && Array.isArray(existing)) {
+    // Lọc bỏ mockup demo cũ nếu có trong localStorage
+    return existing.filter((a) => a.id !== "PC-202610-8821");
+  }
+  return [];
 }
 
 export function getUserAppointments() {
- const user = getCurrentUser();
- if (!user) return [];
- const all = getAppointments();
- // Lọc lịch hẹn của tài khoản hiện tại
- return all.filter((a) => {
- return (
- (user.phone && a.ownerPhone === user.phone) ||
- (user.email && a.userEmail === user.email) ||
- (user.name && a.ownerName === user.name)
- );
- });
+  const user = getCurrentUser();
+  if (!user) return [];
+  const all = getAppointments();
+  // Lọc lịch hẹn ưu tiên theo userId / ownerPhone / userEmail (KHÔNG lọc theo ownerName tránh lẫn user trùng tên)
+  return all.filter((a) => belongsToUser(a, user));
+}
+
+export async function syncUserAppointmentsFromDatabase() {
+  const user = getCurrentUser();
+  if (!user) return [];
+
+  const userId = user.id || user._id;
+  const userEmail = user.email;
+  if (!userId && !userEmail) return getUserAppointments();
+
+  try {
+    const remote = await apiGetAppointments(userId, userEmail);
+    if (Array.isArray(remote)) {
+      const normalizedRemote = remote
+        .map(normalizeAppointmentItem)
+        .filter(Boolean);
+
+      // Giữ lại lịch hẹn của tài khoản khác (nếu có trong localStorage), thay thế lịch của user hiện tại bằng bản mới nhất từ MongoDB
+      const otherUsersAppts = getAppointments().filter((a) => !belongsToUser(a, user));
+      const merged = [...normalizedRemote, ...otherUsersAppts];
+      setData(STORAGE_KEYS.APPOINTMENTS, merged);
+      return normalizedRemote;
+    }
+  } catch (err) {
+    console.warn("[Booking] Không thể đồng bộ lịch hẹn từ MongoDB, dùng dữ liệu cục bộ:", err);
+  }
+
+  return getUserAppointments();
 }
 
 export async function saveAppointment(appointment) {
- const list = getAppointments();
- list.unshift(appointment);
- setData(STORAGE_KEYS.APPOINTMENTS, list);
+  const normalized = normalizeAppointmentItem(appointment) || appointment;
+  const list = getAppointments().filter(
+    (a) => String(a.id) !== String(normalized.id)
+  );
+  list.unshift(normalized);
+  setData(STORAGE_KEYS.APPOINTMENTS, list);
 
- // Tạo thông báo mới trong hệ thống thông báo
- const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
- notifs.unshift({
- id: Date.now(),
- icon: "📅",
- title: "Đặt lịch hẹn thành công!",
- desc: `Lịch hẹn ${appointment.serviceName} cho ${appointment.petName} vào ${appointment.time} ngày ${appointment.date} đã được ghi nhận. Mã: ${appointment.id}.`,
- time: Date.now(),
- read: false,
- });
- setData(STORAGE_KEYS.NOTIFICATIONS, notifs);
- renderNotifBadge();
+  // Tạo thông báo mới trong hệ thống thông báo
+  const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
+  notifs.unshift({
+    id: Date.now(),
+    icon: "📅",
+    title: "Đặt lịch hẹn thành công!",
+    desc: `Lịch hẹn ${normalized.serviceName} cho ${normalized.petName} vào ${normalized.time} ngày ${normalized.date} đã được ghi nhận. Mã: ${normalized.id}.`,
+    time: Date.now(),
+    read: false,
+  });
+  setData(STORAGE_KEYS.NOTIFICATIONS, notifs);
+  renderNotifBadge();
 
- return appointment;
+  return normalized;
 }
 
 export async function cancelAppointment(appointmentId) {
- const list = getAppointments();
- const target = list.find((a) => a.id === appointmentId);
- if (target) {
- if (target.bookingCode) {
- await apiCancelAppointment(target.bookingCode);
- }
- target.status = "Đã hủy";
- setData(STORAGE_KEYS.APPOINTMENTS, list);
+  const list = getAppointments();
+  const target = list.find(
+    (a) =>
+      String(a.id) === String(appointmentId) ||
+      String(a.bookingCode || "") === String(appointmentId) ||
+      String(a._id || "") === String(appointmentId)
+  );
+  if (target) {
+    const cancelKey = target.bookingCode || target.id;
+    if (cancelKey) {
+      await apiCancelAppointment(cancelKey);
+    }
+    target.status = "Đã hủy";
+    setData(STORAGE_KEYS.APPOINTMENTS, list);
 
- // Ghi nhận thông báo vào hệ thống thông báo chuông
- const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
- notifs.unshift({
- id: Date.now(),
- icon: "ℹ️",
- title: "Hủy lịch hẹn thành công",
- desc: `Lịch hẹn ${target.serviceName} cho bé ${target.petName} (Mã: ${target.id}) đã được hủy theo yêu cầu của bạn.`,
- time: Date.now(),
- read: false,
- });
- setData(STORAGE_KEYS.NOTIFICATIONS, notifs);
- renderNotifBadge();
- }
- return list;
+    // Ghi nhận thông báo vào hệ thống thông báo chuông
+    const notifs = getData(STORAGE_KEYS.NOTIFICATIONS, []);
+    notifs.unshift({
+      id: Date.now(),
+      icon: "ℹ️",
+      title: "Hủy lịch hẹn thành công",
+      desc: `Lịch hẹn ${target.serviceName} cho bé ${target.petName} (Mã: ${target.id}) đã được hủy theo yêu cầu của bạn.`,
+      time: Date.now(),
+      read: false,
+    });
+    setData(STORAGE_KEYS.NOTIFICATIONS, notifs);
+    renderNotifBadge();
+  }
+  return list;
 }
 
 export function initBookingPage() {
@@ -244,388 +335,542 @@ export function initBookingPage() {
  });
  }
 
- // 2. Khởi tạo danh sách Thú cưng
- function renderPets() {
- const user = getCurrentUser();
- const petStepSubtitle = document.getElementById("petStepSubtitle");
+  // 2. Khởi tạo danh sách Thú cưng
+  async function renderPets(options = {}) {
+    const user = getCurrentUser();
+    const petStepSubtitle = document.getElementById("petStepSubtitle");
 
- if (!user) {
- // Người dùng CHƯA đăng nhập: Hiển thị giao diện nhập thông tin bé cưng cho khách
- if (petStepSubtitle) {
- petStepSubtitle.textContent = "Bạn đang đặt lịch với tư cách Khách (vui lòng điền thông tin bé cưng)";
- }
+    if (!user) {
+      // Người dùng CHƯA đăng nhập: Hiển thị giao diện nhập thông tin bé cưng cho khách
+      if (petStepSubtitle) {
+        petStepSubtitle.textContent = "Bạn đang đặt lịch với tư cách Khách (vui lòng điền thông tin bé cưng)";
+      }
 
- petsContainer.innerHTML = `
- <div class="guest-pet-box">
- <div class="guest-auth-callout">
- <div class="callout-icon">💡</div>
- <div class="callout-text">
- <strong>Bạn chưa đăng nhập tài khoản</strong>
- <span>Đăng nhập để chọn nhanh bé cưng từ hồ sơ đã lưu của bạn, hoặc nhập thông tin bé trực tiếp bên dưới:</span>
- </div>
- <a href="./login.html" class="btn-guest-login">Đăng nhập</a>
- </div>
+      petsContainer.innerHTML = `
+        <div class="guest-pet-box">
+          <div class="guest-auth-callout">
+            <div class="callout-icon">💡</div>
+            <div class="callout-text">
+              <strong>Bạn chưa đăng nhập tài khoản</strong>
+              <span>Đăng nhập để chọn nhanh bé cưng từ hồ sơ đã lưu của bạn, hoặc nhập thông tin bé trực tiếp bên dưới:</span>
+            </div>
+            <a href="./login.html" class="btn-guest-login">Đăng nhập</a>
+          </div>
 
- <div class="form-grid-2">
- <label>
- <span>Tên bé cưng: *</span>
- <div class="input-icon-wrap">
- <svg viewBox="0 0 24 24" fill="currentColor">
- <ellipse cx="12" cy="16" rx="6" ry="5"/>
- <ellipse cx="5" cy="9" rx="2.2" ry="3"/>
- <ellipse cx="10" cy="6" rx="2.2" ry="3"/>
- <ellipse cx="14" cy="6" rx="2.2" ry="3"/>
- <ellipse cx="19" cy="9" rx="2.2" ry="3"/>
- </svg>
- <input type="text" id="guestPetName" placeholder="VD: Bé Lu, Miu Miu, Cún con..." required />
- </div>
- </label>
+          <div class="form-grid-2">
+            <label>
+              <span>Tên bé cưng: *</span>
+              <div class="input-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <ellipse cx="12" cy="16" rx="6" ry="5"/>
+                  <ellipse cx="5" cy="9" rx="2.2" ry="3"/>
+                  <ellipse cx="10" cy="6" rx="2.2" ry="3"/>
+                  <ellipse cx="14" cy="6" rx="2.2" ry="3"/>
+                  <ellipse cx="19" cy="9" rx="2.2" ry="3"/>
+                </svg>
+                <input type="text" id="guestPetName" placeholder="VD: Bé Lu, Miu Miu, Cún con..." required />
+              </div>
+            </label>
 
- <label>
- <span>Loài &amp; Giống thú cưng:</span>
- <div class="input-icon-wrap">
- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
- <circle cx="12" cy="12" r="10"/>
- <path d="M12 6v6l4 2"/>
- </svg>
- <input type="text" id="guestPetBreed" placeholder="VD: Chó Poodle, Mèo Anh lông ngắn..." />
- </div>
- </label>
- </div>
- </div>
- `;
+            <label>
+              <span>Loài &amp; Giống thú cưng:</span>
+              <div class="input-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                <input type="text" id="guestPetBreed" placeholder="VD: Chó Poodle, Mèo Anh lông ngắn..." />
+              </div>
+            </label>
+          </div>
+        </div>
+      `;
 
- const guestPetNameInput = document.getElementById("guestPetName");
- const guestPetBreedInput = document.getElementById("guestPetBreed");
+      const guestPetNameInput = document.getElementById("guestPetName");
+      const guestPetBreedInput = document.getElementById("guestPetBreed");
 
- const updateGuestPetState = () => {
- const pName = guestPetNameInput ? guestPetNameInput.value.trim() : "";
- const pBreed = guestPetBreedInput ? guestPetBreedInput.value.trim() : "";
- if (pName) {
- currentSelection.pet = {
- id: "guest_pet",
- name: pName,
- species: "Thú cưng",
- breed: pBreed || "Thú cưng gia đình",
- avatar: "../assets/img/golden.jpg",
- };
- } else {
- currentSelection.pet = null;
- }
- updateSummary();
- };
+      const updateGuestPetState = () => {
+        const pName = guestPetNameInput ? guestPetNameInput.value.trim() : "";
+        const pBreed = guestPetBreedInput ? guestPetBreedInput.value.trim() : "";
+        if (pName) {
+          currentSelection.pet = {
+            id: "guest_pet",
+            name: pName,
+            species: "Thú cưng",
+            breed: pBreed || "Thú cưng gia đình",
+            avatar: "../assets/img/golden.jpg",
+          };
+        } else {
+          currentSelection.pet = null;
+        }
+        updateSummary();
+      };
 
- if (guestPetNameInput) guestPetNameInput.addEventListener("input", updateGuestPetState);
- if (guestPetBreedInput) guestPetBreedInput.addEventListener("input", updateGuestPetState);
+      if (guestPetNameInput) guestPetNameInput.addEventListener("input", updateGuestPetState);
+      if (guestPetBreedInput) guestPetBreedInput.addEventListener("input", updateGuestPetState);
 
- currentSelection.pet = null; // Khách chưa gõ tên bé thì chưa chọn
- return;
- }
+      currentSelection.pet = null; // Khách chưa gõ tên bé thì chưa chọn
+      updateSummary();
+      return;
+    }
 
- // NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP: Lấy danh sách thú cưng từ hồ sơ của họ
- if (petStepSubtitle) {
- petStepSubtitle.textContent = `Hồ sơ thú cưng đã đăng ký của bạn (${user.name || "Khách hàng"})`;
- }
+    // NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP: Chờ tải danh sách thú cưng mới nhất từ MongoDB trước khi render
+    if (petStepSubtitle) {
+      petStepSubtitle.textContent = `Hồ sơ thú cưng đã đăng ký của bạn (${user.name || "Khách hàng"})`;
+    }
 
- fetchPetsFromDatabase().catch(() => {});
- const pets = getPetsList();
+    let pets = Array.isArray(options.pets) ? options.pets : null;
+    if (!pets) {
+      try {
+        pets = await fetchPetsFromDatabase();
+      } catch {
+        pets = getPetsList();
+      }
+    }
+    if (!Array.isArray(pets)) pets = [];
 
- let html = pets
- .map((p, idx) => {
- const isChecked = idx === 0;
- if (isChecked && !currentSelection.pet) currentSelection.pet = p;
- const avatarSrc = p.avatar || (p.species === "Mèo" ? "../assets/img/frenchie.jpg" : "../assets/img/golden.jpg");
- const speciesIcon = p.species === "Mèo" ? "🐱" : "🐶";
+    const preferredId =
+      options.selectedPetId || currentSelection.pet?.id || currentSelection.pet?._id;
+    let selectedPet = null;
+    if (preferredId) {
+      selectedPet = pets.find(
+        (p) =>
+          String(p.id) === String(preferredId) ||
+          (p._id && String(p._id) === String(preferredId))
+      );
+    }
+    if (!selectedPet && pets.length > 0) {
+      selectedPet = pets[0];
+    }
+    currentSelection.pet = selectedPet || null;
 
- return `
- <label class="booking-pet-item ${isChecked ? "selected" : ""}" data-id="${p.id}">
- <input type="radio" name="petOption" value="${p.id}" ${isChecked ? "checked" : ""} />
- <img class="booking-pet-thumb" src="${escapeHTML(avatarSrc)}" alt="${escapeHTML(p.name)}" />
- <div class="booking-pet-info">
- <strong>${escapeHTML(p.name)}</strong>
- <span>${speciesIcon} ${escapeHTML(p.breed || p.species)}</span>
- </div>
- </label>
- `;
- })
- .join("");
+    let html = pets
+      .map((p) => {
+        const isChecked = Boolean(selectedPet && String(p.id) === String(selectedPet.id));
+        const avatarSrc =
+          p.avatar ||
+          (p.species === "Mèo" ? "../assets/img/frenchie.jpg" : "../assets/img/golden.jpg");
+        const speciesIcon = p.species === "Mèo" ? "🐱" : "🐶";
+        const safeId = escapeHTML(String(p.id || ""));
 
- // Thêm nút bé mới
- html += `
- <div class="booking-pet-new-btn" id="btnQuickAddPet">
- <span>➕</span>
- <span>Thêm bé khác</span>
- </div>
- `;
+        return `
+          <label class="booking-pet-item ${isChecked ? "selected" : ""}" data-id="${safeId}">
+            <input type="radio" name="petOption" value="${safeId}" ${isChecked ? "checked" : ""} />
+            <img class="booking-pet-thumb" src="${escapeHTML(avatarSrc)}" alt="${escapeHTML(p.name)}" />
+            <div class="booking-pet-info">
+              <strong>${escapeHTML(p.name)}</strong>
+              <span>${speciesIcon} ${escapeHTML(p.breed || p.species)}</span>
+            </div>
+          </label>
+        `;
+      })
+      .join("");
 
- petsContainer.innerHTML = `
- <div class="booking-pets-grid">
- ${html}
- </div>
- `;
+    // Thêm nút bé mới
+    html += `
+      <div class="booking-pet-new-btn" id="btnQuickAddPet">
+        <span>➕</span>
+        <span>Thêm bé khác</span>
+      </div>
+    `;
 
- petsContainer.querySelectorAll(".booking-pet-item").forEach((card) => {
- card.addEventListener("click", () => {
- petsContainer.querySelectorAll(".booking-pet-item").forEach((c) => c.classList.remove("selected"));
- card.classList.add("selected");
- const radio = card.querySelector('input[type="radio"]');
- if (radio) radio.checked = true;
+    petsContainer.innerHTML = `
+      <div class="booking-pets-grid">
+        ${html}
+      </div>
+    `;
 
- const pId = card.dataset.id;
- currentSelection.pet = pets.find((p) => p.id === pId);
- updateSummary();
- });
- });
+    petsContainer.querySelectorAll(".booking-pet-item").forEach((card) => {
+      card.addEventListener("click", () => {
+        petsContainer
+          .querySelectorAll(".booking-pet-item")
+          .forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+        const radio = card.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
 
- const btnQuickAdd = document.getElementById("btnQuickAddPet");
- if (btnQuickAdd) {
- btnQuickAdd.addEventListener("click", () => {
- const petName = prompt("Nhập tên bé cưng của bạn:");
- if (petName && petName.trim()) {
- const newPet = {
- id: "pet_" + Date.now(),
- name: petName.trim(),
- species: "Chó",
- breed: "Thú cưng gia đình",
- age: "1 tuổi",
- gender: "Đực",
- avatar: "../assets/img/golden.jpg",
- };
- pets.push(newPet);
- setData(STORAGE_KEYS.PETS, pets);
- currentSelection.pet = newPet;
- renderPets();
- updateSummary();
- }
- });
- }
- }
+        const pId = card.dataset.id;
+        currentSelection.pet = pets.find((p) => String(p.id) === String(pId)) || null;
+        updateSummary();
+      });
+    });
 
- // 3. Khởi tạo Ngày & Khung giờ
- function isWithinClinicHours(timeStr) {
- if (!timeStr) return false;
- const parts = timeStr.split(":");
- if (parts.length < 2) return false;
- const h = parseInt(parts[0], 10);
- const m = parseInt(parts[1], 10);
- if (isNaN(h) || isNaN(m)) return false;
- const totalMinutes = h * 60 + m;
+    const btnQuickAdd = document.getElementById("btnQuickAddPet");
+    if (btnQuickAdd) {
+      btnQuickAdd.addEventListener("click", async () => {
+        const petName = prompt("Nhập tên bé cưng của bạn:");
+        if (!petName || !petName.trim()) return;
 
- // Sáng: 08:30 (510 phút) đến 11:30 (690 phút)
- const isMorning = totalMinutes>= 8 * 60 + 30 && totalMinutes <= 11 * 60 + 30;
- // Chiều & Tối: 13:30 (810 phút) đến 19:30 (1170 phút)
- const isAfternoon = totalMinutes>= 13 * 60 + 30 && totalMinutes <= 19 * 60 + 30;
+        const trimmedName = petName.trim();
+        const ownerId = user.id || user._id;
+        const newPetPayload = {
+          name: trimmedName,
+          species: "Chó",
+          breed: "Thú cưng gia đình",
+          age: "Chưa rõ",
+          ageText: "Chưa rõ",
+          gender: "Đực",
+          vaccinated: "Cần tiêm nhắc lại",
+          sterilized: "Chưa triệt sản",
+          avatar: "../assets/img/golden.jpg",
+          userId: ownerId,
+          ownerId: ownerId,
+        };
 
- return isMorning || isAfternoon;
- }
+        try {
+          const updatedPets = await savePetItem(newPetPayload);
+          const savedPet =
+            [...updatedPets].reverse().find((p) => p.name === trimmedName) ||
+            updatedPets[updatedPets.length - 1] ||
+            null;
+          currentSelection.pet = savedPet;
+          await renderPets({
+            pets: updatedPets,
+            selectedPetId: savedPet?.id || savedPet?._id,
+          });
+          updateSummary();
+        } catch (err) {
+          console.error("Không thể thêm thú cưng mới:", err);
+          alert(err.message || "Không thể thêm thú cưng lúc này. Vui lòng thử lại.");
+        }
+      });
+    }
 
- function initDateTime() {
- // Thiết lập ngày tối thiểu là ngày hôm nay
- const today = new Date();
- const yyyy = today.getFullYear();
- const mm = String(today.getMonth() + 1).padStart(2, "0");
- const dd = String(today.getDate()).padStart(2, "0");
- const todayStr = `${yyyy}-${mm}-${dd}`;
+    updateSummary();
+  }
 
- if (dateInput) {
- dateInput.min = todayStr;
- dateInput.value = todayStr;
- currentSelection.date = formatDateVN(todayStr);
+  // 3. Khởi tạo Ngày & Khung giờ
+  function getTodayISO() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
- dateInput.addEventListener("change", () => {
- currentSelection.date = formatDateVN(dateInput.value);
- currentSelection.time = "";
- const customTimeInput = document.getElementById("customTimeInput");
- if (customTimeInput) {
- customTimeInput.value = "";
- customTimeInput.classList.remove("custom-time-active");
- }
- if (timeSlotsContainer) {
- timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((pill) => {
- pill.classList.remove("selected");
- const radio = pill.querySelector('input[type="radio"]');
- if (radio) radio.checked = false;
- });
- const firstSlot = timeSlotsContainer.querySelector(".time-slot-pill");
- if (firstSlot) {
- firstSlot.classList.add("selected");
- const radio = firstSlot.querySelector('input[type="radio"]');
- if (radio) radio.checked = true;
- currentSelection.time = firstSlot.dataset.time || radio?.value || "";
- }
- }
- refreshBookedSlots();
- updateSummary();
- });
- }
+  function parseTimeToMinutes(timeStr) {
+    if (!timeStr || typeof timeStr !== "string") return -1;
+    const parts = timeStr.split(":");
+    if (parts.length < 2) return -1;
+    const h = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    if (isNaN(h) || isNaN(m)) return -1;
+    return h * 60 + m;
+  }
 
- const customTimeInput = document.getElementById("customTimeInput");
- const customTimeError = document.getElementById("customTimeError");
+  function isPastDateTime(dateISO, timeStr) {
+    if (!dateISO) return false;
+    const todayISO = getTodayISO();
+    if (dateISO < todayISO) return true;
+    if (dateISO > todayISO) return false;
+    const slotMinutes = parseTimeToMinutes(timeStr);
+    if (slotMinutes < 0) return false;
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    return slotMinutes <= nowMinutes;
+  }
 
- // Gắn sự kiện cho các pill time-slot cố định
- if (timeSlotsContainer) {
- const slots = timeSlotsContainer.querySelectorAll(".time-slot-pill");
- slots.forEach((pill) => {
- pill.addEventListener("click", () => {
- if (pill.classList.contains("booked")) {
- alert("Khung giờ đã được đặt trước.");
- return;
- }
- slots.forEach((p) => p.classList.remove("selected"));
- pill.classList.add("selected");
- const radio = pill.querySelector('input[type="radio"]');
- if (radio) radio.checked = true;
+  function isWithinClinicHours(timeStr) {
+    const totalMinutes = parseTimeToMinutes(timeStr);
+    if (totalMinutes < 0) return false;
 
- // Bỏ custom time khi khách click chọn pill cố định
- if (customTimeInput) {
- customTimeInput.value = "";
- customTimeInput.classList.remove("custom-time-active");
- }
- if (customTimeError) customTimeError.hidden = true;
+    // Sáng: 08:30 (510 phút) đến 11:30 (690 phút)
+    const isMorning = totalMinutes >= 8 * 60 + 30 && totalMinutes <= 11 * 60 + 30;
+    // Chiều & Tối: 13:30 (810 phút) đến 19:30 (1170 phút)
+    const isAfternoon = totalMinutes >= 13 * 60 + 30 && totalMinutes <= 19 * 60 + 30;
 
- currentSelection.time = pill.dataset.time || radio?.value || "08:30";
- updateSummary();
- });
- });
- const firstSlot = slots[0];
- if (firstSlot) {
- firstSlot.classList.add("selected");
- const radio = firstSlot.querySelector('input[type="radio"]');
- if (radio) radio.checked = true;
- currentSelection.time = firstSlot.dataset.time || radio?.value || "";
- }
- }
- refreshBookedSlots();
+    return isMorning || isAfternoon;
+  }
 
- // Gắn sự kiện cho ô TỰ CHỌN GIỜ RIÊNG (Custom Time Picker)
- if (customTimeInput) {
- const handleCustomTimeChange = () => {
- const val = customTimeInput.value;
- if (!val) {
- customTimeInput.classList.remove("custom-time-active");
- if (customTimeError) customTimeError.hidden = true;
- return;
- }
+  function applySlotAvailability() {
+    if (!timeSlotsContainer || !dateInput?.value) return;
+    const selectedDate = dateInput.value;
+    const slots = [...timeSlotsContainer.querySelectorAll(".time-slot-pill")];
 
- if (isWithinClinicHours(val)) {
- if (bookedTimes.has(val)) {
- customTimeInput.classList.remove("custom-time-active");
- currentSelection.time = "";
- if (customTimeError) {
- customTimeError.textContent = "Khung giờ đã được đặt trước.";
- customTimeError.hidden = false;
- }
- updateSummary();
- return;
- }
- // Bỏ chọn các pill cố định để khách toàn quyền chọn giờ riêng
- if (timeSlotsContainer) {
- timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((p) => {
- p.classList.remove("selected");
- const r = p.querySelector('input[type="radio"]');
- if (r) r.checked = false;
- });
- }
- customTimeInput.classList.add("custom-time-active");
- if (customTimeError) customTimeError.hidden = true;
+    slots.forEach((pill) => {
+      const time = pill.dataset.time;
+      const isBooked = bookedTimes.has(time);
+      const isPast = isPastDateTime(selectedDate, time);
+      const isDisabled = isBooked || isPast;
 
- currentSelection.time = val;
- updateSummary();
- } else {
- customTimeInput.classList.remove("custom-time-active");
- if (customTimeError) {
- customTimeError.textContent = "⚠️ Khung giờ này ngoài ca tiếp nhận. Vui lòng chọn trong khoảng 08:30 – 11:30 (sáng) hoặc 13:30 – 19:30 (chiều tối).";
- customTimeError.hidden = false;
- }
- }
- };
+      pill.classList.toggle("booked", isBooked);
+      pill.classList.toggle("past", isPast);
+      pill.classList.toggle("disabled", isDisabled);
+      if (isPast && !isBooked) {
+        pill.style.opacity = "0.45";
+        pill.style.cursor = "not-allowed";
+        pill.style.textDecoration = "line-through";
+      } else if (!isBooked) {
+        pill.style.opacity = "";
+        pill.style.cursor = "";
+        pill.style.textDecoration = "";
+      }
 
- customTimeInput.addEventListener("input", handleCustomTimeChange);
- customTimeInput.addEventListener("change", handleCustomTimeChange);
- }
- }
+      pill.setAttribute("aria-disabled", String(isDisabled));
+      pill.title = isBooked
+        ? "Khung giờ đã được đặt trước"
+        : isPast
+        ? "Khung giờ này đã qua"
+        : "";
 
- async function refreshBookedSlots() {
- if (!dateInput?.value) return;
- const selectedDate = dateInput.value;
- availabilityLoaded = false;
- try {
- const result = await apiGetBookedSlots(selectedDate);
- if (dateInput.value !== selectedDate) return;
- bookedTimes = new Set(result.bookedTimes || []);
- availabilityLoaded = true;
- const slots = [...(timeSlotsContainer?.querySelectorAll(".time-slot-pill") || [])];
- slots.forEach((pill) => {
- const time = pill.dataset.time;
- const isBooked = bookedTimes.has(time);
- pill.classList.toggle("booked", isBooked);
- pill.setAttribute("aria-disabled", String(isBooked));
- pill.title = isBooked ? "Khung giờ đã được đặt trước" : "";
- const radio = pill.querySelector('input[type="radio"]');
- if (radio) radio.disabled = isBooked;
- if (isBooked && currentSelection.time === time) {
- pill.classList.remove("selected");
- if (radio) radio.checked = false;
- currentSelection.time = "";
- }
- });
- if (!currentSelection.time) {
- const firstAvailable = slots.find((pill) => !pill.classList.contains("booked"));
- if (firstAvailable) {
- firstAvailable.classList.add("selected");
- const radio = firstAvailable.querySelector('input[type="radio"]');
- if (radio) radio.checked = true;
- currentSelection.time = firstAvailable.dataset.time || radio?.value || "";
- }
- }
- updateSummary();
- } catch (error) {
- if (dateInput.value === selectedDate) {
- availabilityLoaded = false;
- console.error("Không thể kiểm tra khung giờ đã đặt:", error);
- }
- }
- }
+      const radio = pill.querySelector('input[type="radio"]');
+      if (radio) radio.disabled = isDisabled;
 
- function formatDateVN(dateString) {
- if (!dateString) return "";
- const parts = dateString.split("-");
- if (parts.length === 3) {
- return `${parts[2]}/${parts[1]}/${parts[0]}`;
- }
- return dateString;
- }
+      if (isDisabled && currentSelection.time === time) {
+        pill.classList.remove("selected");
+        if (radio) radio.checked = false;
+        currentSelection.time = "";
+      }
+    });
 
- // 4. Tự động nạp thông tin chủ nuôi
- function prefillUserInfo() {
- const user = getCurrentUser();
- if (user) {
- if (ownerNameInput && !ownerNameInput.value) ownerNameInput.value = user.name || "";
- if (ownerPhoneInput && !ownerPhoneInput.value) ownerPhoneInput.value = user.phone || "";
- } else {
- // Khi là khách (chưa đăng nhập): để trống ô nhập, KHÔNG hardcode
- if (ownerNameInput) ownerNameInput.value = "";
- if (ownerPhoneInput) ownerPhoneInput.value = "";
- }
- }
+    const customTimeInput = document.getElementById("customTimeInput");
+    const customTimeError = document.getElementById("customTimeError");
+    if (customTimeInput && customTimeInput.value) {
+      const val = customTimeInput.value;
+      if (bookedTimes.has(val) || isPastDateTime(selectedDate, val)) {
+        customTimeInput.classList.remove("custom-time-active");
+        if (currentSelection.time === val) {
+          currentSelection.time = "";
+        }
+        if (customTimeError) {
+          customTimeError.textContent = bookedTimes.has(val)
+            ? "Khung giờ đã được đặt trước."
+            : "⚠️ Khung giờ này đã qua. Vui lòng chọn khung giờ trong tương lai.";
+          customTimeError.hidden = false;
+        }
+      }
+    }
 
- // 5. Cập nhật thẻ Tóm tắt theo thời gian thực (Live Summary)
- function updateSummary() {
- if (sumService) {
- sumService.textContent = currentSelection.service
- ? `${currentSelection.service.icon} ${currentSelection.service.name}`
- : "Chưa chọn";
- }
- if (sumPet) {
- sumPet.textContent = currentSelection.pet
- ? `${currentSelection.pet.name} (${currentSelection.pet.breed || currentSelection.pet.species})`
- : "Chưa chọn bé cưng";
- }
- if (sumDateTime) {
- const timeTxt = currentSelection.time || "09:30";
- const dateTxt = currentSelection.date || "Hôm nay";
- sumDateTime.textContent = `${timeTxt} • ${dateTxt}`;
- }
+    if (!currentSelection.time && (!customTimeInput || !customTimeInput.value)) {
+      const firstAvailable = slots.find(
+        (pill) => !pill.classList.contains("booked") && !pill.classList.contains("past")
+      );
+      slots.forEach((p) => {
+        p.classList.remove("selected");
+        const r = p.querySelector('input[type="radio"]');
+        if (r) r.checked = false;
+      });
+      if (firstAvailable) {
+        firstAvailable.classList.add("selected");
+        const radio = firstAvailable.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+        currentSelection.time = firstAvailable.dataset.time || radio?.value || "";
+      } else {
+        currentSelection.time = "";
+      }
+    }
+
+    updateSummary();
+  }
+
+  function initDateTime() {
+    // Thiết lập ngày tối thiểu là ngày hôm nay
+    const todayStr = getTodayISO();
+    const customTimeInput = document.getElementById("customTimeInput");
+    const customTimeError = document.getElementById("customTimeError");
+
+    if (dateInput) {
+      dateInput.min = todayStr;
+      dateInput.value = todayStr;
+      currentSelection.date = formatDateVN(todayStr);
+
+      dateInput.addEventListener("change", () => {
+        currentSelection.date = formatDateVN(dateInput.value);
+        currentSelection.time = "";
+        if (customTimeInput) {
+          customTimeInput.value = "";
+          customTimeInput.classList.remove("custom-time-active");
+        }
+        if (customTimeError) customTimeError.hidden = true;
+        if (timeSlotsContainer) {
+          timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((pill) => {
+            pill.classList.remove("selected");
+            const radio = pill.querySelector('input[type="radio"]');
+            if (radio) radio.checked = false;
+          });
+        }
+        applySlotAvailability();
+        refreshBookedSlots();
+      });
+    }
+
+    // Gắn sự kiện cho các pill time-slot cố định
+    if (timeSlotsContainer) {
+      const slots = timeSlotsContainer.querySelectorAll(".time-slot-pill");
+      slots.forEach((pill) => {
+        // Xóa trạng thái checked mặc định cứng từ HTML để applySlotAvailability chọn đúng slot khả dụng đầu tiên
+        pill.classList.remove("selected");
+        const radioInit = pill.querySelector('input[type="radio"]');
+        if (radioInit) radioInit.checked = false;
+
+        pill.addEventListener("click", (ev) => {
+          if (pill.classList.contains("booked")) {
+            ev.preventDefault();
+            alert("Khung giờ đã được đặt trước.");
+            return;
+          }
+          if (
+            pill.classList.contains("past") ||
+            isPastDateTime(dateInput?.value, pill.dataset.time)
+          ) {
+            ev.preventDefault();
+            alert("Khung giờ này đã qua. Vui lòng chọn khung giờ khác hoặc chọn ngày mai.");
+            return;
+          }
+
+          slots.forEach((p) => {
+            p.classList.remove("selected");
+            const r = p.querySelector('input[type="radio"]');
+            if (r) r.checked = false;
+          });
+          pill.classList.add("selected");
+          const radio = pill.querySelector('input[type="radio"]');
+          if (radio) radio.checked = true;
+
+          // Bỏ custom time khi khách click chọn pill cố định
+          if (customTimeInput) {
+            customTimeInput.value = "";
+            customTimeInput.classList.remove("custom-time-active");
+          }
+          if (customTimeError) customTimeError.hidden = true;
+
+          currentSelection.time = pill.dataset.time || radio?.value || "";
+          updateSummary();
+        });
+      });
+    }
+
+    applySlotAvailability();
+    refreshBookedSlots();
+
+    // Gắn sự kiện cho ô TỰ CHỌN GIỜ RIÊNG (Custom Time Picker)
+    if (customTimeInput) {
+      const handleCustomTimeChange = () => {
+        const val = customTimeInput.value;
+        if (!val) {
+          customTimeInput.classList.remove("custom-time-active");
+          if (customTimeError) customTimeError.hidden = true;
+          const selectedPill = timeSlotsContainer?.querySelector(".time-slot-pill.selected");
+          currentSelection.time = selectedPill ? selectedPill.dataset.time || "" : "";
+          updateSummary();
+          return;
+        }
+
+        const clearSelectedPills = () => {
+          if (timeSlotsContainer) {
+            timeSlotsContainer.querySelectorAll(".time-slot-pill").forEach((p) => {
+              p.classList.remove("selected");
+              const r = p.querySelector('input[type="radio"]');
+              if (r) r.checked = false;
+            });
+          }
+        };
+
+        if (!isWithinClinicHours(val)) {
+          customTimeInput.classList.remove("custom-time-active");
+          clearSelectedPills();
+          currentSelection.time = "";
+          if (customTimeError) {
+            customTimeError.textContent =
+              "⚠️ Khung giờ này ngoài ca tiếp nhận. Vui lòng chọn trong khoảng 08:30 – 11:30 (sáng) hoặc 13:30 – 19:30 (chiều tối).";
+            customTimeError.hidden = false;
+          }
+          updateSummary();
+          return;
+        }
+
+        if (isPastDateTime(dateInput?.value, val)) {
+          customTimeInput.classList.remove("custom-time-active");
+          clearSelectedPills();
+          currentSelection.time = "";
+          if (customTimeError) {
+            customTimeError.textContent =
+              "⚠️ Khung giờ này đã qua. Vui lòng chọn khung giờ trong tương lai hoặc chọn ngày mai.";
+            customTimeError.hidden = false;
+          }
+          updateSummary();
+          return;
+        }
+
+        if (bookedTimes.has(val)) {
+          customTimeInput.classList.remove("custom-time-active");
+          clearSelectedPills();
+          currentSelection.time = "";
+          if (customTimeError) {
+            customTimeError.textContent = "Khung giờ đã được đặt trước.";
+            customTimeError.hidden = false;
+          }
+          updateSummary();
+          return;
+        }
+
+        // Hợp lệ: Bỏ chọn các pill cố định để khách toàn quyền chọn giờ riêng
+        clearSelectedPills();
+        customTimeInput.classList.add("custom-time-active");
+        if (customTimeError) customTimeError.hidden = true;
+
+        currentSelection.time = val;
+        updateSummary();
+      };
+
+      customTimeInput.addEventListener("input", handleCustomTimeChange);
+      customTimeInput.addEventListener("change", handleCustomTimeChange);
+    }
+  }
+
+  async function refreshBookedSlots() {
+    if (!dateInput?.value) return;
+    const selectedDate = dateInput.value;
+    availabilityLoaded = false;
+    try {
+      const result = await apiGetBookedSlots(selectedDate);
+      if (dateInput.value !== selectedDate) return;
+      bookedTimes = new Set(result.bookedTimes || []);
+      availabilityLoaded = true;
+      applySlotAvailability();
+    } catch (error) {
+      if (dateInput.value === selectedDate) {
+        availabilityLoaded = false;
+        applySlotAvailability();
+        console.error("Không thể kiểm tra khung giờ đã đặt:", error);
+      }
+    }
+  }
+
+  function formatDateVN(dateString) {
+    return formatDateVNStatic(dateString);
+  }
+
+  // 4. Tự động nạp thông tin chủ nuôi
+  function prefillUserInfo() {
+    const user = getCurrentUser();
+    if (user) {
+      if (ownerNameInput && !ownerNameInput.value) ownerNameInput.value = user.name || "";
+      if (ownerPhoneInput && !ownerPhoneInput.value) ownerPhoneInput.value = user.phone || "";
+    } else {
+      // Khi là khách (chưa đăng nhập): để trống ô nhập, KHÔNG hardcode
+      if (ownerNameInput) ownerNameInput.value = "";
+      if (ownerPhoneInput) ownerPhoneInput.value = "";
+    }
+  }
+
+  // 5. Cập nhật thẻ Tóm tắt theo thời gian thực (Live Summary)
+  function updateSummary() {
+    if (sumService) {
+      sumService.textContent = currentSelection.service
+        ? `${currentSelection.service.icon} ${currentSelection.service.name}`
+        : "Chưa chọn";
+    }
+    if (sumPet) {
+      sumPet.textContent = currentSelection.pet
+        ? `${currentSelection.pet.name} (${currentSelection.pet.breed || currentSelection.pet.species})`
+        : "Chưa chọn bé cưng";
+    }
+    if (sumDateTime) {
+      const timeTxt = currentSelection.time || "Chưa chọn giờ";
+      const dateTxt = currentSelection.date || "Hôm nay";
+      sumDateTime.textContent = `${timeTxt} • ${dateTxt}`;
+    }
  if (sumLocation) {
  sumLocation.textContent = "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng";
  }
@@ -711,301 +956,361 @@ export function initBookingPage() {
  return;
  }
 
- if (!dateInput.value) {
- alert("Vui lòng chọn ngày hẹn.");
- dateInput.focus();
- return;
- }
+    if (!dateInput.value) {
+      alert("Vui lòng chọn ngày hẹn.");
+      dateInput.focus();
+      return;
+    }
 
- if (!currentSelection.time) {
- alert("Vui lòng chọn khung giờ hẹn phù hợp.");
- return;
- }
+    if (dateInput.value < getTodayISO()) {
+      alert("Không thể đặt lịch cho ngày trong quá khứ. Vui lòng chọn từ hôm nay trở đi.");
+      dateInput.focus();
+      return;
+    }
 
- const ownerName = (ownerNameInput.value || "").trim();
- if (!ownerName) {
- alert("Vui lòng nhập họ và tên người đặt lịch.");
- ownerNameInput.focus();
- return;
- }
+    if (!currentSelection.time) {
+      alert("Vui lòng chọn khung giờ hẹn phù hợp.");
+      return;
+    }
 
- const ownerPhone = (ownerPhoneInput.value || "").trim();
- if (!ownerPhone) {
- alert("Vui lòng nhập số điện thoại liên hệ.");
- ownerPhoneInput.focus();
- return;
- }
+    if (!isWithinClinicHours(currentSelection.time)) {
+      alert(
+        "Khung giờ ngoài ca tiếp nhận. Vui lòng chọn trong khoảng 08:30 – 11:30 hoặc 13:30 – 19:30."
+      );
+      return;
+    }
 
- const user = getCurrentUser();
- if (!availabilityLoaded) {
- await refreshBookedSlots();
- if (!availabilityLoaded) {
- alert("Không thể kiểm tra khung giờ. Vui lòng thử lại sau.");
- return;
- }
- }
- if (bookedTimes.has(currentSelection.time)) {
- alert("Khung giờ đã được đặt trước.");
- await refreshBookedSlots();
- return;
- }
+    if (isPastDateTime(dateInput.value, currentSelection.time)) {
+      alert("Khung giờ đã qua. Vui lòng chọn khung giờ trong tương lai hoặc chọn ngày khác.");
+      applySlotAvailability();
+      return;
+    }
 
- let newAppointment;
- try {
- const result = await apiCreateAppointment({
- userId: user?.id ? String(user.id) : undefined,
- userEmail: user?.email,
- serviceId: currentSelection.service.id,
- serviceName: currentSelection.service.name,
- serviceIcon: currentSelection.service.icon,
- petName: currentSelection.pet.name,
- petSpecies: currentSelection.pet.species || "Thú cưng",
- petBreed: currentSelection.pet.breed || "",
- petAvatar: currentSelection.pet.avatar || "../assets/img/golden.jpg",
- dateISO: dateInput.value,
- time: currentSelection.time,
- ownerName,
- ownerPhone,
- notes: (notesInput?.value || "").trim(),
- location: "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng",
- feeDisplay: currentSelection.service.priceDisplay,
- });
- newAppointment = {
- ...result,
- id: result.bookingCode,
- bookingCode: result.bookingCode,
- date: formatDateVN(dateInput.value),
- createdAt: Date.now(),
- };
- await saveAppointment(newAppointment);
- } catch (error) {
- if (error.statusCode === 409) {
- alert("Khung giờ đã được đặt trước.");
- await refreshBookedSlots();
- return;
- }
- console.error("Không thể đặt lịch:", error);
- alert(error.message || "Không thể đặt lịch lúc này. Vui lòng thử lại.");
- return;
- }
- const bookingCode = newAppointment.bookingCode;
- if (user?.id) {
- createNotification({
- userId: String(user.id),
- type: "appointment",
- title: "Đặt lịch hẹn thành công!",
- message: `Lịch hẹn ${newAppointment.serviceName} cho ${newAppointment.petName} vào ${newAppointment.time} ngày ${newAppointment.date} đã được ghi nhận. Mã: ${newAppointment.id}.`,
- icon: "📅",
- }).catch((error) => {
- console.error("Không thể lưu thông báo đặt lịch:", error);
- });
- }
+    const ownerName = (ownerNameInput.value || "").trim();
+    if (!ownerName) {
+      alert("Vui lòng nhập họ và tên người đặt lịch.");
+      ownerNameInput.focus();
+      return;
+    }
 
- // Mở Modal thành công
- if (successBookingId) successBookingId.textContent = `Mã lịch hẹn: ${bookingCode}`;
- if (successRecapService) successRecapService.textContent = `${newAppointment.serviceIcon} ${newAppointment.serviceName}`;
- if (successRecapPet) successRecapPet.textContent = `${newAppointment.petName} (${newAppointment.petBreed})`;
- if (successRecapTime) successRecapTime.textContent = `${newAppointment.time} ngày ${newAppointment.date}`;
+    const ownerPhone = normalizePhone(ownerPhoneInput.value || "");
+    if (!ownerPhone) {
+      alert("Vui lòng nhập số điện thoại liên hệ.");
+      ownerPhoneInput.focus();
+      return;
+    }
 
- if (successModal) successModal.hidden = false;
- updateBadgeCount();
- });
+    const user = getCurrentUser();
+    const userId = user?.id || user?._id;
+    if (!availabilityLoaded) {
+      await refreshBookedSlots();
+      if (!availabilityLoaded) {
+        alert("Không thể kiểm tra khung giờ. Vui lòng thử lại sau.");
+        return;
+      }
+    }
+    if (bookedTimes.has(currentSelection.time)) {
+      alert("Khung giờ đã được đặt trước.");
+      await refreshBookedSlots();
+      return;
+    }
 
- if (successModalClose) {
- successModalClose.addEventListener("click", () => {
- successModal.hidden = true;
- });
- }
+    let newAppointment;
+    try {
+      const result = await apiCreateAppointment({
+        userId: userId ? String(userId) : undefined,
+        userEmail: user?.email,
+        serviceId: currentSelection.service.id,
+        serviceName: currentSelection.service.name,
+        serviceIcon: currentSelection.service.icon,
+        petName: currentSelection.pet.name,
+        petSpecies: currentSelection.pet.species || "Thú cưng",
+        petBreed: currentSelection.pet.breed || "",
+        petAvatar: currentSelection.pet.avatar || "../assets/img/golden.jpg",
+        dateISO: dateInput.value,
+        time: currentSelection.time,
+        ownerName,
+        ownerPhone,
+        notes: (notesInput?.value || "").trim(),
+        location: "123 Nguyễn Văn Linh, P. Hải Châu, TP. Đà Nẵng",
+        feeDisplay: currentSelection.service.priceDisplay,
+      });
+      newAppointment = {
+        ...result,
+        id: result.bookingCode || result._id,
+        bookingCode: result.bookingCode,
+        date: formatDateVN(dateInput.value),
+        createdAt: Date.now(),
+      };
+      await saveAppointment(newAppointment);
+    } catch (error) {
+      if (error.statusCode === 409) {
+        alert("Khung giờ đã được đặt trước.");
+        await refreshBookedSlots();
+        return;
+      }
+      console.error("Không thể đặt lịch:", error);
+      alert(error.message || "Không thể đặt lịch lúc này. Vui lòng thử lại.");
+      return;
+    }
 
- if (btnViewMyAppts) {
- btnViewMyAppts.addEventListener("click", () => {
- successModal.hidden = true;
- const user = getCurrentUser();
- if (user) {
- switchToMyAppointmentsTab();
- } else {
- alert("Để xem và quản lý lịch hẹn vừa đặt, bạn hãy đăng nhập hoặc tạo tài khoản mới!");
- window.location.href = "./login.html";
- }
- });
- }
+    // Làm mới khung giờ đã đặt ngay sau khi đặt lịch thành công
+    await refreshBookedSlots();
+    if (user) {
+      await syncUserAppointmentsFromDatabase();
+    }
 
- // 7. Xử lý Tab "Lịch hẹn đã đặt (My Appointments)"
- function updateBadgeCount() {
- const user = getCurrentUser();
- const bookingViewTabs = document.getElementById("bookingViewTabs");
+    const bookingCode = newAppointment.bookingCode || newAppointment.id;
+    if (userId) {
+      createNotification({
+        userId: String(userId),
+        type: "appointment",
+        title: "Đặt lịch hẹn thành công!",
+        message: `Lịch hẹn ${newAppointment.serviceName} cho ${newAppointment.petName} vào ${newAppointment.time} ngày ${newAppointment.date} đã được ghi nhận. Mã: ${newAppointment.id}.`,
+        icon: "📅",
+      }).catch((error) => {
+        console.error("Không thể lưu thông báo đặt lịch:", error);
+      });
+    }
 
- if (!user) {
- // Khách vãng lai: ẨN hoàn toàn thanh tab "Lịch hẹn của tôi" và badge
- if (bookingViewTabs) bookingViewTabs.style.display = "none";
- if (tabMyAppointments) tabMyAppointments.hidden = true;
- if (apptBadgeCount) {
- apptBadgeCount.textContent = "0";
- apptBadgeCount.hidden = true;
- }
- return;
- }
+    // Mở Modal thành công
+    if (successBookingId) successBookingId.textContent = `Mã lịch hẹn: ${bookingCode}`;
+    if (successRecapService)
+      successRecapService.textContent = `${newAppointment.serviceIcon} ${newAppointment.serviceName}`;
+    if (successRecapPet)
+      successRecapPet.textContent = `${newAppointment.petName} (${newAppointment.petBreed})`;
+    if (successRecapTime)
+      successRecapTime.textContent = `${newAppointment.time} ngày ${newAppointment.date}`;
 
- // Đã đăng nhập: Hiện tab chuyển đổi và badge số lượng thật
- if (bookingViewTabs) bookingViewTabs.style.display = "inline-flex";
- if (tabMyAppointments) tabMyAppointments.hidden = false;
+    if (successModal) successModal.hidden = false;
+    updateBadgeCount();
+  });
 
- const myAppts = getUserAppointments();
- if (apptBadgeCount) {
- apptBadgeCount.textContent = myAppts.length;
- apptBadgeCount.hidden = myAppts.length === 0;
- }
- }
+  if (successModalClose) {
+    successModalClose.addEventListener("click", () => {
+      successModal.hidden = true;
+    });
+  }
 
- function renderMyAppointments() {
- const listContainer = document.getElementById("appointmentCardsList");
- const emptyBox = document.getElementById("emptyAppointmentsBox");
- const guestAuthBox = document.getElementById("guestAuthPromptBox");
- const filterBar = document.querySelector(".appointments-filter-bar");
- if (!listContainer) return;
+  if (btnViewMyAppts) {
+    btnViewMyAppts.addEventListener("click", () => {
+      successModal.hidden = true;
+      const user = getCurrentUser();
+      if (user) {
+        switchToMyAppointmentsTab();
+      } else {
+        alert("Để xem và quản lý lịch hẹn vừa đặt, bạn hãy đăng nhập hoặc tạo tài khoản mới!");
+        window.location.href = "./login.html";
+      }
+    });
+  }
 
- const user = getCurrentUser();
- if (!user) {
- // Khách chưa đăng nhập: Không hiển thị danh sách của ai cả, mà hiện nhắc đăng nhập
- if (guestAuthBox) guestAuthBox.hidden = false;
- if (emptyBox) emptyBox.hidden = true;
- if (listContainer) listContainer.innerHTML = "";
- if (filterBar) filterBar.style.display = "none";
- updateBadgeCount();
- return;
- }
+  // 7. Xử lý Tab "Lịch hẹn đã đặt (My Appointments)"
+  function updateBadgeCount() {
+    const user = getCurrentUser();
+    const bookingViewTabs = document.getElementById("bookingViewTabs");
 
- if (guestAuthBox) guestAuthBox.hidden = true;
- if (filterBar) filterBar.style.display = "flex";
+    if (!user) {
+      // Khách vãng lai: ẨN hoàn toàn thanh tab "Lịch hẹn của tôi" và badge
+      if (bookingViewTabs) bookingViewTabs.style.display = "none";
+      if (tabMyAppointments) tabMyAppointments.hidden = true;
+      if (apptBadgeCount) {
+        apptBadgeCount.textContent = "0";
+        apptBadgeCount.hidden = true;
+      }
+      return;
+    }
 
- let list = getUserAppointments();
- updateBadgeCount();
+    // Đã đăng nhập: Hiện tab chuyển đổi và badge số lượng thật
+    if (bookingViewTabs) bookingViewTabs.style.display = "inline-flex";
+    if (tabMyAppointments) tabMyAppointments.hidden = false;
 
- if (list.length === 0) {
- listContainer.innerHTML = "";
- if (emptyBox) emptyBox.hidden = false;
- return;
- }
+    const myAppts = getUserAppointments();
+    if (apptBadgeCount) {
+      apptBadgeCount.textContent = myAppts.length;
+      apptBadgeCount.hidden = myAppts.length === 0;
+    }
+  }
 
- if (emptyBox) emptyBox.hidden = true;
+  function renderMyAppointments() {
+    const listContainer = document.getElementById("appointmentCardsList");
+    const emptyBox = document.getElementById("emptyAppointmentsBox");
+    const guestAuthBox = document.getElementById("guestAuthPromptBox");
+    const filterBar = document.querySelector(".appointments-filter-bar");
+    if (!listContainer) return;
 
- // Lọc theo bộ lọc trạng thái nếu có
- let displayList = list;
- if (currentStatusFilter === "pending") {
- displayList = list.filter((a) => a.status === "Chờ xác nhận");
- } else if (currentStatusFilter === "confirmed") {
- displayList = list.filter((a) => a.status === "Đã xác nhận");
- } else if (currentStatusFilter === "cancelled") {
- displayList = list.filter((a) => a.status === "Đã hủy");
- }
+    const user = getCurrentUser();
+    if (!user) {
+      // Khách chưa đăng nhập: Không hiển thị danh sách của ai cả, mà hiện nhắc đăng nhập
+      if (guestAuthBox) guestAuthBox.hidden = false;
+      if (emptyBox) emptyBox.hidden = true;
+      if (listContainer) listContainer.innerHTML = "";
+      if (filterBar) filterBar.style.display = "none";
+      updateBadgeCount();
+      return;
+    }
 
- if (displayList.length === 0) {
- listContainer.innerHTML = `
- <div style="text-align:center; padding: 40px 20px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius-card); color:var(--ink-soft);">
- Không có lịch hẹn nào ở trạng thái này.
- </div>
- `;
- return;
- }
+    if (guestAuthBox) guestAuthBox.hidden = true;
+    if (filterBar) filterBar.style.display = "flex";
 
- listContainer.innerHTML = displayList
- .map((a) => {
- let statusClass = "pending";
- if (a.status === "Đã xác nhận") statusClass = "confirmed";
- if (a.status === "Đã hủy") statusClass = "cancelled";
+    let list = getUserAppointments();
+    updateBadgeCount();
 
- const canCancel = a.status === "Chờ xác nhận" || a.status === "Đã xác nhận";
+    if (list.length === 0) {
+      listContainer.innerHTML = "";
+      if (emptyBox) emptyBox.hidden = false;
+      return;
+    }
 
- return `
- <article class="appointment-card" data-id="${a.id}">
- <div class="appt-left">
- <div class="appt-icon-box">${a.serviceIcon || "🩺"}</div>
- <div class="appt-info">
- <h4>${escapeHTML(a.serviceName)}</h4>
- <div class="appt-meta">
- <span>🐾 <strong>${escapeHTML(a.petName)}</strong> (${escapeHTML(a.petBreed || a.petSpecies)})</span>
- <span>📅 <strong>${escapeHTML(a.time)}</strong> • ${escapeHTML(a.date)}</span>
- <span>📍 ${escapeHTML(a.location)}</span>
- </div>
- </div>
- </div>
+    if (emptyBox) emptyBox.hidden = true;
 
- <div class="appt-right">
- <span class="appt-status ${statusClass}">${escapeHTML(a.status)}</span>
- <span style="font-size:12px; color:var(--ink-faint)">Mã: ${escapeHTML(a.id)}</span>
- ${canCancel ? `<button class="btn-cancel-appt" data-action="cancel" data-id="${a.id}" type="button">Hủy lịch</button>` : ""}
- </div>
- </article>
- `;
- })
- .join("");
+    // Lọc theo bộ lọc trạng thái nếu có
+    let displayList = list;
+    if (currentStatusFilter === "pending") {
+      displayList = list.filter((a) => a.status === "Chờ xác nhận" || a.status === "pending");
+    } else if (currentStatusFilter === "confirmed") {
+      displayList = list.filter((a) => a.status === "Đã xác nhận");
+    } else if (currentStatusFilter === "cancelled") {
+      displayList = list.filter((a) => a.status === "Đã hủy");
+    }
 
- listContainer.querySelectorAll('[data-action="cancel"]').forEach((btn) => {
- btn.addEventListener("click", async () => {
- const id = btn.dataset.id;
- if (confirm(`Bạn có chắc chắn muốn hủy lịch hẹn mã ${id} không?`)) {
- try {
- await cancelAppointment(id);
- renderMyAppointments();
- } catch (error) {
- console.error("Không thể hủy lịch hẹn:", error);
- alert(error.message || "Không thể hủy lịch hẹn lúc này.");
- }
- }
- });
- });
- }
+    if (displayList.length === 0) {
+      listContainer.innerHTML = `
+        <div style="text-align:center; padding: 40px 20px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius-card); color:var(--ink-soft);">
+          Không có lịch hẹn nào ở trạng thái này.
+        </div>
+      `;
+      return;
+    }
 
- let currentStatusFilter = "all";
- function setupFilterButtons() {
- const filterContainer = document.getElementById("apptStatusFilters");
- if (!filterContainer) return;
- const buttons = filterContainer.querySelectorAll(".appt-filter-btn");
- buttons.forEach((btn) => {
- btn.addEventListener("click", () => {
- buttons.forEach((b) => b.classList.remove("active"));
- btn.classList.add("active");
- currentStatusFilter = btn.dataset.filter || "all";
- renderMyAppointments();
- });
- });
- }
+    listContainer.innerHTML = displayList
+      .map((a) => {
+        let statusClass = "pending";
+        let statusLabel = a.status || "Chờ xác nhận";
+        if (a.status === "Đã xác nhận") {
+          statusClass = "confirmed";
+        } else if (a.status === "Hoàn thành" || a.status === "completed") {
+          statusClass = "confirmed";
+          if (a.status === "completed") statusLabel = "Hoàn thành";
+        } else if (a.status === "Đã hủy") {
+          statusClass = "cancelled";
+        } else if (a.status === "pending") {
+          statusClass = "pending";
+          statusLabel = "Chờ xác nhận";
+        }
 
- function switchToBookingTab() {
- tabNewBooking.classList.add("active");
- tabMyAppointments.classList.remove("active");
- viewBookingForm.hidden = false;
- viewMyAppointments.hidden = true;
- }
+        const canCancel =
+          a.status !== "Đã hủy" &&
+          a.status !== "Hoàn thành" &&
+          a.status !== "completed";
+        const safeId = escapeHTML(String(a.id || ""));
 
- function switchToMyAppointmentsTab() {
- tabNewBooking.classList.remove("active");
- tabMyAppointments.classList.add("active");
- viewBookingForm.hidden = true;
- viewMyAppointments.hidden = false;
- renderMyAppointments();
- }
+        return `
+          <article class="appointment-card" data-id="${safeId}">
+            <div class="appt-left">
+              <div class="appt-icon-box">${a.serviceIcon || "🩺"}</div>
+              <div class="appt-info">
+                <h4>${escapeHTML(a.serviceName)}</h4>
+                <div class="appt-meta">
+                  <span>🐾 <strong>${escapeHTML(a.petName)}</strong> (${escapeHTML(a.petBreed || a.petSpecies)})</span>
+                  <span>📅 <strong>${escapeHTML(a.time)}</strong> • ${escapeHTML(a.date)}</span>
+                  <span>📍 ${escapeHTML(a.location)}</span>
+                </div>
+              </div>
+            </div>
 
- if (tabNewBooking) tabNewBooking.addEventListener("click", switchToBookingTab);
- if (tabMyAppointments) tabMyAppointments.addEventListener("click", switchToMyAppointmentsTab);
+            <div class="appt-right">
+              <span class="appt-status ${statusClass}">${escapeHTML(statusLabel)}</span>
+              <span style="font-size:12px; color:var(--ink-faint)">Mã: ${safeId}</span>
+              ${canCancel ? `<button class="btn-cancel-appt" data-action="cancel" data-id="${safeId}" type="button">Hủy lịch</button>` : ""}
+            </div>
+          </article>
+        `;
+      })
+      .join("");
 
- const btnBookFirst = document.getElementById("btnBookFirstAppt");
- if (btnBookFirst) btnBookFirst.addEventListener("click", switchToBookingTab);
+    listContainer.querySelectorAll('[data-action="cancel"]').forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+        if (confirm(`Bạn có chắc chắn muốn hủy lịch hẹn mã ${id} không?`)) {
+          try {
+            await cancelAppointment(id);
+            await syncUserAppointmentsFromDatabase();
+            renderMyAppointments();
+            await refreshBookedSlots();
+          } catch (error) {
+            console.error("Không thể hủy lịch hẹn:", error);
+            alert(error.message || "Không thể hủy lịch hẹn lúc này.");
+          }
+        }
+      });
+    });
+  }
 
- // Khởi chạy
- renderServices();
- renderPets();
- initDateTime();
- prefillUserInfo();
- updateSummary();
- updateBadgeCount();
- setupFilterButtons();
+  let currentStatusFilter = "all";
+  function setupFilterButtons() {
+    const filterContainer = document.getElementById("apptStatusFilters");
+    if (!filterContainer) return;
+    const buttons = filterContainer.querySelectorAll(".appt-filter-btn");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentStatusFilter = btn.dataset.filter || "all";
+        renderMyAppointments();
+      });
+    });
+  }
 
- if (
- window.location.hash === "#my-appts" ||
- window.location.hash === "#my-appointments" ||
- window.location.pathname.includes("appointment-list")
- ) {
- switchToMyAppointmentsTab();
- }
+  function switchToBookingTab() {
+    tabNewBooking.classList.add("active");
+    tabMyAppointments.classList.remove("active");
+    viewBookingForm.hidden = false;
+    viewMyAppointments.hidden = true;
+  }
+
+  async function switchToMyAppointmentsTab() {
+    tabNewBooking.classList.remove("active");
+    tabMyAppointments.classList.add("active");
+    viewBookingForm.hidden = true;
+    viewMyAppointments.hidden = false;
+    renderMyAppointments();
+    if (getCurrentUser()) {
+      await syncUserAppointmentsFromDatabase();
+      renderMyAppointments();
+    }
+  }
+
+  if (tabNewBooking) tabNewBooking.addEventListener("click", switchToBookingTab);
+  if (tabMyAppointments) tabMyAppointments.addEventListener("click", switchToMyAppointmentsTab);
+
+  const btnBookFirst = document.getElementById("btnBookFirstAppt");
+  if (btnBookFirst) btnBookFirst.addEventListener("click", switchToBookingTab);
+
+  // Khởi chạy
+  renderServices();
+  renderPets();
+  initDateTime();
+  prefillUserInfo();
+  updateSummary();
+  updateBadgeCount();
+  setupFilterButtons();
+
+  // Đồng bộ lịch hẹn mới nhất từ MongoDB ngay khi mở trang
+  if (getCurrentUser()) {
+    syncUserAppointmentsFromDatabase().then(() => {
+      updateBadgeCount();
+      if (viewMyAppointments && !viewMyAppointments.hidden) {
+        renderMyAppointments();
+      }
+    });
+  }
+
+  if (
+    window.location.hash === "#my-appts" ||
+    window.location.hash === "#my-appointments" ||
+    window.location.pathname.includes("appointment-list")
+  ) {
+    switchToMyAppointmentsTab();
+  }
 }

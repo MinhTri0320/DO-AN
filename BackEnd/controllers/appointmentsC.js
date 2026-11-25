@@ -1,5 +1,38 @@
 const crypto = require("crypto");
+const mongoose = require("mongoose");
 const Appointment = require("../models/appointment");
+const User = require("../models/user");
+
+const ROLE_MAP = {
+  admin: 1,
+  doctor: 2,
+  receptionist: 3,
+  pet_owner: 4,
+};
+
+const getVietnamNow = () => {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    hourCycle: "h23",
+  });
+  const parts = {};
+  for (const part of formatter.formatToParts(now)) {
+    if (part.type !== "literal") parts[part.type] = part.value;
+  }
+  const hour = Number(parts.hour) % 24;
+  const minute = Number(parts.minute);
+  return {
+    todayVN: `${parts.year}-${parts.month}-${parts.day}`,
+    nowMinutesVN: hour * 60 + minute,
+  };
+};
 
 const isDate = (value) => {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -68,6 +101,23 @@ const create = async (req, res) => {
     return res.status(400).json({
       message: "Thông tin đặt lịch không hợp lệ.",
     });
+  }
+
+  // Không cho đặt lịch vào ngày/giờ trong quá khứ theo giờ Việt Nam (UTC+7)
+  const { todayVN, nowMinutesVN } = getVietnamNow();
+  if (data.dateISO < todayVN) {
+    return res.status(400).json({
+      message: "Không thể đặt lịch vào ngày trong quá khứ.",
+    });
+  }
+  if (data.dateISO === todayVN) {
+    const [slotHour, slotMinute] = data.time.split(":").map(Number);
+    const slotMinutes = slotHour * 60 + slotMinute;
+    if (slotMinutes <= nowMinutesVN) {
+      return res.status(400).json({
+        message: "Khung giờ này đã trôi qua. Vui lòng chọn khung giờ khác.",
+      });
+    }
   }
 
   const bookingCode = `PC-${data.dateISO.replaceAll("-", "")}-${crypto
@@ -214,29 +264,95 @@ const listBookedSlots = async (req, res) => {
 
 const cancel = async (req, res) => {
   try {
-    const appointment = await Appointment.findOneAndUpdate(
-      {
-        bookingCode: req.params.bookingCode,
-        slotReserved: true,
-      },
-      {
-        $set: {
-          slotReserved: false,
-          status: "Đã hủy",
-        },
-      },
-      {
-        new: true,
-      }
-    );
+    const bookingCode = req.params.bookingCode;
+    const body = req.body || {};
 
-    if (!appointment) {
+    const lookupQuery = mongoose.Types.ObjectId.isValid(bookingCode)
+      ? { $or: [{ bookingCode }, { _id: bookingCode }] }
+      : { bookingCode };
+
+    const existing = await Appointment.findOne(lookupQuery);
+
+    if (!existing) {
       return res.status(404).json({
         message: "Không tìm thấy lịch hẹn đang hoạt động.",
       });
     }
 
-    return res.json({
+    // Kiểm tra quyền sở hữu nếu có x-user-id hoặc body.userId (nhân viên role_id 1/2/3 được phép hủy)
+    const rawCallerId =
+      req.headers["x-user-id"] ||
+      req.headers["user-id"] ||
+      body.userId;
+    const callerId = typeof rawCallerId === "string" ? rawCallerId.trim() : "";
+
+    let isStaff = false;
+    if (callerId) {
+      if (mongoose.Types.ObjectId.isValid(callerId)) {
+        const caller = await User.findOne({
+          _id: callerId,
+          isDeleted: { $ne: true },
+        }).lean();
+        if (caller) {
+          const roleId = caller.role_id || ROLE_MAP[caller.role] || 4;
+          if ([1, 2, 3].includes(roleId)) {
+            isStaff = true;
+          }
+        }
+      }
+
+      if (!isStaff && existing.userId && String(existing.userId) !== String(callerId)) {
+        return res.status(403).json({
+          message: "Bạn chỉ có thể hủy lịch hẹn của chính mình",
+        });
+      }
+    }
+
+    // Chặn hủy lịch đã hoàn thành hoặc đã hủy trước đó
+    const currentStatus = String(existing.status || "").trim();
+    if (["Hoàn thành", "completed", "Đã hủy"].includes(currentStatus)) {
+      const msg =
+        currentStatus === "Đã hủy"
+          ? "Lịch hẹn này đã được hủy trước đó."
+          : "Không thể hủy lịch hẹn đã hoàn thành.";
+      return res.status(400).json({ message: msg });
+    }
+
+    const rawReason =
+      body.reason || body.cancelReason || "Khách hàng hủy lịch";
+    const cancelReason =
+      String(rawReason).trim().slice(0, 500) || "Khách hàng hủy lịch";
+
+    // models/appointment.js quy định enum cancelledBy: ["customer", "staff", "system"]
+    const cancelledBy = isStaff ? "staff" : "customer";
+
+    const appointment = await Appointment.findOneAndUpdate(
+      {
+        _id: existing._id,
+        status: { $nin: ["Hoàn thành", "completed", "Đã hủy"] },
+      },
+      {
+        $set: {
+          status: "Đã hủy",
+          slotReserved: false,
+          cancelledAt: new Date(),
+          cancelReason,
+          cancelledBy,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!appointment) {
+      return res.status(400).json({
+        message: "Lịch hẹn này không thể hủy ở trạng thái hiện tại.",
+      });
+    }
+
+    return res.status(200).json({
       appointment,
     });
   } catch (error) {

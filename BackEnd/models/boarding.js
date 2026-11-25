@@ -417,6 +417,23 @@ boardingSchema.statics.checkOutById = async function (idOrCode, options = {}) {
   return boarding.performCheckOut(options);
 };
 
+function buildMixedIdMatch(id) {
+  const idStr = String(id);
+  if (mongoose.Types.ObjectId.isValid(idStr)) {
+    return { $in: [idStr, new mongoose.Types.ObjectId(idStr)] };
+  }
+  return idStr;
+}
+
+function parseEndDate(dateVal) {
+  if (typeof dateVal === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateVal.trim())) {
+    const d = new Date(dateVal.trim());
+    d.setUTCHours(23, 59, 59, 999);
+    return d;
+  }
+  return new Date(dateVal);
+}
+
 // =====================================================================
 //  CÁC PHƯƠNG THỨC TRUY VẤN CƠ SỞ DỮ LIỆU (DATABASE QUERY METHODS - TRÍ)
 // =====================================================================
@@ -426,7 +443,7 @@ boardingSchema.statics.checkOutById = async function (idOrCode, options = {}) {
  */
 boardingSchema.statics.findActiveBoardings = function () {
   return this.find({ status: "checked_in", isDeleted: false })
-    .populate("customerId", "fullName username phone email")
+    .populate("customerId", "name phone")
     .populate("petId", "name species breed weight avatar")
     .populate("cageId", "cageCode size pricePerDay status")
     .sort({ checkInDate: -1 });
@@ -444,17 +461,17 @@ boardingSchema.statics.findHistory = function ({
 } = {}) {
   const query = { status: "checked_out", isDeleted: false };
 
-  if (customerId) query.customerId = customerId;
-  if (petId) query.petId = petId;
+  if (customerId) query.customerId = buildMixedIdMatch(customerId);
+  if (petId) query.petId = buildMixedIdMatch(petId);
 
   if (fromDate || toDate) {
     query.actualCheckOutDate = {};
     if (fromDate) query.actualCheckOutDate.$gte = new Date(fromDate);
-    if (toDate) query.actualCheckOutDate.$lte = new Date(toDate);
+    if (toDate) query.actualCheckOutDate.$lte = parseEndDate(toDate);
   }
 
   return this.find(query)
-    .populate("customerId", "fullName username phone email")
+    .populate("customerId", "name phone")
     .populate("petId", "name species breed weight avatar")
     .populate("cageId", "cageCode size pricePerDay")
     .sort({ actualCheckOutDate: -1, checkInDate: -1 });
@@ -464,7 +481,7 @@ boardingSchema.statics.findHistory = function ({
  * 3. Truy vấn danh sách lưu chuồng THEO KHÁCH HÀNG (customerId)
  */
 boardingSchema.statics.findByCustomer = function (customerId, status = null) {
-  const query = { customerId, isDeleted: false };
+  const query = { customerId: buildMixedIdMatch(customerId), isDeleted: false };
   if (status) query.status = status;
 
   return this.find(query)
@@ -477,11 +494,11 @@ boardingSchema.statics.findByCustomer = function (customerId, status = null) {
  * 4. Truy vấn danh sách lưu chuồng THEO THÚ CƯNG (petId)
  */
 boardingSchema.statics.findByPet = function (petId, status = null) {
-  const query = { petId, isDeleted: false };
+  const query = { petId: buildMixedIdMatch(petId), isDeleted: false };
   if (status) query.status = status;
 
   return this.find(query)
-    .populate("customerId", "fullName username phone")
+    .populate("customerId", "name phone")
     .populate("cageId", "cageCode size pricePerDay")
     .sort({ checkInDate: -1 });
 };
@@ -494,10 +511,10 @@ boardingSchema.statics.findByDateRange = function (fromDate, toDate) {
   if (fromDate || toDate) {
     query.checkInDate = {};
     if (fromDate) query.checkInDate.$gte = new Date(fromDate);
-    if (toDate) query.checkInDate.$lte = new Date(toDate);
+    if (toDate) query.checkInDate.$lte = parseEndDate(toDate);
   }
   return this.find(query)
-    .populate("customerId", "fullName username phone")
+    .populate("customerId", "name phone")
     .populate("petId", "name species")
     .populate("cageId", "cageCode size")
     .sort({ checkInDate: -1 });

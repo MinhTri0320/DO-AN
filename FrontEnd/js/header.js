@@ -12,17 +12,7 @@
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { renderNotifBadge } from "./notifications.js";
-import {
-  openRoleModal,
-  loadDoctorAppointments,
-  loadDoctorDiagnoses,
-  loadDoctorMedicalRecords,
-  loadRecepInvoices,
-  loadRecepAllAppointments,
-  loadRecepPrescriptions,
-  loadRecepPharmacy,
-  initModalFilters,
-} from "./roleModals.js";
+import { escapeHTML } from "./storage.js";
 
 // Khôi phục dropdown khách hàng mặc định
 function resetCustomerNavAndDropdown() {
@@ -56,10 +46,12 @@ function renderRoleSpecificNavAndDropdown(user) {
       ? 3
       : 4);
 
+  const displayName = escapeHTML((user.name || "Người dùng").trim() || "Người dùng");
+
   // 1. ADMIN (role_id === 1): CHỈ HIỂN THỊ PHÂN QUYỀN + ĐĂNG XUẤT
   if (roleId === 1) {
     dropdown.innerHTML = `
-      <p class="dropdown-name" id="userName">${user.name} <span style="font-size: 11px; background: #FDE8E8; color: #9B1C1C; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Admin</span></p>
+      <p class="dropdown-name" id="userName">${displayName} <span style="font-size: 11px; background: #FDE8E8; color: #9B1C1C; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Admin</span></p>
       <a href="./admin-roles.html" class="dropdown-link">⚙️ Quản lý phân quyền</a>
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
@@ -73,7 +65,7 @@ function renderRoleSpecificNavAndDropdown(user) {
   // 2. BÁC SĨ (role_id === 2): CHUYỂN VÀO BÀN LÀM VIỆC BÁC SĨ + ĐĂNG XUẤT
   else if (roleId === 2) {
     dropdown.innerHTML = `
-      <p class="dropdown-name" id="userName">${user.name} <span style="font-size: 11px; background: #DEF7EC; color: #03543F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Bác sĩ</span></p>
+      <p class="dropdown-name" id="userName">${displayName} <span style="font-size: 11px; background: #DEF7EC; color: #03543F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Bác sĩ</span></p>
       <a href="./doctor-dashboard.html" class="dropdown-link">👨‍⚕️ Bàn làm việc Bác sĩ</a>
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
@@ -86,30 +78,59 @@ function renderRoleSpecificNavAndDropdown(user) {
   }
   // 3. LỄ TÂN (role_id === 3): CHUYỂN VÀO CỔNG NGHIỆP VỤ LỄ TÂN + ĐĂNG XUẤT
   else if (roleId === 3) {
+    const currentPath = window.location.pathname.toLowerCase();
+    const recepLinks = [
+      {
+        file: "receptionist-dashboard.html",
+        navLabel: "🛎️ Cổng nghiệp vụ Lễ tân",
+        dropdownLabel: "🛎️ Cổng nghiệp vụ Lễ tân",
+      },
+      {
+        file: "cage-management.html",
+        navLabel: "🏨 Khách Sạn",
+        dropdownLabel: "🏨 Lưu chuồng &amp; Khách sạn",
+      },
+      {
+        file: "grooming-schedule.html",
+        navLabel: "✂️ Grooming",
+        dropdownLabel: "✂️ Lịch Chăm Sóc Grooming",
+      },
+      {
+        file: "medicine-dispensing.html",
+        navLabel: "💊 Kho Thuốc",
+        dropdownLabel: "💊 Kho Thuốc &amp; Cấp Thuốc",
+      },
+      {
+        file: "invoice-payment.html",
+        navLabel: "💳 Hóa Đơn",
+        dropdownLabel: "💳 Hóa Đơn &amp; Thanh Toán",
+      },
+    ];
+
     dropdown.innerHTML = `
-      <p class="dropdown-name" id="userName">${user.name} <span style="font-size: 11px; background: #E1EFFE; color: #1E429F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Lễ tân</span></p>
-      <a href="./receptionist-dashboard.html" class="dropdown-link">🛎️ Cổng nghiệp vụ Lễ tân</a>
-      <a href="./cage-management.html" class="dropdown-link">🏨 Lưu chuồng &amp; Khách sạn</a>
-      <a href="./grooming-schedule.html" class="dropdown-link">✂️ Lịch Chăm Sóc Grooming</a>
-      <a href="./medicine-dispensing.html" class="dropdown-link">💊 Kho Thuốc &amp; Cấp Thuốc</a>
-      <a href="./invoice-payment.html" class="dropdown-link">💳 Hóa Đơn &amp; Thanh Toán</a>
+      <p class="dropdown-name" id="userName">${displayName} <span style="font-size: 11px; background: #E1EFFE; color: #1E429F; padding: 2px 6px; border-radius: 6px; margin-left: 4px; font-weight: 600;">Lễ tân</span></p>
+      ${recepLinks
+        .map((item) => {
+          const isActive = currentPath.endsWith(item.file);
+          return `<a href="./${item.file}" class="dropdown-link${isActive ? " active" : ""}">${item.dropdownLabel}</a>`;
+        })
+        .join("\n      ")}
       <a href="#" class="dropdown-link" id="logoutBtn">🚪 Đăng xuất</a>
     `;
 
     if (menuNav) {
-      menuNav.innerHTML = `
-        <a href="./receptionist-dashboard.html" class="link active">🛎️ Cổng nghiệp vụ Lễ tân</a>
-        <a href="./cage-management.html" class="link">🏨 Khách Sạn</a>
-        <a href="./grooming-schedule.html" class="link">✂️ Grooming</a>
-        <a href="./medicine-dispensing.html" class="link">💊 Kho Thuốc</a>
-        <a href="./invoice-payment.html" class="link">💳 Hóa Đơn</a>
-      `;
+      menuNav.innerHTML = recepLinks
+        .map((item) => {
+          const isActive = currentPath.endsWith(item.file);
+          return `<a href="./${item.file}" class="link${isActive ? " active" : ""}">${item.navLabel}</a>`;
+        })
+        .join("\n        ");
     }
   }
   // 4. KHÁCH HÀNG (role_id === 4): GIỮ NGUYÊN 100% GIAO DIỆN
   else {
     dropdown.innerHTML = `
-      <p class="dropdown-name" id="userName">${user.name}</p>
+      <p class="dropdown-name" id="userName">${displayName}</p>
       <a href="./customer-profile.html" class="dropdown-link">👤 Hồ sơ khách hàng</a>
       <a href="./pet-profile.html" class="dropdown-link">🐾 Hồ sơ thú cưng</a>
       <a href="./medical-record.html" class="dropdown-link">🩺 Hồ sơ y tế &amp; Bệnh án</a>
@@ -169,17 +190,19 @@ function renderHeaderAuth() {
 
     guestBox.hidden = true;
     userBox.hidden = false;
+    const safeInitial = (user.name || "U").trim().charAt(0).toUpperCase() || "U";
+    const safeDisplayName = (user.name || "Người dùng").trim() || "Người dùng";
     const initialEl = document.getElementById("userInitial");
     const nameEl = document.getElementById("userName");
-    if (initialEl) initialEl.textContent = user.name.trim().charAt(0).toUpperCase();
-    if (nameEl) nameEl.textContent = user.name;
+    if (initialEl) initialEl.textContent = safeInitial;
+    if (nameEl) nameEl.textContent = safeDisplayName;
 
     // Cập nhật thẻ người dùng ở sidebar nếu trang hiện tại có
     const sideInitial = document.getElementById("sidebarUserInitial");
     const sideName = document.getElementById("sidebarUserName");
     const sidePhone = document.getElementById("sidebarUserPhone");
-    if (sideInitial && user.name) sideInitial.textContent = user.name.trim().charAt(0).toUpperCase();
-    if (sideName && user.name) sideName.textContent = user.name;
+    if (sideInitial) sideInitial.textContent = safeInitial;
+    if (sideName) sideName.textContent = safeDisplayName;
     if (sidePhone && (user.phone || user.email)) sidePhone.textContent = user.phone || user.email;
 
     renderRoleSpecificNavAndDropdown(user);
@@ -217,7 +240,8 @@ function initAvatarDropdown() {
 
 function initLogoutButton() {
   const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
+  if (logoutBtn && !logoutBtn.dataset.logoutBound) {
+    logoutBtn.dataset.logoutBound = "1";
     logoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
       logoutUser();
@@ -226,7 +250,8 @@ function initLogoutButton() {
   }
 
   const sidebarLogout = document.getElementById("sidebarLogoutLink");
-  if (sidebarLogout) {
+  if (sidebarLogout && !sidebarLogout.dataset.logoutBound) {
+    sidebarLogout.dataset.logoutBound = "1";
     sidebarLogout.addEventListener("click", (e) => {
       e.preventDefault();
       logoutUser();
@@ -247,6 +272,9 @@ function initAuthProtectedLinks() {
     "prescription.html",
     "customer-profile.html",
     "pet-profile.html",
+    "grooming-schedule.html",
+    "medicine-dispensing.html",
+    "invoice-payment.html",
   ];
 
   const adminOnlyKeywords = ["admin-roles.html"];

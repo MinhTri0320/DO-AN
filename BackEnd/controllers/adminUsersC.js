@@ -1,22 +1,36 @@
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const Doctor = require("../models/doctor");
 const Role = require("../models/role");
+
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 /**
  * Middleware kiểm tra quyền Quản trị viên (Admin - role_id = 1)
  */
 async function verifyAdminCaller(req) {
+  const body = req.body || {};
   const callerId =
     req.headers["x-user-id"] ||
     req.headers["user-id"] ||
     req.query.adminId ||
-    req.body.adminId;
+    body.adminId;
 
   if (!callerId) {
     return {
       authorized: false,
       status: 401,
       message: "Vui lòng cung cấp định danh Admin (x-user-id) để thực hiện thao tác này.",
+    };
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(callerId)) {
+    return {
+      authorized: false,
+      status: 403,
+      message: "Quyền truy cập bị từ chối! Định danh Admin không hợp lệ.",
     };
   }
 
@@ -45,15 +59,29 @@ const getUsers = async (req, res) => {
     const filter = { isDeleted: { $ne: true } };
 
     // Tìm kiếm song song theo Tên hoặc Số điện thoại
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), "i");
+    if (search && String(search).trim()) {
+      const regex = new RegExp(escapeRegex(String(search).trim()), "i");
       filter.$or = [{ name: regex }, { phone: regex }];
     }
 
-    if (role_id) {
-      filter.role_id = Number(role_id);
-    } else if (role) {
-      filter.role = String(role).trim();
+    if (role_id !== undefined && String(role_id).trim() !== "") {
+      const parsedRoleId = Number(role_id);
+      if (isNaN(parsedRoleId) || ![1, 2, 3, 4].includes(parsedRoleId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Tham số role_id không hợp lệ! Chỉ chấp nhận 1, 2, 3 hoặc 4.",
+        });
+      }
+      filter.role_id = parsedRoleId;
+    } else if (role !== undefined && String(role).trim() !== "") {
+      const normalizedRole = String(role).trim().toLowerCase();
+      if (!["admin", "doctor", "receptionist", "pet_owner"].includes(normalizedRole)) {
+        return res.status(400).json({
+          success: false,
+          message: "Tham số role không hợp lệ! Chỉ chấp nhận admin, doctor, receptionist hoặc pet_owner.",
+        });
+      }
+      filter.role = normalizedRole;
     }
 
     const users = await User.find(filter)
@@ -96,27 +124,16 @@ const updateUserRole = async (req, res) => {
     }
 
     const { id } = req.params;
-    let { role_id, role } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "ID người dùng không hợp lệ." });
+    }
+
+    const body = req.body || {};
+    let { role_id, role } = body;
 
     const targetUser = await User.findById(id);
     if (!targetUser) {
       return res.status(404).json({ success: false, message: "Không tìm thấy người dùng cần phân quyền." });
-    }
-
-    // Quy tắc bảo vệ Admin:
-    // Admin chỉ có thể tự đổi role của chính mình khi trong hệ thống có nhiều hơn 2 Admin
-    if (String(auth.caller._id) === String(targetUser._id)) {
-      const adminCount = await User.countDocuments({
-        $or: [{ role_id: 1 }, { role: "admin" }],
-        isDeleted: { $ne: true },
-      });
-
-      if (adminCount <= 2) {
-        return res.status(400).json({
-          success: false,
-          message: `Không thể tự đổi quyền Admin của chính mình khi hệ thống chỉ có ${adminCount} Admin! Hệ thống yêu cầu phải có nhiều hơn 2 Admin mới cho phép tự đổi quyền.`,
-        });
-      }
     }
 
     const roleToId = {
@@ -132,15 +149,52 @@ const updateUserRole = async (req, res) => {
       4: "pet_owner",
     };
 
-    if (role_id !== undefined) {
-      role_id = Number(role_id);
-      role = idToRole[role_id] || "pet_owner";
-    } else if (role) {
-      role = String(role).trim().toLowerCase();
-      role_id = roleToId[role] || 4;
+    let nextRoleId;
+    let nextRole;
+
+    if (role_id !== undefined && role_id !== null && String(role_id).trim() !== "") {
+      const parsedRoleId = Number(role_id);
+      if (isNaN(parsedRoleId) || !idToRole[parsedRoleId]) {
+        return res.status(400).json({
+          success: false,
+          message: "role_id không hợp lệ! Chỉ chấp nhận 1 (admin), 2 (doctor), 3 (receptionist), 4 (pet_owner).",
+        });
+      }
+      nextRoleId = parsedRoleId;
+      nextRole = idToRole[nextRoleId];
+    } else if (role !== undefined && String(role).trim() !== "") {
+      const normalizedRole = String(role).trim().toLowerCase();
+      if (!roleToId[normalizedRole]) {
+        return res.status(400).json({
+          success: false,
+          message: "role không hợp lệ! Chỉ chấp nhận admin, doctor, receptionist hoặc pet_owner.",
+        });
+      }
+      nextRole = normalizedRole;
+      nextRoleId = roleToId[nextRole];
     } else {
       return res.status(400).json({ success: false, message: "Vui lòng cung cấp role_id (1, 2, 3, 4) hoặc role." });
     }
+
+    // Quy tắc bảo vệ Admin:
+    // Admin chỉ có thể tự hạ quyền của chính mình khi trong hệ thống có nhiều hơn 2 Admin
+    const isSelf = String(auth.caller._id) === String(targetUser._id);
+    if (isSelf && nextRoleId !== 1) {
+      const adminCount = await User.countDocuments({
+        $or: [{ role_id: 1 }, { role: "admin" }],
+        isDeleted: { $ne: true },
+      });
+
+      if (adminCount <= 2) {
+        return res.status(400).json({
+          success: false,
+          message: `Không thể tự đổi quyền Admin của chính mình khi hệ thống chỉ có ${adminCount} Admin! Hệ thống yêu cầu phải có nhiều hơn 2 Admin mới cho phép tự đổi quyền.`,
+        });
+      }
+    }
+
+    role_id = nextRoleId;
+    role = nextRole;
 
     targetUser.role = role;
     targetUser.role_id = role_id;

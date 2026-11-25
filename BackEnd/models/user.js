@@ -10,6 +10,16 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/^0\d{9}$/, "Số điện thoại không hợp lệ"],
     },
+    email: { type: String, trim: true, lowercase: true, default: "" },
+    dob: { type: String, trim: true, default: "" },
+    gender: { type: String, trim: true, default: "other" },
+    address: {
+      houseNumber: { type: String, trim: true, default: "" },
+      street: { type: String, trim: true, default: "" },
+      ward: { type: String, trim: true, default: "" },
+      district: { type: String, trim: true, default: "" },
+      city: { type: String, trim: true, default: "TP. Đà Nẵng" },
+    },
     password: { type: String, required: true },
     role: {
       type: String,

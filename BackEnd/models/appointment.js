@@ -30,9 +30,12 @@ const appointmentSchema = new mongoose.Schema(
     ownerPhone: { type: String, required: true, trim: true, maxlength: 20 },
     notes: { type: String, trim: true, maxlength: 1000 },
     location: { type: String, trim: true, maxlength: 250 },
+    id_bac_sy: { type: String, trim: true, index: true },
+    doctorPhone: { type: String, trim: true },
+    doctorName: { type: String, trim: true },
     status: {
       type: String,
-      enum: ["Chờ xác nhận", "Đã xác nhận", "Đã hủy", "Hoàn thành", "completed", "pending"],
+      enum: ["Chờ xác nhận", "Đã xác nhận", "Đã hủy", "Hoàn thành", "pending", "completed"],
       default: "Chờ xác nhận",
     },
     feeDisplay: { type: String, trim: true, maxlength: 60 },

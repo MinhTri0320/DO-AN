@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Invoice = require("../models/invoice");
 const User = require("../models/user");
 
@@ -8,10 +9,9 @@ async function getCallerInfo(req) {
   const callerId =
     req.headers["x-user-id"] ||
     req.headers["user-id"] ||
-    req.query.userId ||
-    req.query.customerId;
+    req.query.userId;
 
-  if (!callerId) return null;
+  if (!callerId || !mongoose.Types.ObjectId.isValid(callerId)) return null;
 
   try {
     const user = await User.findById(callerId).lean();
@@ -33,6 +33,27 @@ async function getCallerInfo(req) {
 // Tự động tính tổng tiền từ backend, khóa cố định đơn giá tại thời điểm lập
 const createInvoice = async (req, res) => {
   try {
+    const caller = await getCallerInfo(req);
+    if (!caller) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập với tài khoản nhân viên để tạo hóa đơn.",
+      });
+    }
+    if (caller.role_id === 4) {
+      return res.status(403).json({
+        success: false,
+        message: "Khách hàng không có quyền tạo hóa đơn.",
+      });
+    }
+    if (![1, 2, 3].includes(caller.role_id)) {
+      return res.status(403).json({
+        success: false,
+        message: "Chỉ nhân viên phòng khám mới có quyền tạo hóa đơn.",
+      });
+    }
+
+    const body = req.body || {};
     const {
       customerId,
       petId,
@@ -40,7 +61,7 @@ const createInvoice = async (req, res) => {
       prescriptionCode,
       items,
       notes,
-    } = req.body;
+    } = body;
 
     if (!customerId || !items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
@@ -75,6 +96,26 @@ const createInvoice = async (req, res) => {
 // 2. Tạo hóa đơn tự động từ lượt cấp thuốc (POST /api/invoices/from-dispensing/:dispensingId)
 const createFromDispensing = async (req, res) => {
   try {
+    const caller = await getCallerInfo(req);
+    if (!caller) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập với tài khoản nhân viên để tạo hóa đơn.",
+      });
+    }
+    if (caller.role_id === 4) {
+      return res.status(403).json({
+        success: false,
+        message: "Khách hàng không có quyền tạo hóa đơn.",
+      });
+    }
+    if (![1, 2, 3].includes(caller.role_id)) {
+      return res.status(403).json({
+        success: false,
+        message: "Chỉ nhân viên phòng khám mới có quyền tạo hóa đơn.",
+      });
+    }
+
     const { dispensingId } = req.params;
 
     const newInvoice = await Invoice.createFromDispensing(dispensingId);
@@ -118,12 +159,12 @@ const getInvoices = async (req, res) => {
       filter.$or = [{ customerId: caller.id }, { customerPhone: caller.phone }];
     } else if (caller.role_id === 3 || caller.role_id === 1) {
       // Lễ tân hoặc Admin: Xem toàn bộ hoặc lọc theo khách hàng
-      if (customerId) {
+      if (customerId && mongoose.Types.ObjectId.isValid(customerId)) {
         filter.customerId = customerId;
       }
     } else if (caller.role_id === 2) {
       // Bác sĩ: nếu có customerId thì lọc theo đó
-      if (customerId) {
+      if (customerId && mongoose.Types.ObjectId.isValid(customerId)) {
         filter.customerId = customerId;
       }
     }

@@ -10,7 +10,7 @@
  ============================================================ */
 
 import { loginUser, registerUser } from "./auth.js";
-import { isValidPhone } from "./validators.js";
+import { isValidPhone, normalizePhone } from "./validators.js";
 
 const MODAL_ID = "pawncareAuthModal";
 const REMEMBER_KEY = "pawncare_remembered_phone";
@@ -627,9 +627,13 @@ export function initAuthModal() {
  clearFieldErr(phoneWrap);
  if (emailWrap) clearFieldErr(emailWrap);
  clearFieldErr(passWrap);
+ if (alertEl) {
+ alertEl.textContent = "";
+ alertEl.className = "auth-alert";
+ }
 
  const name = regForm.elements.name.value.trim();
- const phone = regForm.elements.phone.value.trim();
+ const phone = normalizePhone(regForm.elements.phone.value);
  const email = regForm.elements.email ? regForm.elements.email.value.trim() : "";
  const password = regForm.elements.password.value;
  const petName = regForm.elements.petName.value.trim();
@@ -645,7 +649,7 @@ export function initAuthModal() {
  valid = false;
  }
  if (!isValidPhone(phone)) {
- showFieldErr(phoneWrap, "Số điện thoại không hợp lệ (10 chữ số).");
+ showFieldErr(phoneWrap, "Số điện thoại không hợp lệ (10 chữ số, bắt đầu bằng 0).");
  valid = false;
  }
  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -667,7 +671,7 @@ export function initAuthModal() {
  submitBtn.textContent = "ĐANG TẠO TÀI KHOẢN...";
 
  try {
- await registerUser({
+ const user = await registerUser({
  name,
  email,
  phone,
@@ -681,6 +685,28 @@ export function initAuthModal() {
  closeAuthModal();
  submitBtn.disabled = false;
  submitBtn.textContent = "ĐĂNG KÝ THÀNH VIÊN";
+ const roleId =
+ Number(user?.role_id) ||
+ (user?.role === "admin"
+ ? 1
+ : user?.role === "doctor"
+ ? 2
+ : user?.role === "receptionist"
+ ? 3
+ : 4);
+ if (roleId === 1) {
+ window.location.href = "./admin-roles.html";
+ } else if (roleId === 2) {
+ window.location.href = "./doctor-dashboard.html";
+ } else if (roleId === 3) {
+ window.location.href = "./receptionist-dashboard.html";
+ } else if (window.pendingRedirectUrl) {
+ const dest = window.pendingRedirectUrl;
+ window.pendingRedirectUrl = null;
+ window.location.href = dest;
+ } else {
+ window.location.reload();
+ }
  }, 700);
  } catch (err) {
  showAlert(alertEl, err.message, "error");

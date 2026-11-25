@@ -7,6 +7,10 @@ const {
   analyzePetHealthEvolution,
 } = require("../services/diagnosisService");
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 /**
  * 1. Lấy danh sách kết quả chẩn đoán bệnh
  * GET /api/diagnoses?petId=...&category=...&status=...&search=...
@@ -28,8 +32,8 @@ const getDiagnoses = async (req, res) => {
     if (status && status !== "all") {
       filter.status = String(status).trim();
     }
-    if (search) {
-      const regex = new RegExp(search.trim(), "i");
+    if (search && String(search).trim()) {
+      const regex = new RegExp(escapeRegex(String(search).trim()), "i");
       filter.$or = [
         { diagnosisCode: regex },
         { confirmedDiagnosis: regex },
@@ -279,6 +283,11 @@ const createDiagnosis = async (req, res) => {
       category: data.category || "Khám tổng quát",
       status: data.status || "Đang điều trị",
       veterinarian: data.veterinarian || "BS. CKI. Nguyễn Văn Hùng",
+      ...(data.doctorName !== undefined ? { doctorName: String(data.doctorName).trim() } : {}),
+      ...(data.id_bac_sy !== undefined ? { id_bac_sy: String(data.id_bac_sy).trim() } : {}),
+      ...(data.doctorPhone !== undefined ? { doctorPhone: String(data.doctorPhone).trim() } : {}),
+      ...(data.customerName !== undefined ? { customerName: String(data.customerName).trim() } : {}),
+      ...(data.customerPhone !== undefined ? { customerPhone: String(data.customerPhone).trim() } : {}),
       clinicBranch:
         data.clinicBranch || "PawnCare 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
       reason: data.reason || "Khám định kỳ & kiểm tra sức khỏe",

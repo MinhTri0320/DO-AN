@@ -10,6 +10,7 @@
  ============================================================ */
 
 import { STORAGE_KEYS, getData, setData } from "./storage.js";
+import { normalizePhone } from "./validators.js";
 
 export const API_BASE_URL = "http://localhost:3000/api";
 const LOCAL_USERS_KEY = "pawncare_registered_users";
@@ -33,17 +34,61 @@ function getLocalUsers() {
  return getData(LOCAL_USERS_KEY, []);
 }
 
+// Tạo mã băm mật khẩu dùng cho chế độ demo offline (không bao giờ lưu plaintext)
+async function hashPasswordOffline(password) {
+  const text = String(password || "");
+  try {
+    if (
+      typeof crypto !== "undefined" &&
+      crypto.subtle &&
+      typeof TextEncoder !== "undefined"
+    ) {
+      const digest = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(`pawncare:${text}`)
+      );
+      return Array.from(new Uint8Array(digest))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+  } catch (e) {
+    // Fallback cho môi trường không hỗ trợ crypto.subtle (vd: HTTP/file://)
+  }
+
+  let h1 = 0x811c9dc5;
+  let h2 = 0x9e3779b9;
+  const salted = `pawncare:${text}`;
+  for (let i = 0; i < salted.length; i++) {
+    const c = salted.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 0x01000193);
+    h2 = Math.imul(h2 ^ (c + i), 0x85ebca6b);
+  }
+  return `fnv_${(h1 >>> 0).toString(16).padStart(8, "0")}${(h2 >>> 0)
+    .toString(16)
+    .padStart(8, "0")}`;
+}
+
 function saveLocalUser(user) {
- const users = getLocalUsers();
- const existingIdx = users.findIndex((u) => u.phone === user.phone);
+  const users = getLocalUsers();
+  // Loại bỏ hoàn toàn mật khẩu dạng plaintext trước khi lưu vào localStorage
+  const { password: _removedPassword, ...safeUser } = user || {};
+  const normalizedPhone = safeUser.phone ? normalizePhone(safeUser.phone) : "";
+  if (normalizedPhone) safeUser.phone = normalizedPhone;
 
- if (existingIdx>= 0) {
- users[existingIdx] = user;
- } else {
- users.push(user);
- }
+  const existingIdx = users.findIndex(
+    (u) =>
+      (safeUser.id && u.id && String(u.id) === String(safeUser.id)) ||
+      (normalizedPhone && normalizePhone(u.phone) === normalizedPhone)
+  );
 
- setData(LOCAL_USERS_KEY, users);
+  if (existingIdx >= 0) {
+    const { password: _oldPassword, ...existingSafe } = users[existingIdx] || {};
+    users[existingIdx] = { ...existingSafe, ...safeUser };
+  } else {
+    users.push(safeUser);
+  }
+
+  setData(LOCAL_USERS_KEY, users);
 }
 
 
@@ -52,111 +97,135 @@ function saveLocalUser(user) {
 // ============================================================
 
 export async function registerUser({
- name,
- phone,
- password,
- petName = "",
- address = {},
+  name,
+  email = "",
+  phone,
+  password,
+  petName = "",
+  address = {},
 }) {
- const payload = {
- name: name.trim(),
- phone: phone.trim(),
- password,
- petName: (petName || "").trim(),
- address: address || {},
- };
+  const normalizedPhone = normalizePhone(phone);
+  const payload = {
+    name: (name || "").trim(),
+    email: (email || "").trim(),
+    phone: normalizedPhone,
+    password,
+    petName: (petName || "").trim(),
+    address: address || {},
+  };
 
- try {
- console.log(
- `[AUTH] Đang gửi yêu cầu đăng ký tới BackEnd: ${API_BASE_URL}/register...`,
- {
- name: payload.name,
- phone: payload.phone,
- }
- );
+  try {
+    console.log(
+      `[AUTH] Đang gửi yêu cầu đăng ký tới BackEnd: ${API_BASE_URL}/register...`,
+      {
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+      }
+    );
 
- const res = await fetch(`${API_BASE_URL}/register`, {
- method: "POST",
- headers: { "Content-Type": "application/json" },
+    const res = await fetch(`${API_BASE_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
 
- body: JSON.stringify({
- name: payload.name,
- phone: payload.phone,
- password: payload.password,
- }),
- });
+      body: JSON.stringify({
+        name: payload.name,
+        phone: payload.phone,
+        email: payload.email,
+        password: payload.password,
+        address: payload.address,
+      }),
+    });
 
- const data = await res.json().catch(() => ({}));
+    const data = await res.json().catch(() => ({}));
 
- if (!res.ok) {
- throw new Error(
- data.message || "Đăng ký không thành công."
- );
- }
+    if (!res.ok) {
+      throw new Error(data.message || "Đăng ký không thành công.");
+    }
 
- const user = {
- ...(data.user || {}),
- petName: payload.petName,
- address: payload.address,
- };
+    const serverAddr = data.user?.address;
+    const mergedAddress =
+      serverAddr && typeof serverAddr === "object" && Object.keys(serverAddr).length > 0
+        ? { ...payload.address, ...serverAddr }
+        : payload.address;
 
- setData(STORAGE_KEYS.CURRENT_USER, user);
+    const user = {
+      ...(data.user || {}),
+      id: data.user?.id || data.user?._id,
+      name: data.user?.name || payload.name,
+      phone: data.user?.phone || payload.phone,
+      email: data.user?.email || payload.email,
+      petName: data.user?.petName || payload.petName,
+      address: mergedAddress,
+      role: data.user?.role || "pet_owner",
+      role_id:
+        Number(data.user?.role_id) ||
+        (data.user?.role === "admin"
+          ? 1
+          : data.user?.role === "doctor"
+          ? 2
+          : data.user?.role === "receptionist"
+          ? 3
+          : 4),
+    };
 
- saveLocalUser({
- ...payload,
- id: user.id || user._id || "u_" + Date.now(),
- });
+    setData(STORAGE_KEYS.CURRENT_USER, user);
 
- notifyAuthChange(user);
+    // Không lưu password (kể cả plaintext) vào localStorage trong nhánh online
+    saveLocalUser({
+      id: user.id || user._id || "u_" + Date.now(),
+      name: user.name || payload.name,
+      email: user.email || "",
+      phone: user.phone || payload.phone,
+      petName: user.petName || "",
+      address: user.address || {},
+      role: user.role || "pet_owner",
+      role_id: Number(user.role_id) || 4,
+    });
 
- return user;
+    notifyAuthChange(user);
 
- } catch (err) {
+    return user;
+  } catch (err) {
+    // Nếu BackEnd chưa bật
+    if (err instanceof TypeError) {
+      console.warn(
+        "BackEnd offline, sử dụng phiên đăng ký cục bộ cho demo."
+      );
 
- // Nếu BackEnd chưa bật
- if (err instanceof TypeError) {
+      const users = getLocalUsers();
 
- console.warn(
- "BackEnd offline, sử dụng phiên đăng ký cục bộ cho demo."
- );
+      if (users.some((u) => normalizePhone(u.phone) === payload.phone)) {
+        throw new Error("Số điện thoại này đã được đăng ký tài khoản.");
+      }
 
- const users = getLocalUsers();
+      const mockUser = {
+        id: "local_" + Date.now(),
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        petName: payload.petName,
+        address: payload.address,
+        role: "pet_owner",
+        role_id: 4,
+      };
 
- if (
- users.some(
- (u) => u.phone === payload.phone
- )
- ) {
- throw new Error(
- "Số điện thoại này đã được đăng ký tài khoản."
- );
- }
+      const passwordHash = await hashPasswordOffline(payload.password);
 
- const mockUser = {
- id: "local_" + Date.now(),
- name: payload.name,
- phone: payload.phone,
- petName: payload.petName,
- address: payload.address,
- };
+      saveLocalUser({
+        ...mockUser,
+        passwordHash,
+      });
 
- saveLocalUser({
- ...payload,
- id: mockUser.id,
- });
+      setData(STORAGE_KEYS.CURRENT_USER, mockUser);
 
- setData(
- STORAGE_KEYS.CURRENT_USER,
- mockUser
- );
+      notifyAuthChange(mockUser);
 
- notifyAuthChange(mockUser);
+      return mockUser;
+    }
 
- return mockUser;
- }
-
- throw err;
- }
+    throw err;
+  }
 }
 
 
@@ -166,104 +235,114 @@ export async function registerUser({
 
 export async function loginUser({
   phone,
+  email,
   phoneOrEmail,
-  password
+  password,
 }) {
-  const account = (phone || phoneOrEmail || "").trim();
+  const account = (phone || phoneOrEmail || email || "").trim();
+  const isEmailLogin = account.includes("@");
+  const normalizedAccount = isEmailLogin
+    ? account.toLowerCase()
+    : normalizePhone(account);
 
- // Tìm tài khoản theo số điện thoại
- const users = getLocalUsers();
+  // Tìm tài khoản cục bộ để bổ sung metadata nếu server chưa trả về
+  const users = getLocalUsers();
 
- const matchedUser = users.find(
- (u) => u.phone === account
- );
+  const matchedUser = users.find((u) =>
+    isEmailLogin
+      ? String(u.email || "").trim().toLowerCase() === normalizedAccount
+      : normalizePhone(u.phone) === normalizedAccount
+  );
 
- try {
- console.log(
- `[AUTH] Đang gửi yêu cầu đăng nhập tới BackEnd: ${API_BASE_URL}/login...`,
- {
- phone: account,
- }
- );
+  const loginBody = isEmailLogin
+    ? { email: normalizedAccount, phone: normalizedAccount, password }
+    : { phone: normalizedAccount, password };
 
- const res = await fetch(`${API_BASE_URL}/login`, {
- method: "POST",
- headers: { "Content-Type": "application/json" },
+  try {
+    console.log(
+      `[AUTH] Đang gửi yêu cầu đăng nhập tới BackEnd: ${API_BASE_URL}/login...`,
+      isEmailLogin ? { email: normalizedAccount } : { phone: normalizedAccount }
+    );
 
- body: JSON.stringify({
- phone: account,
- password,
- }),
- });
+    const res = await fetch(`${API_BASE_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
 
- const data = await res.json().catch(() => ({}));
+      body: JSON.stringify(loginBody),
+    });
 
- if (!res.ok) {
- throw new Error(
- data.message ||
- "Số điện thoại hoặc mật khẩu không đúng."
- );
- }
+    const data = await res.json().catch(() => ({}));
 
- const user = {
- ...(data.user || {}),
- petName: matchedUser?.petName || "",
- address: matchedUser?.address || {},
- };
+    if (!res.ok) {
+      throw new Error(
+        data.message || "Số điện thoại hoặc mật khẩu không đúng."
+      );
+    }
 
- setData(
- STORAGE_KEYS.CURRENT_USER,
- user
- );
+    const serverAddr = data.user?.address;
+    const mergedAddress =
+      serverAddr && typeof serverAddr === "object" && Object.keys(serverAddr).length > 0
+        ? { ...(matchedUser?.address || {}), ...serverAddr }
+        : matchedUser?.address || {};
 
- notifyAuthChange(user);
+    const user = {
+      ...(data.user || {}),
+      email:
+        data.user?.email ||
+        matchedUser?.email ||
+        (isEmailLogin ? normalizedAccount : ""),
+      petName: data.user?.petName || matchedUser?.petName || "",
+      address: mergedAddress,
+    };
 
- return user;
+    setData(STORAGE_KEYS.CURRENT_USER, user);
 
- } catch (err) {
+    notifyAuthChange(user);
 
- // Nếu BackEnd chưa bật
- if (err instanceof TypeError) {
+    return user;
+  } catch (err) {
+    // Nếu BackEnd chưa bật
+    if (err instanceof TypeError) {
+      console.warn("BackEnd offline, kiểm tra đăng nhập cục bộ.");
 
- console.warn(
- "BackEnd offline, kiểm tra đăng nhập cục bộ."
- );
+      const users = getLocalUsers();
+      const inputHash = await hashPasswordOffline(password);
 
- const users = getLocalUsers();
+      const matched = users.find((u) => {
+        const accountMatch = isEmailLogin
+          ? String(u.email || "").trim().toLowerCase() === normalizedAccount
+          : normalizePhone(u.phone) === normalizedAccount;
+        return (
+          accountMatch &&
+          Boolean(u.passwordHash) &&
+          u.passwordHash === inputHash
+        );
+      });
 
- const matched = users.find(
- (u) =>
- u.phone === account &&
- u.password === password
- );
+      if (matched) {
+        const user = {
+          id: matched.id,
+          name: matched.name,
+          email: matched.email || "",
+          phone: matched.phone,
+          petName: matched.petName,
+          address: matched.address,
+          role: matched.role || "pet_owner",
+          role_id: Number(matched.role_id) || 4,
+        };
 
- if (matched) {
+        setData(STORAGE_KEYS.CURRENT_USER, user);
 
- const user = {
- id: matched.id,
- name: matched.name,
- phone: matched.phone,
- petName: matched.petName,
- address: matched.address,
- };
+        notifyAuthChange(user);
 
- setData(
- STORAGE_KEYS.CURRENT_USER,
- user
- );
+        return user;
+      }
 
- notifyAuthChange(user);
+      throw new Error("Số điện thoại hoặc mật khẩu không chính xác.");
+    }
 
- return user;
- }
-
- throw new Error(
- "Số điện thoại hoặc mật khẩu không chính xác."
- );
- }
-
- throw err;
- }
+    throw err;
+  }
 }
 
 

@@ -183,6 +183,7 @@ invoiceSchema.pre("save", function () {
 invoiceSchema.statics.createInvoice = async function ({
   customerId,
   petId = null,
+  petName: providedPetName = "",
   dispensingId = null,
   prescriptionCode = "",
   items = [],
@@ -191,13 +192,19 @@ invoiceSchema.statics.createInvoice = async function ({
   const User = mongoose.model("User");
   const Pet = mongoose.model("Pet");
 
-  const user = await User.findById(customerId).lean();
-  const customerName = user ? (user.fullName || user.username) : "Khách hàng";
+  const validCustomerId = mongoose.Types.ObjectId.isValid(customerId) ? customerId : null;
+  if (!validCustomerId) {
+    throw new Error("Mã khách hàng (customerId) không hợp lệ.");
+  }
+
+  const user = await User.findById(validCustomerId).lean();
+  const customerName = user ? (user.name || user.fullName || user.username || "Khách hàng") : "Khách hàng";
   const customerPhone = user ? (user.phone || "") : "";
 
-  let petName = "";
-  if (petId) {
-    const pet = await Pet.findById(petId).lean();
+  const validPetId = petId && mongoose.Types.ObjectId.isValid(petId) ? petId : null;
+  let petName = providedPetName || "";
+  if (validPetId) {
+    const pet = await Pet.findById(validPetId).lean();
     if (pet) petName = pet.name;
   }
 
@@ -221,10 +228,10 @@ invoiceSchema.statics.createInvoice = async function ({
 
   const newInvoice = await this.create({
     invoiceCode,
-    customerId,
+    customerId: validCustomerId,
     customerName,
     customerPhone,
-    petId,
+    petId: validPetId,
     petName,
     dispensingId,
     prescriptionCode,
@@ -242,10 +249,56 @@ invoiceSchema.statics.createInvoice = async function ({
  */
 invoiceSchema.statics.createFromDispensing = async function (dispensingId) {
   const Dispensing = mongoose.model("Dispensing");
-  const dispensing = await Dispensing.findById(dispensingId).lean();
+  const Pet = mongoose.model("Pet");
+
+  const dispensingQuery = mongoose.Types.ObjectId.isValid(dispensingId)
+    ? { _id: dispensingId, isDeleted: false }
+    : { dispensingCode: String(dispensingId || "").trim().toUpperCase(), isDeleted: false };
+
+  const dispensing = await Dispensing.findOne(dispensingQuery).lean();
 
   if (!dispensing) {
     throw new Error(`Không tìm thấy lượt cấp thuốc với ID: ${dispensingId}`);
+  }
+
+  // Chặn tạo trùng hóa đơn cho cùng 1 lượt cấp thuốc
+  const existingInvoice = await this.findOne({
+    dispensingId: dispensing._id,
+    isDeleted: false,
+  }).lean();
+
+  if (existingInvoice) {
+    throw new Error(
+      `Lượt cấp thuốc [${dispensing.dispensingCode}] đã có hóa đơn [${existingInvoice.invoiceCode}], không thể lập hóa đơn trùng!`
+    );
+  }
+
+  let resolvedCustomerId =
+    dispensing.customerId && mongoose.Types.ObjectId.isValid(dispensing.customerId)
+      ? dispensing.customerId
+      : null;
+
+  const validPetId =
+    dispensing.petId && mongoose.Types.ObjectId.isValid(dispensing.petId)
+      ? dispensing.petId
+      : null;
+
+  // Nếu dispensing.customerId trống hoặc không phải ObjectId hợp lệ, thử tra Pet để lấy ownerId
+  if (!resolvedCustomerId) {
+    let pet = null;
+    if (validPetId) {
+      pet = await Pet.findById(validPetId).lean();
+    }
+    if (!pet && dispensing.petName) {
+      pet = await Pet.findOne({ name: dispensing.petName }).lean();
+    }
+    if (pet && pet.ownerId && mongoose.Types.ObjectId.isValid(pet.ownerId)) {
+      resolvedCustomerId = pet.ownerId;
+    }
+  }
+
+  if (!resolvedCustomerId) {
+    throw new Error("Không xác định được khách hàng cho lượt cấp thuốc này.");
   }
 
   const items = (dispensing.items || []).map((it) => ({
@@ -256,8 +309,9 @@ invoiceSchema.statics.createFromDispensing = async function (dispensingId) {
   }));
 
   return this.createInvoice({
-    customerId: dispensing.customerId,
-    petId: dispensing.petId,
+    customerId: resolvedCustomerId,
+    petId: validPetId,
+    petName: dispensing.petName || "",
     dispensingId: dispensing._id,
     prescriptionCode: dispensing.prescriptionCode || dispensing.prescriptionId,
     items,
@@ -285,7 +339,7 @@ invoiceSchema.statics.findByCustomer = function (customerId, status = null) {
  */
 invoiceSchema.statics.findByStatus = function (status) {
   return this.find({ status, isDeleted: false })
-    .populate("customerId", "fullName username phone email")
+    .populate("customerId", "name phone")
     .populate("petId", "name species")
     .sort({ createdAt: -1 });
 };

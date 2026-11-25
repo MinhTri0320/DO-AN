@@ -11,32 +11,85 @@
 export const API_BASE_URL = "http://localhost:3000/api";
 
 /**
+ * Đọc thông tin người dùng hiện tại từ localStorage một cách an toàn
+ */
+function getStoredCurrentUser() {
+  try {
+    if (typeof localStorage === "undefined") return null;
+    const raw = localStorage.getItem("pawncare_current_user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Xác định số điện thoại từ identifier (object user, chuỗi SĐT) hoặc localStorage
+ */
+function resolvePhoneFromIdentifier(identifier) {
+  if (identifier && typeof identifier === "object") {
+    if (identifier.phone) return String(identifier.phone).trim();
+  } else if (typeof identifier === "string") {
+    const trimmed = identifier.trim();
+    const digits = trimmed.replace(/\D/g, "");
+    if (
+      trimmed &&
+      !trimmed.includes("@") &&
+      !/^[a-f0-9]{24}$/i.test(trimmed) &&
+      /^[0-9+\-\s().]+$/.test(trimmed) &&
+      digits.length >= 8 &&
+      digits.length <= 15
+    ) {
+      return trimmed;
+    }
+  }
+
+  const currentUser = getStoredCurrentUser();
+  if (currentUser?.phone) {
+    return String(currentUser.phone).trim();
+  }
+  return "";
+}
+
+/**
  * Helper gọi HTTP fetch với timeout & tự động parse JSON
  */
 async function request(endpoint, options = {}) {
- const url = `${API_BASE_URL}${endpoint}`;
- const headers = {
- "Content-Type": "application/json",
- ...(options.headers || {}),
- };
+  const url = `${API_BASE_URL}${endpoint}`;
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
 
- const response = await fetch(url, {
- ...options,
- headers,
- });
+  // Tự động đính kèm x-user-id từ localStorage nếu caller chưa truyền sẵn
+  const hasUserIdHeader = Object.keys(headers).some(
+    (k) => k.toLowerCase() === "x-user-id" && headers[k]
+  );
+  if (!hasUserIdHeader) {
+    const currentUser = getStoredCurrentUser();
+    const currentUserId = currentUser?.id || currentUser?._id;
+    if (currentUserId) {
+      headers["x-user-id"] = String(currentUserId);
+    }
+  }
 
- const data = await response.json().catch(() => ({}));
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
 
- if (!response.ok) {
- const errorMsg = data.message || `Lỗi yêu cầu: ${response.status} ${response.statusText}`;
- const err = new Error(errorMsg);
- err.statusCode = response.status;
- err.status = response.status;
- err.data = data;
- throw err;
- }
+  const data = await response.json().catch(() => ({}));
 
- return data;
+  if (!response.ok) {
+    const errorMsg = data.message || `Lỗi yêu cầu: ${response.status} ${response.statusText}`;
+    const err = new Error(errorMsg);
+    err.statusCode = response.status;
+    err.status = response.status;
+    err.data = data;
+    throw err;
+  }
+
+  return data;
 }
 
 export async function apiRequest(endpoint, options = {}) {
@@ -79,17 +132,18 @@ export async function apiRegister({ name, email, phone, password, petName, addre
 /**
  * Đăng nhập tài khoản
  * Gửi tới: POST http://localhost:3000/api/login
- * Body: { email, password }
+ * Body: { phone, password }
  */
-export async function apiLogin({ email, password }) {
- console.log(`[API] Đang gửi yêu cầu đăng nhập tới ${API_BASE_URL}/login...`, { email });
- return await request("/login", {
- method: "POST",
- body: JSON.stringify({
- email: email.trim(),
- password: password,
- }),
- });
+export async function apiLogin({ phone, email, phoneOrEmail, password } = {}) {
+  const resolvedPhone = (phone || phoneOrEmail || email || "").trim();
+  console.log(`[API] Đang gửi yêu cầu đăng nhập tới ${API_BASE_URL}/login...`, { phone: resolvedPhone });
+  return await request("/login", {
+    method: "POST",
+    body: JSON.stringify({
+      phone: resolvedPhone,
+      password: password,
+    }),
+  });
 }
 
 /* ============================================================
@@ -223,35 +277,36 @@ export async function apiGetPetById(petId) {
  * Nếu thú cưng mới: POST /api/pets
  */
 export async function apiSavePet(pet) {
- try {
- const isUpdate = Boolean(pet.id && !pet.id.startsWith("pet_") && !pet.id.startsWith("local_"));
- console.log(`[API] Đang lưu hồ sơ thú cưng tới MongoDB/BackEnd...`, { isUpdate, pet });
+  try {
+    const petId = pet?.id || pet?._id;
+    const isUpdate = Boolean(
+      petId &&
+        !String(petId).startsWith("pet_") &&
+        !String(petId).startsWith("local_")
+    );
+    console.log(`[API] Đang lưu hồ sơ thú cưng tới MongoDB/BackEnd...`, { isUpdate, pet });
 
- let resData = null;
- if (isUpdate) {
- try {
- resData = await request(`/pets/${encodeURIComponent(pet.id)}`, {
- method: "PUT",
- body: JSON.stringify(pet),
- });
- } catch (e) {
- resData = await request("/pets", {
- method: "POST",
- body: JSON.stringify(pet),
- });
- }
- } else {
- resData = await request("/pets", {
- method: "POST",
- body: JSON.stringify(pet),
- });
- }
+    let resData = null;
+    if (isUpdate) {
+      resData = await request(`/pets/${encodeURIComponent(petId)}`, {
+        method: "PUT",
+        body: JSON.stringify(pet),
+      });
+    } else {
+      resData = await request("/pets", {
+        method: "POST",
+        body: JSON.stringify(pet),
+      });
+    }
 
- return resData?.pet || resData?.data || resData;
- } catch (err) {
- console.warn("[API] BackEnd offline hoặc chưa có route lưu thú cưng, lưu thú cưng cục bộ:", err.message);
- return null;
- }
+    return resData?.pet || resData?.data || resData;
+  } catch (err) {
+    if (err instanceof TypeError) {
+      console.warn("[API] BackEnd offline, lưu thú cưng cục bộ:", err.message);
+      return null;
+    }
+    throw err;
+  }
 }
 
 /**
@@ -259,13 +314,16 @@ export async function apiSavePet(pet) {
  * Gửi tới: DELETE http://localhost:3000/api/pets/:id
  */
 export async function apiDeletePet(petId) {
- try {
- console.log(`[API] Đang xóa thú cưng từ MongoDB/BackEnd: ${API_BASE_URL}/pets/${petId}...`);
- return await request(`/pets/${encodeURIComponent(petId)}`, { method: "DELETE" });
- } catch (err) {
- console.warn("[API] BackEnd offline hoặc chưa có route xóa thú cưng:", err.message);
- return null;
- }
+  try {
+    console.log(`[API] Đang xóa thú cưng từ MongoDB/BackEnd: ${API_BASE_URL}/pets/${petId}...`);
+    return await request(`/pets/${encodeURIComponent(petId)}`, { method: "DELETE" });
+  } catch (err) {
+    if (err instanceof TypeError) {
+      console.warn("[API] BackEnd offline, xóa thú cưng cục bộ:", err.message);
+      return null;
+    }
+    throw err;
+  }
 }
 
 /* ============================================================
@@ -274,88 +332,103 @@ export async function apiDeletePet(petId) {
 
 /**
  * Lấy thông tin hồ sơ người dùng từ MongoDB thông qua Back-End Express
- * Gửi tới: GET http://localhost:3000/api/users/profile/:id hoặc /api/users/:id hoặc /api/users/profile?email=...
+ * Gửi tới: GET http://localhost:3000/api/profile (kèm ?phone=... nếu có; x-user-id được request() tự động đính kèm)
  */
-export async function apiGetUserProfile(userIdOrEmail) {
- try {
- const param = userIdOrEmail ? encodeURIComponent(userIdOrEmail) : "";
- console.log(`[API] Đang lấy thông tin hồ sơ người dùng từ MongoDB/BackEnd...`, { userIdOrEmail });
+export async function apiGetUserProfile(identifier = null) {
+  try {
+    const phone = resolvePhoneFromIdentifier(identifier);
+    const currentUser = getStoredCurrentUser();
+    const resolvedUserId =
+      typeof identifier === "string" && /^[a-f0-9]{24}$/i.test(identifier.trim())
+        ? identifier.trim()
+        : identifier && typeof identifier === "object"
+        ? identifier.id || identifier._id
+        : currentUser?.id || currentUser?._id;
 
- // Thử endpoint 1: /users/profile/:id (hoặc /users/profile)
- let endpoint = param ? `/users/profile/${param}` : `/users/profile`;
- let resData = null;
+    const endpoint = phone
+      ? `/profile?phone=${encodeURIComponent(phone)}`
+      : "/profile";
 
- try {
- resData = await request(endpoint, { method: "GET" });
- } catch (e1) {
- // Thử endpoint 2: /users/:id
- if (param) {
- try {
- resData = await request(`/users/${param}`, { method: "GET" });
- } catch (e2) {
- // Thử endpoint 3: query string ?id= hoặc ?email=
- if (userIdOrEmail && userIdOrEmail.includes("@")) {
- resData = await request(`/users?email=${param}`, { method: "GET" });
- } else {
- resData = await request(`/users?id=${param}`, { method: "GET" });
- }
- }
- } else {
- throw e1;
- }
- }
+    const headers = {};
+    if (resolvedUserId) {
+      headers["x-user-id"] = String(resolvedUserId);
+    }
 
- const user = resData?.user || resData?.profile || resData?.data || resData;
- return user;
- } catch (err) {
- console.warn("[API] BackEnd offline hoặc chưa có route GET user profile, dùng fallback cục bộ:", err.message);
- return null;
- }
+    console.log(`[API] Đang lấy thông tin hồ sơ người dùng từ MongoDB/BackEnd...`, {
+      identifier,
+      phone,
+      endpoint,
+    });
+
+    const resData = await request(endpoint, {
+      method: "GET",
+      headers,
+    });
+
+    const user = resData?.user || resData?.profile || resData?.data || resData;
+    return user;
+  } catch (err) {
+    console.warn("[API] BackEnd offline hoặc chưa có route GET user profile, dùng fallback cục bộ:", err.message);
+    return null;
+  }
 }
 
 export const apiGetProfile = apiGetUserProfile;
 
 /**
  * Cập nhật thông tin hồ sơ người dùng tới MongoDB thông qua Back-End Express
- * Gửi tới: PUT http://localhost:3000/api/users/profile/:id hoặc PUT /api/users/profile
+ * Gửi tới: PUT http://localhost:3000/api/users/profile
+ * Hỗ trợ cả 2 chữ ký gọi: apiUpdateProfile(profileData, userId) và apiUpdateProfile(identifier, profileData)
  */
-export async function apiUpdateProfile(profileData, userId = null) {
- try {
- const id = userId || profileData.id || profileData._id;
- const param = id ? encodeURIComponent(id) : "";
- console.log(`[API] Đang cập nhật hồ sơ khách hàng tới MongoDB/BackEnd...`, profileData);
+export async function apiUpdateProfile(identifierOrData, profileDataOrUserId = null) {
+  try {
+    let profileData;
+    if (
+      identifierOrData &&
+      typeof identifierOrData === "object" &&
+      (!profileDataOrUserId || typeof profileDataOrUserId !== "object")
+    ) {
+      // Kiểu gọi: apiUpdateProfile(profileData, userId)
+      profileData = { ...identifierOrData };
+      if (!profileData.id && !profileData._id && typeof profileDataOrUserId === "string" && profileDataOrUserId) {
+        profileData.id = profileDataOrUserId;
+      }
+    } else if (profileDataOrUserId && typeof profileDataOrUserId === "object") {
+      // Kiểu gọi: apiUpdateProfile(identifier, profileData)
+      profileData = { ...profileDataOrUserId };
+      if (!profileData.phone) {
+        const phone = resolvePhoneFromIdentifier(identifierOrData);
+        if (phone) profileData.phone = phone;
+      }
+      if (!profileData.id && !profileData._id && typeof identifierOrData === "string" && identifierOrData) {
+        profileData.id = identifierOrData;
+      }
+    } else {
+      profileData = {};
+    }
 
- let endpoint = param ? `/users/profile/${param}` : `/users/profile`;
- let resData = null;
+    if (!profileData.phone) {
+      const currentUser = getStoredCurrentUser();
+      if (currentUser?.phone) {
+        profileData.phone = String(currentUser.phone).trim();
+      }
+    }
 
- try {
- resData = await request(endpoint, {
- method: "PUT",
- body: JSON.stringify(profileData),
- });
- } catch (e1) {
- if (param) {
- try {
- resData = await request(`/users/${param}`, {
- method: "PUT",
- body: JSON.stringify(profileData),
- });
- } catch (e2) {
- resData = await request("/users/profile", {
- method: "PUT",
- body: JSON.stringify(profileData),
- });
- }
- } else {
- throw e1;
- }
- }
+    console.log(`[API] Đang cập nhật hồ sơ khách hàng tới MongoDB/BackEnd...`, profileData);
 
- return resData?.user || resData?.profile || resData?.data || resData;
- } catch (err) {
- console.warn("[API] BackEnd offline hoặc chưa có route PUT update profile, lưu hồ sơ cục bộ:", err.message);
- return null;
- }
+    const resData = await request("/users/profile", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+
+    return resData?.user || resData?.profile || resData?.data || resData;
+  } catch (err) {
+    if (err instanceof TypeError) {
+      console.warn("[API] BackEnd offline, lưu hồ sơ cục bộ:", err.message);
+      return null;
+    }
+    throw err;
+  }
 }
 
 

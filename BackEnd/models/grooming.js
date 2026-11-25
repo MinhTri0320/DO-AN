@@ -25,6 +25,15 @@ function minutesToTime(minutes) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
+// Helper chuẩn hóa giờ bắt đầu về định dạng HH:mm (padStart 2 chữ số cho giờ & phút)
+function normalizeTimeHHmm(timeStr) {
+  if (!timeStr) return "00:00";
+  const parts = String(timeStr).trim().split(":");
+  const h = String(parseInt(parts[0], 10) || 0).padStart(2, "0");
+  const m = String(parseInt(parts[1], 10) || 0).padStart(2, "0");
+  return `${h}:${m}`;
+}
+
 // Helper chuẩn hóa ngày YYYY-MM-DD
 function normalizeDateISO(dateStr) {
   if (!dateStr) return new Date().toISOString().slice(0, 10);
@@ -248,7 +257,7 @@ groomingSchema.statics.checkOverlap = async function ({
  * 2. Không cho tạo lịch vào thời điểm trong quá khứ (trừ khi skipPastCheck)
  * 3. Không cho tạo lịch trùng giờ với lịch chưa hủy
  */
-boardingSchema_statics_create = groomingSchema.statics.createSchedule = async function ({
+groomingSchema.statics.createSchedule = async function ({
   customerId,
   petId,
   serviceName,
@@ -276,14 +285,18 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
 
   // Lấy thông tin khách hàng
   const user = await User.findById(customerId).lean();
-  const customerName = user ? (user.fullName || user.username || user.name) : "Khách hàng";
+  const customerName = user ? (user.name || user.fullName || user.username || "Khách hàng") : "Khách hàng";
   const customerPhone = user ? (user.phone || "") : "";
 
   const normDateISO = normalizeDateISO(date);
+  const paddedStartTime = normalizeTimeHHmm(startTime);
 
   // 2. Kiểm tra không cho tạo lịch trong quá khứ
   if (!skipPastCheck) {
-    const scheduledDateTime = new Date(`${normDateISO}T${startTime}:00`);
+    const scheduledDateTime = new Date(`${normDateISO}T${paddedStartTime}:00`);
+    if (isNaN(scheduledDateTime.getTime())) {
+      throw new Error("Ngày hoặc giờ hẹn không hợp lệ!");
+    }
     if (scheduledDateTime.getTime() < Date.now()) {
       throw new Error("Không thể đặt lịch hẹn vào thời điểm trong quá khứ!");
     }
@@ -297,7 +310,7 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
     );
   }
 
-  const startM = timeToMinutes(startTime);
+  const startM = timeToMinutes(paddedStartTime);
   const endM = startM + Number(duration);
   const endTime = minutesToTime(endM);
 
@@ -311,7 +324,7 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
 
     const overlap = await this.checkOverlap({
       dateISO: normDateISO,
-      startTime,
+      startTime: paddedStartTime,
       duration,
       id_bac_sy,
     });
@@ -325,13 +338,13 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
     // Không chỉ định đích danh bác sĩ: kiểm tra tổng số lịch đang có
     const conflicts = await this.checkOverlap({
       dateISO: normDateISO,
-      startTime,
+      startTime: paddedStartTime,
       duration,
     });
 
     if (conflicts.length >= activeDoctors.length) {
       throw new Error(
-        `Lịch đã đầy trong khung giờ ${startTime} - ${endTime} ngày ${date} (tất cả ${activeDoctors.length} bác sĩ đều bận)!`
+        `Lịch đã đầy trong khung giờ ${paddedStartTime} - ${endTime} ngày ${date} (tất cả ${activeDoctors.length} bác sĩ đều bận)!`
       );
     }
 
@@ -355,7 +368,7 @@ boardingSchema_statics_create = groomingSchema.statics.createSchedule = async fu
     price: Number(price) || 0,
     date,
     dateISO: normDateISO,
-    startTime,
+    startTime: paddedStartTime,
     duration: Number(duration),
     endTime,
     startMinutes: startM,
@@ -412,7 +425,7 @@ groomingSchema.methods.changeStatus = async function (newStatus) {
 groomingSchema.statics.findByDate = function (dateStr) {
   const normDate = normalizeDateISO(dateStr);
   return this.find({ dateISO: normDate, isDeleted: false })
-    .populate("customerId", "fullName username phone email")
+    .populate("customerId", "name phone")
     .populate("petId", "name species breed weight avatar")
     .sort({ startMinutes: 1, startTime: 1 });
 };
@@ -428,7 +441,7 @@ groomingSchema.statics.findByDateRange = function (fromDate, toDate) {
     dateISO: { $gte: normFrom, $lte: normTo },
     isDeleted: false,
   })
-    .populate("customerId", "fullName username phone email")
+    .populate("customerId", "name phone")
     .populate("petId", "name species breed")
     .sort({ dateISO: 1, startMinutes: 1 });
 };
@@ -453,7 +466,7 @@ groomingSchema.statics.findByPet = function (petId, status = null) {
   if (status) query.status = status;
 
   return this.find(query)
-    .populate("customerId", "fullName username phone")
+    .populate("customerId", "name phone")
     .sort({ dateISO: -1, startMinutes: -1 });
 };
 

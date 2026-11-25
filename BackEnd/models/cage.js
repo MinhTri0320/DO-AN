@@ -126,19 +126,17 @@ cageSchema.virtual("sizeLabel").get(function () {
 });
 
 // Middleware: Ngăn xóa chuồng đang occupied (đang dùng) theo nghiệp vụ Sprint 4
-cageSchema.pre("deleteOne", { document: true, query: false }, function (next) {
+cageSchema.pre("deleteOne", { document: true, query: false }, async function () {
   if (this.status === "occupied") {
-    return next(new Error("Chuồng đang có thú cưng lưu trú (occupied), không được phép xóa!"));
+    throw new Error("Chuồng đang có thú cưng lưu trú (occupied), không được phép xóa!");
   }
-  next();
 });
 
-cageSchema.pre("findOneAndDelete", async function (next) {
+cageSchema.pre("findOneAndDelete", async function () {
   const doc = await this.model.findOne(this.getQuery());
   if (doc && doc.status === "occupied") {
-    return next(new Error("Chuồng đang có thú cưng lưu trú (occupied), không được phép xóa!"));
+    throw new Error("Chuồng đang có thú cưng lưu trú (occupied), không được phép xóa!");
   }
-  next();
 });
 
 // =====================================================================

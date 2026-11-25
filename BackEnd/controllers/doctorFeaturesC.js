@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const Doctor = require("../models/doctor");
 const Diagnosis = require("../models/diagnosis");
@@ -6,41 +7,63 @@ const Grooming = require("../models/grooming");
 const Appointment = require("../models/appointment");
 const Invoice = require("../models/invoice");
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function normalizeDateFormats(dateStr) {
+  const s = String(dateStr || "").trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y, m, d] = s.split("-");
+    return { dateISO: s, dateVN: `${d}/${m}/${y}` };
+  }
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const [d, m, y] = s.split("/");
+    return { dateISO: `${y}-${m}-${d}`, dateVN: s };
+  }
+  return { dateISO: s, dateVN: s };
+}
+
 /**
  * Helper xác thực Bác sĩ (CHỈ dành riêng cho Bác sĩ thú y: role_id = 2)
  */
 async function verifyDoctorCaller(req) {
+  const body = req.body || {};
   const callerId =
     req.headers["x-user-id"] ||
     req.headers["user-id"] ||
     req.query.doctorId ||
-    req.body.doctorId;
+    body.doctorId;
 
   let doctorDoc = null;
   let callerUser = null;
 
-  if (callerId) {
-    callerUser = await User.findById(callerId).lean();
-    if (callerUser) {
-      if (callerUser.role_id !== 2 && callerUser.role !== "doctor") {
-        return {
-          authorized: false,
-          status: 403,
-          message: "Quyền truy cập bị từ chối! Chức năng này chỉ dành riêng cho Bác sĩ thú y (role_id = 2).",
-        };
+  if (callerId && mongoose.Types.ObjectId.isValid(callerId)) {
+    try {
+      callerUser = await User.findById(callerId).lean();
+      if (callerUser) {
+        if (callerUser.role_id !== 2 && callerUser.role !== "doctor") {
+          return {
+            authorized: false,
+            status: 403,
+            message: "Quyền truy cập bị từ chối! Chức năng này chỉ dành riêng cho Bác sĩ thú y (role_id = 2).",
+          };
+        }
+        doctorDoc = await Doctor.findOne({ userId: callerUser._id, isActive: true }).lean();
+        return { authorized: true, user: callerUser, doctor: doctorDoc };
       }
-      doctorDoc = await Doctor.findOne({ userId: callerUser._id, isActive: true }).lean();
-      return { authorized: true, user: callerUser, doctor: doctorDoc };
-    }
+    } catch (e) {}
   }
 
   // Hoặc kiểm tra qua id_bac_sy trực tiếp nếu truyền header/query
   const id_bac_sy = req.headers["x-doctor-id"] || req.query.id_bac_sy;
   if (id_bac_sy) {
-    doctorDoc = await Doctor.findOne({ id_bac_sy, isActive: true }).lean();
-    if (doctorDoc) {
-      return { authorized: true, user: null, doctor: doctorDoc };
-    }
+    try {
+      doctorDoc = await Doctor.findOne({ id_bac_sy, isActive: true }).lean();
+      if (doctorDoc) {
+        return { authorized: true, user: null, doctor: doctorDoc };
+      }
+    } catch (e) {}
   }
 
   return {
@@ -74,14 +97,22 @@ const getDoctorAppointments = async (req, res) => {
       filterAppointment.doctorPhone = doctorPhone;
     }
 
-    // Bộ lọc thời gian (tháng YYYY-MM, ngày YYYY-MM-DD, hoặc khoảng ngày)
+    // Bộ lọc thời gian (tháng YYYY-MM, ngày DD/MM/YYYY hoặc YYYY-MM-DD, hoặc khoảng ngày)
     if (month) {
-      const monthPrefix = new RegExp(`^${month}`);
+      const monthPrefix = new RegExp(`^${escapeRegex(month)}`);
       filterGrooming.dateISO = monthPrefix;
       filterAppointment.dateISO = monthPrefix;
     } else if (date) {
-      filterGrooming.date = date;
-      filterAppointment.date = date;
+      const { dateISO, dateVN } = normalizeDateFormats(date);
+      const dateValues = [...new Set([String(date).trim(), dateISO, dateVN].filter(Boolean))];
+      filterGrooming.$and = filterGrooming.$and || [];
+      filterGrooming.$and.push({
+        $or: [{ date: { $in: dateValues } }, { dateISO: { $in: dateValues } }],
+      });
+      filterAppointment.$and = filterAppointment.$and || [];
+      filterAppointment.$and.push({
+        $or: [{ date: { $in: dateValues } }, { dateISO: { $in: dateValues } }],
+      });
     } else if (startDate && endDate) {
       filterGrooming.dateISO = { $gte: startDate, $lte: endDate };
       filterAppointment.dateISO = { $gte: startDate, $lte: endDate };
@@ -93,7 +124,6 @@ const getDoctorAppointments = async (req, res) => {
       .lean();
 
     // 2. Lấy danh sách lịch khám chung (Appointment) của bác sĩ
-    // Nếu bảng appointment chưa có id_bac_sy cụ thể, tìm theo doctorPhone hoặc bác sĩ phụ trách
     const appointments = await Appointment.find(filterAppointment)
       .sort({ dateISO: 1, time: 1 })
       .lean();
@@ -104,10 +134,13 @@ const getDoctorAppointments = async (req, res) => {
       ...appointments.map((a) => a.ownerPhone).filter(Boolean),
     ])];
 
-    const invoices = await Invoice.find({
-      customerPhone: { $in: customerPhones },
-      isDeleted: false,
-    }).lean();
+    const invoices =
+      customerPhones.length > 0
+        ? await Invoice.find({
+            customerPhone: { $in: customerPhones },
+            isDeleted: false,
+          }).lean()
+        : [];
 
     const invoiceByPhoneMap = new Map();
     invoices.forEach((inv) => {
@@ -139,7 +172,7 @@ const getDoctorAppointments = async (req, res) => {
       status: g.status,
       id_bac_sy: g.id_bac_sy,
       doctorName: g.groomerName,
-      notes: g.notes || "",
+      notes: g.note || "",
       invoices: invoiceByPhoneMap.get(g.customerPhone) || [],
     }));
 
@@ -159,7 +192,7 @@ const getDoctorAppointments = async (req, res) => {
       endTime: "",
       status: a.status,
       id_bac_sy: a.id_bac_sy || id_bac_sy,
-      doctorName: auth.doctor ? auth.doctor.name : "Bác sĩ phụ trách",
+      doctorName: a.doctorName || (auth.doctor ? auth.doctor.name : "Bác sĩ phụ trách"),
       notes: a.notes || "",
       invoices: invoiceByPhoneMap.get(a.ownerPhone) || [],
     }));
@@ -208,12 +241,17 @@ const getDoctorDiagnoses = async (req, res) => {
       .sort({ dateISO: -1, createdAt: -1 })
       .lean();
 
-    // Tổng hợp hóa đơn khám cho từng ca chẩn đoán
+    // Tổng hợp hóa đơn khám cho từng ca chẩn đoán (lọc chỉ giữ ObjectId hợp lệ để tránh CastError 500)
     const petIds = diagnoses.map((d) => d.petId).filter(Boolean);
-    const invoices = await Invoice.find({
-      petId: { $in: petIds },
-      isDeleted: false,
-    }).lean();
+    const validPetIds = [...new Set(petIds.filter((id) => mongoose.Types.ObjectId.isValid(id)))];
+
+    const invoices =
+      validPetIds.length > 0
+        ? await Invoice.find({
+            petId: { $in: validPetIds },
+            isDeleted: false,
+          }).lean()
+        : [];
 
     const invoiceByPetMap = new Map();
     invoices.forEach((inv) => {
@@ -229,6 +267,7 @@ const getDoctorDiagnoses = async (req, res) => {
 
     const enrichedDiagnoses = diagnoses.map((d) => ({
       ...d,
+      doctorName: d.doctorName || d.veterinarian,
       invoices: invoiceByPetMap.get(String(d.petId)) || [],
     }));
 
@@ -260,8 +299,8 @@ const getPetMedicalRecords = async (req, res) => {
       filter.petId = String(petId).trim();
     }
 
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), "i");
+    if (search && String(search).trim()) {
+      const regex = new RegExp(escapeRegex(String(search).trim()), "i");
       filter.$or = [
         { recordCode: regex },
         { petName: regex },
@@ -294,10 +333,11 @@ const completeAppointment = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { diagnosis, treatmentPlan, notes } = req.body;
+    const body = req.body || {};
+    const { diagnosis, treatmentPlan, notes } = body;
 
     const doctorName = auth.doctor ? auth.doctor.name : (auth.user?.name || "Bác sĩ thú y");
-    const id_bac_sy = auth.doctor ? auth.doctor.id_bac_sy : (req.body.id_bac_sy || "bs00001");
+    const id_bac_sy = auth.doctor ? auth.doctor.id_bac_sy : (body.id_bac_sy || "bs00001");
     const doctorPhone = auth.doctor ? auth.doctor.phone : auth.user?.phone;
 
     let appointment = null;
@@ -305,7 +345,7 @@ const completeAppointment = async (req, res) => {
     let targetType = "appointment";
 
     // 1. Tìm trong bảng Appointment
-    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (mongoose.Types.ObjectId.isValid(id)) {
       appointment = await Appointment.findById(id);
     }
     if (!appointment) {
@@ -314,11 +354,11 @@ const completeAppointment = async (req, res) => {
 
     // 2. Nếu không có, tìm trong bảng Grooming
     if (!appointment) {
-      if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      if (mongoose.Types.ObjectId.isValid(id)) {
         grooming = await Grooming.findById(id);
       }
       if (!grooming) {
-        grooming = await Grooming.findOne({ groomingCode: id });
+        grooming = await Grooming.findOne({ groomingCode: id, isDeleted: false });
       }
       if (grooming) targetType = "grooming";
     }
@@ -330,23 +370,47 @@ const completeAppointment = async (req, res) => {
       });
     }
 
+    const blockedStatuses = ["Hoàn thành", "completed", "Đã hủy", "cancelled"];
+    const currentStatus = targetType === "appointment" ? appointment.status : grooming.status;
+    if (blockedStatuses.includes(currentStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: `Ca hẹn [${id}] hiện đang ở trạng thái "${currentStatus}", không thể xác nhận hoàn thành!`,
+      });
+    }
+
     const now = new Date();
     const todayStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
     const todayISO = now.toISOString().split("T")[0];
 
     let createdRecord = null;
     let createdDiagnosis = null;
+    const Pet = require("../models/pet");
 
     if (targetType === "appointment") {
       appointment.status = "Hoàn thành";
       appointment.slotReserved = false;
       await appointment.save();
 
-      // Xác định petId hợp lệ (bắt buộc trong MedicalRecord)
-      const Pet = require("../models/pet");
+      // Xác định petId hợp lệ: ưu tiên tìm theo ownerId + name rồi mới fallback name
       let effectivePetId = appointment.petId;
       if (!effectivePetId) {
-        const foundPet = await Pet.findOne({ name: appointment.petName }).lean();
+        let ownerObjectId =
+          appointment.userId && mongoose.Types.ObjectId.isValid(appointment.userId)
+            ? appointment.userId
+            : null;
+        if (!ownerObjectId && appointment.ownerPhone) {
+          const ownerUser = await User.findOne({ phone: appointment.ownerPhone }).select("_id").lean();
+          if (ownerUser) ownerObjectId = ownerUser._id;
+        }
+
+        let foundPet = null;
+        if (ownerObjectId && appointment.petName) {
+          foundPet = await Pet.findOne({ ownerId: ownerObjectId, name: appointment.petName }).lean();
+        }
+        if (!foundPet && appointment.petName) {
+          foundPet = await Pet.findOne({ name: appointment.petName }).lean();
+        }
         if (foundPet) {
           effectivePetId = String(foundPet._id);
         } else {
@@ -354,10 +418,14 @@ const completeAppointment = async (req, res) => {
         }
       }
 
-      // Tạo Hồ sơ khám (MedicalRecord)
       const recordCode = `MR-${now.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-      const confirmedDiag = diagnosis || appointment.serviceName || "Khám và điều trị hoàn tất";
+      const confirmedDiag = (diagnosis && String(diagnosis).trim()) || appointment.serviceName || "Khám và điều trị hoàn tất";
+      const finalTreatmentPlan =
+        (treatmentPlan && String(treatmentPlan).trim()) ||
+        "Đã hoàn thành khám và tư vấn điều trị tại phòng khám";
+      const finalNotes = (notes && String(notes).trim()) || appointment.notes || "";
 
+      // Tạo Hồ sơ khám (MedicalRecord)
       createdRecord = await MedicalRecord.create({
         recordCode,
         petId: effectivePetId,
@@ -366,14 +434,16 @@ const completeAppointment = async (req, res) => {
         ownerName: appointment.ownerName || "Khách hàng",
         ownerPhone: appointment.ownerPhone || "",
         title: `Hoàn thành ca khám: ${appointment.serviceName || "Khám bệnh"}`,
+        status: "Đã hoàn thành",
         confirmedDiagnosis: confirmedDiag,
-        treatmentPlan: treatmentPlan || "Đã hoàn thành khám và tư vấn điều trị tại phòng khám",
+        treatmentPlan: finalTreatmentPlan,
+        doctorAdvice: finalTreatmentPlan,
         veterinarian: `BS. ${doctorName}`,
         id_bac_sy: id_bac_sy,
         doctorPhone: doctorPhone,
         date: appointment.date || todayStr,
         dateISO: appointment.dateISO || todayISO,
-        notes: notes || appointment.notes || "",
+        notes: finalNotes,
         isDeleted: false,
       });
 
@@ -381,15 +451,19 @@ const completeAppointment = async (req, res) => {
       const diagCode = `DX-${now.getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
       createdDiagnosis = await Diagnosis.create({
         diagnosisCode: diagCode,
+        recordId: recordCode,
         petId: effectivePetId,
         petName: appointment.petName || "Thú cưng",
         petSpecies: appointment.petSpecies || "Chó",
         customerName: appointment.ownerName || "Khách hàng",
         customerPhone: appointment.ownerPhone || "",
         category: appointment.serviceName || "Khám nội khoa",
+        status: "Đã hoàn thành",
         confirmedDiagnosis: confirmedDiag,
-        treatmentPlan: treatmentPlan || "Theo dõi và chăm sóc tại nhà",
-        doctorName: `BS. ${doctorName}`,
+        treatmentPlan: finalTreatmentPlan,
+        doctorAdvice: finalTreatmentPlan,
+        veterinarian: `BS. ${doctorName}`,
+        doctorName: doctorName,
         id_bac_sy: id_bac_sy,
         doctorPhone: doctorPhone,
         date: appointment.date || todayStr,
@@ -402,34 +476,77 @@ const completeAppointment = async (req, res) => {
         isDeleted: false,
       });
     } else {
-      // Grooming hoàn thành
+      // Grooming hoàn thành: sử dụng diagnosis & treatmentPlan bác sĩ nhập trong modal
       grooming.status = "completed";
       await grooming.save();
 
-      const Pet = require("../models/pet");
       let effectivePetId = grooming.petId ? String(grooming.petId) : null;
       if (!effectivePetId) {
-        const foundPet = await Pet.findOne({ name: grooming.petName }).lean();
+        let foundPet = null;
+        if (grooming.customerId && mongoose.Types.ObjectId.isValid(grooming.customerId) && grooming.petName) {
+          foundPet = await Pet.findOne({ ownerId: grooming.customerId, name: grooming.petName }).lean();
+        }
+        if (!foundPet && grooming.petName) {
+          foundPet = await Pet.findOne({ name: grooming.petName }).lean();
+        }
         effectivePetId = foundPet ? String(foundPet._id) : `pet_${String(grooming._id).slice(-8)}`;
       }
 
       const recordCode = `MR-${now.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const confirmedDiag =
+        (diagnosis && String(diagnosis).trim()) || `Hoàn thành dịch vụ ${grooming.serviceName}`;
+      const finalTreatmentPlan =
+        (treatmentPlan && String(treatmentPlan).trim()) ||
+        "Bé cưng đã được vệ sinh sạch sẽ, lông mượt mà";
+      const finalNotes = (notes && String(notes).trim()) || grooming.note || "";
+
       createdRecord = await MedicalRecord.create({
         recordCode,
         petId: effectivePetId,
         petName: grooming.petName || "Thú cưng",
         petSpecies: grooming.petSpecies || "Chó",
-        customerName: grooming.customerName || "Khách hàng",
-        customerPhone: grooming.customerPhone || "",
+        ownerName: grooming.customerName || "Khách hàng",
+        ownerPhone: grooming.customerPhone || "",
         title: `Dịch vụ Spa Grooming: ${grooming.serviceName}`,
-        confirmedDiagnosis: `Hoàn thành dịch vụ ${grooming.serviceName}`,
-        treatmentPlan: "Bé cưng đã được vệ sinh sạch sẽ, lông mượt mà",
-        veterinarian: `KTV/BS. ${doctorName}`,
+        category: grooming.serviceName || "Spa & Grooming",
+        status: "Đã hoàn thành",
+        confirmedDiagnosis: confirmedDiag,
+        treatmentPlan: finalTreatmentPlan,
+        doctorAdvice: finalTreatmentPlan,
+        veterinarian: `BS. ${doctorName}`,
         id_bac_sy: id_bac_sy,
         doctorPhone: doctorPhone,
         date: grooming.date || todayStr,
         dateISO: grooming.dateISO || todayISO,
-        notes: grooming.note || "",
+        notes: finalNotes,
+        isDeleted: false,
+      });
+
+      const diagCode = `DX-${now.getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+      createdDiagnosis = await Diagnosis.create({
+        diagnosisCode: diagCode,
+        recordId: recordCode,
+        petId: effectivePetId,
+        petName: grooming.petName || "Thú cưng",
+        petSpecies: grooming.petSpecies || "Chó",
+        customerName: grooming.customerName || "Khách hàng",
+        customerPhone: grooming.customerPhone || "",
+        category: grooming.serviceName || "Spa & Grooming",
+        status: "Đã hoàn thành",
+        confirmedDiagnosis: confirmedDiag,
+        treatmentPlan: finalTreatmentPlan,
+        doctorAdvice: finalTreatmentPlan,
+        veterinarian: `BS. ${doctorName}`,
+        doctorName: doctorName,
+        id_bac_sy: id_bac_sy,
+        doctorPhone: doctorPhone,
+        date: grooming.date || todayStr,
+        dateISO: grooming.dateISO || todayISO,
+        vitalSigns: {
+          temperature: 38.5,
+          weight: 5.0,
+          heartRate: 110,
+        },
         isDeleted: false,
       });
     }
@@ -468,7 +585,7 @@ const lookupDoctorInfo = async (req, res) => {
       });
     }
 
-    const regex = new RegExp(queryStr, "i");
+    const regex = new RegExp(escapeRegex(queryStr), "i");
     const Pet = require("../models/pet");
     const Prescription = require("../models/prescription");
 
@@ -503,8 +620,10 @@ const lookupDoctorInfo = async (req, res) => {
         $or: [
           { prescriptionCode: regex },
           { petName: regex },
-          { diagnosisCode: regex },
+          { diagnosis: regex },
+          { recordCode: regex },
         ],
+        isDeleted: false,
       }).sort({ createdAt: -1 }).lean(),
 
       // 4. Thú cưng

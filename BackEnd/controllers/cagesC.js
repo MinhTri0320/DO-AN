@@ -1,6 +1,27 @@
 const mongoose = require("mongoose");
 const Cage = require("../models/cage");
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function attachCageAliases(c) {
+  if (!c) return c;
+  const s = (c.size || "").toLowerCase();
+  let sizeLabel = "Vừa (5kg - 15kg)";
+  if (s === "nhỏ" || s === "small") sizeLabel = "Nhỏ (Dưới 5kg)";
+  else if (s === "lớn" || s === "large") sizeLabel = "Lớn (Trên 15kg)";
+  return {
+    ...c,
+    id: c.id || (c._id ? String(c._id) : ""),
+    code: c.cageCode,
+    price: c.pricePerDay,
+    dailyPrice: c.pricePerDay,
+    description: c.notes,
+    sizeLabel,
+  };
+}
+
 /**
  * Helper chuẩn hóa kích cỡ chuồng
  * "small" / "nhỏ" -> "nhỏ"
@@ -51,20 +72,31 @@ const getCages = async (req, res) => {
       }
     }
 
-    // Lọc theo khoảng giá
-    if (minPrice != null || maxPrice != null) {
+    // Lọc theo khoảng giá (tránh chuỗi rỗng "" bị ép về 0)
+    const hasMinPrice =
+      minPrice !== undefined &&
+      minPrice !== null &&
+      String(minPrice).trim() !== "" &&
+      !isNaN(Number(minPrice));
+    const hasMaxPrice =
+      maxPrice !== undefined &&
+      maxPrice !== null &&
+      String(maxPrice).trim() !== "" &&
+      !isNaN(Number(maxPrice));
+
+    if (hasMinPrice || hasMaxPrice) {
       filter.pricePerDay = {};
-      if (minPrice != null && !isNaN(minPrice)) {
+      if (hasMinPrice) {
         filter.pricePerDay.$gte = Number(minPrice);
       }
-      if (maxPrice != null && !isNaN(maxPrice)) {
+      if (hasMaxPrice) {
         filter.pricePerDay.$lte = Number(maxPrice);
       }
     }
 
     // Tìm kiếm từ khóa theo mã chuồng, tên, mô tả
     if (search && String(search).trim() !== "") {
-      const searchRegex = new RegExp(String(search).trim(), "i");
+      const searchRegex = new RegExp(escapeRegex(String(search).trim()), "i");
       filter.$or = [
         { cageCode: searchRegex },
         { name: searchRegex },
@@ -76,7 +108,9 @@ const getCages = async (req, res) => {
     // Lấy danh sách chuồng theo bộ lọc
     const cages = await Cage.find(filter)
       .sort({ cageCode: 1 })
-      .lean({ virtuals: true });
+      .lean();
+
+    const mappedCages = cages.map(attachCageAliases);
 
     // Tính toán KPI thống kê toàn bộ chuồng (không bị ảnh hưởng bởi search/filter)
     const [total, available, occupied, maintenance] = await Promise.all([
@@ -88,14 +122,14 @@ const getCages = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      count: cages.length,
+      count: mappedCages.length,
       kpi: {
         total,
         available,
         occupied,
         maintenance,
       },
-      cages,
+      cages: mappedCages,
     });
   } catch (error) {
     console.error("Lỗi lấy danh sách chuồng:", error);
@@ -150,7 +184,7 @@ const getCageById = async (req, res) => {
         { cageCode: String(id).trim().toUpperCase() },
       ],
       isDeleted: false,
-    }).lean({ virtuals: true });
+    }).lean();
 
     if (!cage) {
       return res.status(404).json({
@@ -161,7 +195,7 @@ const getCageById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      cage,
+      cage: attachCageAliases(cage),
     });
   } catch (error) {
     console.error("Lỗi lấy chi tiết chuồng:", error);
@@ -181,6 +215,7 @@ const getCageById = async (req, res) => {
  */
 const createCage = async (req, res) => {
   try {
+    const body = req.body || {};
     const {
       cageCode,
       code,
@@ -191,7 +226,7 @@ const createCage = async (req, res) => {
       status,
       notes,
       description,
-    } = req.body;
+    } = body;
 
     const finalCode = String(cageCode || code || "").trim().toUpperCase();
     if (!finalCode) {
@@ -291,6 +326,7 @@ const updateCage = async (req, res) => {
       });
     }
 
+    const body = req.body || {};
     const {
       cageCode,
       code,
@@ -301,7 +337,7 @@ const updateCage = async (req, res) => {
       status,
       notes,
       description,
-    } = req.body;
+    } = body;
 
     // Kiểm tra đổi mã chuồng (nếu có)
     const newCode = String(cageCode || code || "").trim().toUpperCase();
@@ -331,9 +367,10 @@ const updateCage = async (req, res) => {
     }
 
     // Cập nhật giá theo ngày
-    const newPrice = Number(pricePerDay != null ? pricePerDay : price);
-    if (!isNaN(newPrice)) {
-      if (newPrice <= 0) {
+    const rawPrice = pricePerDay !== undefined ? pricePerDay : price;
+    if (rawPrice !== undefined && rawPrice !== null && String(rawPrice).trim() !== "") {
+      const newPrice = Number(rawPrice);
+      if (isNaN(newPrice) || newPrice <= 0) {
         return res.status(400).json({
           success: false,
           message: "Đơn giá theo ngày phải là số dương hợp lệ!",
@@ -515,7 +552,8 @@ const toggleMaintenance = async (req, res) => {
 const checkIn = async (req, res) => {
   try {
     const { id } = req.params;
-    const { petId, petName, checkOutDate } = req.body;
+    const body = req.body || {};
+    const { petId, petName, checkOutDate } = body;
     const isObjectId = mongoose.Types.ObjectId.isValid(id);
 
     const cage = await Cage.findOne({

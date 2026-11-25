@@ -12,14 +12,7 @@
       - Chặn chuyển ngược trạng thái
    ============================================================ */
 
-import {
-  apiGetGroomings,
-  apiCreateGrooming,
-  apiChangeGroomingStatus,
-  apiCancelGrooming,
-  apiGetGroomingCustomers,
-} from "./api.js";
-import { DEFAULT_HOTEL_CUSTOMERS } from "./hotel-data.js";
+import { API_BASE_URL } from "./config.js";
 import { escapeHTML } from "./storage.js";
 import { getCurrentUser } from "./auth.js";
 
@@ -29,6 +22,73 @@ let allGroomings = [];
 let currentFilterDate = ""; // "" = xem tất cả, hoặc "YYYY-MM-DD"
 let currentFilterStatus = ""; // "" = tất cả, hoặc "pending" | "in_progress" | "completed" | "cancelled"
 let currentSearchTerm = "";
+
+// Helpers định danh & phân quyền người dùng
+function getCallerId(user = getCurrentUser()) {
+  return user ? (user.id || user._id || null) : null;
+}
+
+function getUserRoleId(user = getCurrentUser()) {
+  if (!user) return 0;
+  if (user.role_id !== undefined && user.role_id !== null) {
+    return Number(user.role_id);
+  }
+  if (user.role === "admin") return 1;
+  if (user.role === "doctor") return 2;
+  if (user.role === "receptionist") return 3;
+  return 4;
+}
+
+function isStaffRole(user = getCurrentUser()) {
+  return [1, 2, 3].includes(getUserRoleId(user));
+}
+
+// Helper kiểm tra lịch có thuộc về khách hàng hiện tại hay không
+function isOwnSchedule(item, user = getCurrentUser()) {
+  if (!user || !item) return false;
+  const callerId = String(getCallerId(user) || "");
+  const userPhone = user.phone ? String(user.phone).trim() : "";
+
+  const itemCustId =
+    item.customerId && typeof item.customerId === "object"
+      ? String(item.customerId._id || item.customerId.id || "")
+      : String(item.customerId || "");
+  const itemPhone = item.customerPhone ? String(item.customerPhone).trim() : "";
+
+  return Boolean((callerId && itemCustId === callerId) || (userPhone && itemPhone === userPhone));
+}
+
+// Helper gọi API Grooming luôn kèm header x-user-id
+async function groomingFetch(endpoint, options = {}) {
+  const callerId = getCallerId();
+  const headers = {
+    "Content-Type": "application/json",
+    ...(callerId ? { "x-user-id": callerId } : {}),
+    ...(options.headers || {}),
+  };
+
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch (networkErr) {
+    throw new Error(
+      "Không kết nối được máy chủ. Vui lòng kiểm tra BackEnd đang hoạt động."
+    );
+  }
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const err = new Error(data.message || `Lỗi máy chủ (HTTP ${response.status})`);
+    err.status = response.status;
+    err.data = data;
+    throw err;
+  }
+
+  return data;
+}
 
 // Helper chuyển đổi HH:mm sang phút
 function timeToMinutes(timeStr) {
@@ -52,16 +112,22 @@ function formatVND(amount) {
   return Number(amount).toLocaleString("vi-VN") + " đ";
 }
 
-// Helper format ngày YYYY-MM-DD
+// Helper format ngày YYYY-MM-DD theo GIỜ LOCAL (tránh lệch múi giờ UTC)
+function formatLocalDate(dateObj) {
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function getTodayString() {
-  const today = new Date();
-  return today.toISOString().split("T")[0];
+  return formatLocalDate(new Date());
 }
 
 function getTomorrowString() {
   const d = new Date();
   d.setDate(d.getDate() + 1);
-  return d.toISOString().split("T")[0];
+  return formatLocalDate(d);
 }
 
 // Helper thông minh tính ngày & giờ mặc định hợp lệ (không bao giờ rơi vào quá khứ)
@@ -135,34 +201,99 @@ function showFormAlert(message, type = "danger") {
   alertContainer.style.display = "flex";
 }
 
-// 1. Tải danh sách khách hàng & thú cưng
+// 1. Tải danh sách khách hàng & thú cưng (không dùng fallback ID giả)
 async function loadCustomersAndPets() {
   const selectCustomer = document.getElementById("grmCustomer");
   const selectPet = document.getElementById("grmPet");
+  const btnSubmit = document.getElementById("btnSubmitGrooming");
   if (!selectCustomer || !selectPet) return;
 
   const user = getCurrentUser();
-  if (!user) {
-    // Hiển thị toast nhẹ nhàng thay vì redirect
-    showToast("Vui lòng đăng nhập để sử dụng tính năng này!", "warning");
+  const callerId = getCallerId(user);
+
+  if (!user || !callerId) {
+    customersList = [];
+    selectCustomer.innerHTML = `<option value="">-- Vui lòng đăng nhập --</option>`;
+    selectCustomer.disabled = true;
+    selectPet.innerHTML = `<option value="">-- Vui lòng đăng nhập --</option>`;
+    selectPet.disabled = true;
+    if (btnSubmit) btnSubmit.disabled = true;
+    showFormAlert(
+      'Vui lòng <a href="./login.html" style="color: #1E429F; font-weight: 700;">đăng nhập</a> để đặt lịch chăm sóc grooming.',
+      "warning"
+    );
     return;
   }
 
+  if (btnSubmit) btnSubmit.disabled = false;
+  showFormAlert("");
+
+  let fetchedCustomers = [];
+  let apiFailed = false;
   try {
-    const res = await apiGetGroomingCustomers();
-    if (res && res.success && res.customers && res.customers.length > 0) {
-      customersList = res.customers;
+    const res = await groomingFetch("/grooming-meta/customers", { method: "GET" });
+    if (res && res.success && Array.isArray(res.customers)) {
+      fetchedCustomers = res.customers;
     } else {
-      // Fallback sang khách hàng mặc định của hệ thống
-      customersList = DEFAULT_HOTEL_CUSTOMERS;
+      apiFailed = true;
+      showFormAlert(escapeHTML(res?.message || "Không tải được danh sách khách hàng."), "danger");
     }
   } catch (err) {
-    console.warn("Không tải được khách hàng từ API, dùng dữ liệu dự phòng:", err);
-    customersList = DEFAULT_HOTEL_CUSTOMERS;
+    apiFailed = true;
+    console.warn("Không tải được danh sách khách hàng từ API:", err);
+    showFormAlert(escapeHTML(err.message || "Không tải được danh sách khách hàng."), "danger");
   }
 
-  // Populate vào select
-  selectCustomer.innerHTML = `<option value="">-- Chọn khách hàng --</option>` +
+  const roleId = getUserRoleId(user);
+
+  // Nếu là Khách hàng (role_id === 4): chỉ hiển thị & khóa chọn khách hàng là chính mình
+  if (roleId === 4) {
+    let matchedCustomer = fetchedCustomers.find(
+      (c) =>
+        String(c.id) === String(callerId) ||
+        (c.phone && user.phone && String(c.phone).trim() === String(user.phone).trim())
+    );
+
+    if (!matchedCustomer) {
+      matchedCustomer = {
+        id: String(callerId),
+        name: user.name || "Khách hàng",
+        phone: user.phone || "",
+        pets: [],
+      };
+    }
+
+    customersList = [matchedCustomer];
+    selectCustomer.innerHTML = `<option value="${escapeHTML(matchedCustomer.id)}">${escapeHTML(matchedCustomer.name)} (${escapeHTML(matchedCustomer.phone || "Chưa có SĐT")})</option>`;
+    selectCustomer.value = matchedCustomer.id;
+    selectCustomer.disabled = true;
+
+    if (apiFailed) {
+      selectPet.innerHTML = `<option value="">-- Không tải được danh sách thú cưng --</option>`;
+      selectPet.disabled = true;
+      return;
+    }
+
+    handleCustomerChange(matchedCustomer.id);
+    return;
+  }
+
+  // Nhân viên (Admin / Bác sĩ / Lễ tân): chọn từ danh sách khách hàng thật trong DB
+  customersList = fetchedCustomers;
+  selectCustomer.disabled = false;
+
+  if (customersList.length === 0) {
+    selectCustomer.innerHTML = `<option value="">-- Chưa có khách hàng nào trong hệ thống --</option>`;
+    selectPet.innerHTML = `<option value="">-- Vui lòng tạo hồ sơ khách hàng/thú cưng trước --</option>`;
+    selectPet.disabled = true;
+    if (!apiFailed) {
+      showFormAlert("Hiện chưa có dữ liệu khách hàng trong hệ thống.", "warning");
+    }
+    return;
+  }
+
+  selectCustomer.innerHTML =
+    `<option value="">-- Chọn khách hàng --</option>` +
     customersList
       .map(
         (c) =>
@@ -172,22 +303,6 @@ async function loadCustomersAndPets() {
 
   selectPet.innerHTML = `<option value="">-- Vui lòng chọn khách hàng trước --</option>`;
   selectPet.disabled = true;
-
-  // Tự động nhận diện tài khoản người dùng đang đăng nhập nếu có
-  const currentUser = getCurrentUser();
-  if (currentUser) {
-    const matchedCustomer = customersList.find(
-      (c) =>
-        String(c.id) === String(currentUser.id) ||
-        String(c.id) === String(currentUser._id) ||
-        (c.phone && c.phone === currentUser.phone)
-    );
-
-    if (matchedCustomer) {
-      selectCustomer.value = matchedCustomer.id;
-      handleCustomerChange(matchedCustomer.id);
-    }
-  }
 }
 
 // 2. Khi chọn khách hàng -> Lọc danh sách thú cưng tương ứng
@@ -205,53 +320,45 @@ function handleCustomerChange(customerId) {
 
   const customer = customersList.find((c) => String(c.id) === String(customerId));
   if (!customer || !customer.pets || customer.pets.length === 0) {
-    selectPet.innerHTML = `<option value="">-- Khách hàng này chưa có hồ sơ thú cưng --</option>`;
+    const isCustomerRole = getUserRoleId() === 4;
+    selectPet.innerHTML = isCustomerRole
+      ? `<option value="">-- Bạn chưa có hồ sơ thú cưng --</option>`
+      : `<option value="">-- Khách hàng này chưa có hồ sơ thú cưng --</option>`;
     selectPet.disabled = true;
-    showFormAlert("Khách hàng này hiện chưa có thú cưng nào trong hệ thống!", "warning");
+    showFormAlert(
+      isCustomerRole
+        ? 'Bạn chưa có hồ sơ thú cưng nào. Vui lòng <a href="./pet-profile.html" style="color: #1E429F; font-weight: 700;">tạo hồ sơ thú cưng</a> trước khi đặt lịch grooming!'
+        : 'Khách hàng này chưa có hồ sơ thú cưng. Vui lòng tạo hồ sơ thú cưng trước khi đặt lịch grooming!',
+      "warning"
+    );
     return;
   }
 
   selectPet.disabled = false;
-  selectPet.innerHTML = `<option value="">-- Chọn thú cưng của khách --</option>` +
+  selectPet.innerHTML =
+    `<option value="">-- Chọn thú cưng của khách --</option>` +
     customer.pets
       .map(
         (p) =>
-          `<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)} (${escapeHTML(p.species || "Thú cưng")} ${p.breed ? "- " + escapeHTML(p.breed) : ""})</option>`
+          `<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)} (${escapeHTML(p.species || "Thú cưng")}${p.breed ? " - " + escapeHTML(p.breed) : ""})</option>`
       )
       .join("");
 }
 
-// 3. Kiểm tra trùng giờ client-side (với các lịch chưa bị hủy)
-function checkOverlapClient(newDateISO, newStartTime, durationMinutes) {
-  const newStart = timeToMinutes(newStartTime);
-  const newEnd = newStart + Number(durationMinutes);
-
-  // Chỉ xét các lịch cùng ngày và status !== "cancelled"
-  const activeSchedulesOnDate = allGroomings.filter(
-    (g) => g.dateISO === newDateISO && g.status !== "cancelled"
-  );
-
-  for (const item of activeSchedulesOnDate) {
-    const itemStart = item.startMinutes || timeToMinutes(item.startTime);
-    const itemEnd = item.endMinutes || (itemStart + (item.duration || 45));
-
-    // Công thức giao khoảng: StartA < EndB && StartB < EndA
-    if (newStart < itemEnd && itemStart < newEnd) {
-      return item; // Trả về lịch bị xung đột
-    }
-  }
-
-  return null;
-}
-
-// 4. Xử lý gửi Form tạo lịch chăm sóc Grooming
+// 3. Xử lý gửi Form tạo lịch chăm sóc Grooming
+// (Kiểm tra trùng giờ chuẩn theo từng bác sĩ do BackEnd thực hiện để không chặn oan khi có nhiều bác sĩ)
 async function handleCreateGrooming(e) {
   e.preventDefault();
   showFormAlert("");
 
   const user = getCurrentUser();
-  if (!user) {
+  const callerId = getCallerId(user);
+  if (!user || !callerId) {
     showToast("Vui lòng đăng nhập để tạo lịch!", "warning");
+    showFormAlert(
+      'Vui lòng <a href="./login.html" style="color: #1E429F; font-weight: 700;">đăng nhập</a> để đặt lịch chăm sóc grooming.',
+      "warning"
+    );
     return;
   }
 
@@ -265,7 +372,7 @@ async function handleCreateGrooming(e) {
   const inputNote = document.getElementById("grmNote");
   const btnSubmit = document.getElementById("btnSubmitGrooming");
 
-  const customerId = selectCustomer.value;
+  const customerId = getUserRoleId(user) === 4 ? String(callerId) : selectCustomer.value;
   const petId = selectPet.value;
   const serviceName = inputServiceName.value.trim();
   const price = inputPrice.value ? Number(inputPrice.value) : 0;
@@ -274,7 +381,7 @@ async function handleCreateGrooming(e) {
   const duration = Number(selectDuration.value) || 45;
   const note = inputNote.value.trim();
 
-  // Kiểm tra dữ liệu bắt buộc từng trường để hướng dẫn người dùng chính xác
+  // Kiểm tra dữ liệu bắt buộc từng trường
   if (!customerId) {
     showFormAlert("Vui lòng chọn <strong>Khách hàng</strong> trước khi đặt lịch!", "warning");
     selectCustomer.focus();
@@ -282,13 +389,24 @@ async function handleCreateGrooming(e) {
   }
 
   if (!petId) {
-    showFormAlert("Vui lòng chọn <strong>Thú cưng</strong> muốn đặt dịch vụ grooming!", "warning");
-    selectPet.focus();
+    const selectedCust = customersList.find((c) => String(c.id) === String(customerId));
+    if (!selectedCust || !selectedCust.pets || selectedCust.pets.length === 0) {
+      showFormAlert(
+        'Khách hàng chưa có hồ sơ thú cưng. Vui lòng <a href="./pet-profile.html" style="color: #1E429F; font-weight: 700;">tạo hồ sơ thú cưng</a> trước khi đặt lịch!',
+        "warning"
+      );
+    } else {
+      showFormAlert("Vui lòng chọn <strong>Thú cưng</strong> muốn đặt dịch vụ grooming!", "warning");
+      selectPet.focus();
+    }
     return;
   }
 
   if (!serviceName) {
-    showFormAlert("Vui lòng nhập hoặc bấm chọn <strong>Tên dịch vụ</strong> (ví dụ: Tắm dưỡng mượt, Cắt tỉa lông...)!", "warning");
+    showFormAlert(
+      "Vui lòng nhập hoặc bấm chọn <strong>Tên dịch vụ</strong> (ví dụ: Tắm dưỡng mượt, Cắt tỉa lông...)!",
+      "warning"
+    );
     inputServiceName.focus();
     return;
   }
@@ -298,19 +416,11 @@ async function handleCreateGrooming(e) {
     return;
   }
 
-  // 1. RÀNG BUỘC: Không cho tạo lịch vào thời điểm trong quá khứ
+  // RÀNG BUỘC: Không cho tạo lịch vào thời điểm trong quá khứ
   const selectedDateTime = new Date(`${date}T${startTime}:00`);
   if (selectedDateTime.getTime() < Date.now()) {
-    showFormAlert("<strong>Không thể đặt lịch trong quá khứ!</strong> Vui lòng chọn ngày và giờ ở thời điểm hiện tại hoặc tương lai.", "danger");
-    return;
-  }
-
-  // 2. RÀNG BUỘC: Kiểm tra trùng giờ với các lịch chưa hủy
-  const conflict = checkOverlapClient(date, startTime, duration);
-  if (conflict) {
-    const conflictEndTime = conflict.endTime || minutesToTime(timeToMinutes(conflict.startTime) + (conflict.duration || 45));
     showFormAlert(
-      `<strong>Trùng lịch hẹn!</strong> Khung giờ này bị trùng với lịch <strong>[${conflict.groomingCode || "Lịch hẹn"}]</strong> (${conflict.startTime} - ${conflictEndTime}) của bé <strong>${escapeHTML(conflict.petName)}</strong>. Vui lòng chọn khung giờ khác!`,
+      "<strong>Không thể đặt lịch trong quá khứ!</strong> Vui lòng chọn ngày và giờ ở thời điểm hiện tại hoặc tương lai.",
       "danger"
     );
     return;
@@ -334,7 +444,10 @@ async function handleCreateGrooming(e) {
       note,
     };
 
-    const res = await apiCreateGrooming(payload);
+    const res = await groomingFetch("/grooming", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
 
     if (res && res.success) {
       showToast("Tạo lịch hẹn chăm sóc thành công!", "success");
@@ -354,11 +467,18 @@ async function handleCreateGrooming(e) {
       // Tải lại danh sách lịch
       await loadGroomingSchedules();
     } else {
-      showFormAlert(res?.message || "Không thể tạo lịch hẹn.", "danger");
+      showFormAlert(escapeHTML(res?.message || "Không thể tạo lịch hẹn."), "danger");
     }
   } catch (err) {
     console.error("Lỗi khi tạo lịch grooming:", err);
-    showFormAlert(err.message || "Lỗi máy chủ khi tạo lịch hẹn. Vui lòng thử lại!", "danger");
+    showFormAlert(
+      `<strong>Không thể tạo lịch:</strong> ${escapeHTML(err.message || "Lỗi máy chủ khi tạo lịch hẹn. Vui lòng thử lại!")}`,
+      "danger"
+    );
+    const alertContainer = document.getElementById("groomingAlertContainer");
+    if (alertContainer) {
+      alertContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   } finally {
     if (btnSubmit) {
       btnSubmit.disabled = false;
@@ -367,31 +487,65 @@ async function handleCreateGrooming(e) {
   }
 }
 
-// 5. Tải danh sách lịch chăm sóc từ API & hiển thị
+// 4. Tải danh sách lịch chăm sóc từ API & hiển thị (có kiểm tra đăng nhập & x-user-id)
 async function loadGroomingSchedules() {
   const container = document.getElementById("scheduleTimelineList");
+  const countDisplay = document.getElementById("scheduleCountDisplay");
   if (!container) return;
+
+  const user = getCurrentUser();
+  const callerId = getCallerId(user);
+
+  if (!user || !callerId) {
+    allGroomings = [];
+    updateKPIStats();
+    if (countDisplay) countDisplay.textContent = "0";
+    container.innerHTML = `
+      <div class="no-schedule-box">
+        <span class="no-schedule-icon">🔒</span>
+        <div class="no-schedule-title">Vui lòng đăng nhập để xem lịch chăm sóc</div>
+        <p class="no-schedule-desc">
+          Đăng nhập vào tài khoản PawnCare của bạn để xem, đặt mới hoặc quản lý lịch chăm sóc spa &amp; grooming.
+        </p>
+        <a href="./login.html" class="btn-book-from-empty" style="text-decoration: none;">
+          <span>🔑 Đăng nhập ngay</span>
+        </a>
+      </div>
+    `;
+    return;
+  }
 
   container.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--ink-faint);">⏳ Đang tải lịch hẹn...</div>`;
 
   try {
-    const params = {};
+    const params = new URLSearchParams();
     if (currentFilterDate) {
-      params.date = currentFilterDate;
+      params.append("date", currentFilterDate);
+    }
+    if (getUserRoleId(user) === 4) {
+      params.append("customerId", callerId);
     }
 
-    const res = await apiGetGroomings(params);
+    const query = params.toString();
+    const endpoint = query ? `/grooming?${query}` : "/grooming";
+    const res = await groomingFetch(endpoint, { method: "GET" });
 
-    if (res && res.success) {
-      allGroomings = res.groomings || [];
-    } else {
-      allGroomings = [];
+    let rawList = res && res.success ? res.groomings || [] : [];
+
+    // Bảo vệ phía client: Khách hàng (role_id === 4) chỉ thấy lịch của chính mình
+    if (getUserRoleId(user) === 4) {
+      rawList = rawList.filter((item) => isOwnSchedule(item, user));
     }
+
+    allGroomings = rawList;
 
     renderScheduleList();
     updateKPIStats();
   } catch (err) {
     console.error("Lỗi tải lịch grooming:", err);
+    allGroomings = [];
+    updateKPIStats();
+    if (countDisplay) countDisplay.textContent = "0";
     container.innerHTML = `
       <div class="no-schedule-box">
         <span class="no-schedule-icon">⚠️</span>
@@ -402,7 +556,7 @@ async function loadGroomingSchedules() {
   }
 }
 
-// 6. Cập nhật thẻ KPI Thống kê 4 trạng thái
+// 5. Cập nhật thẻ KPI Thống kê 4 trạng thái
 function updateKPIStats() {
   const statPending = document.getElementById("statPendingGroomings");
   const statInProgress = document.getElementById("statInProgressGroomings");
@@ -427,7 +581,7 @@ function updateKPIStats() {
   if (statCancelled) statCancelled.textContent = cancelledCount;
 }
 
-// 7. Render danh sách lịch hẹn (SẮP XẾP GIỜ TĂNG DẦN & HIỂN THỊ "Chưa có lịch hẹn" NẾU TRỐNG)
+// 6. Render danh sách lịch hẹn (SẮP XẾP GIỜ TĂNG DẦN & HIỂN THỊ "Chưa có lịch hẹn" NẾU TRỐNG)
 function renderScheduleList() {
   const container = document.getElementById("scheduleTimelineList");
   const countDisplay = document.getElementById("scheduleCountDisplay");
@@ -473,7 +627,7 @@ function renderScheduleList() {
         <span class="no-schedule-icon">📅</span>
         <div class="no-schedule-title">Chưa có lịch hẹn</div>
         <p class="no-schedule-desc">
-          Hiện tại chưa có lịch chăm sóc grooming nào trong ${escapeHTML(dateNotice)}. Hãy dùng form bên trái để đặt lịch cho các bé cưng nhé!
+          Hiện tại chưa có lịch chăm sóc grooming nào trong ${escapeHTML(dateNotice)}. Hãy dùng form phía trên để đặt lịch cho các bé cưng nhé!
         </p>
         <button type="button" class="btn-book-from-empty" onclick="document.getElementById('grmServiceName').focus()">
           <span>➕ Đặt lịch ngay</span>
@@ -489,10 +643,12 @@ function renderScheduleList() {
       const statusClass = item.status || "pending";
       const statusTagHtml = getStatusBadgeHtml(item.status);
       const actionButtonsHtml = renderActionButtonsHtml(item);
-      const endTimeDisplay = item.endTime || minutesToTime((item.startMinutes || timeToMinutes(item.startTime)) + (item.duration || 45));
+      const endTimeDisplay =
+        item.endTime ||
+        minutesToTime((item.startMinutes || timeToMinutes(item.startTime)) + (item.duration || 45));
 
       return `
-        <div class="schedule-item-card status-${statusClass}" data-id="${escapeHTML(item._id || item.groomingCode)}">
+        <div class="schedule-item-card status-${escapeHTML(statusClass)}" data-id="${escapeHTML(item._id || item.groomingCode)}">
           <div class="item-top-header">
             <div class="time-slot-badge">
               <span>⏰ ${escapeHTML(item.startTime)} - ${escapeHTML(endTimeDisplay)}</span>
@@ -513,7 +669,7 @@ function renderScheduleList() {
                 Mã lịch: <strong style="color: var(--espresso);">${escapeHTML(item.groomingCode || "GRM-001")}</strong>
               </div>
               <div class="customer-details-line">
-                Chủ nuôi: <strong>${escapeHTML(item.customerName || "Khách hàng")}</strong> 
+                Chủ nuôi: <strong>${escapeHTML(item.customerName || "Khách hàng")}</strong>
                 ${item.customerPhone ? `(${escapeHTML(item.customerPhone)})` : ""}
               </div>
             </div>
@@ -549,7 +705,7 @@ function renderScheduleList() {
   attachActionButtonListeners();
 }
 
-// 8. Tạo HTML nhãn màu trạng thái riêng biệt (pending, in_progress, completed, cancelled)
+// 7. Tạo HTML nhãn màu trạng thái riêng biệt (pending, in_progress, completed, cancelled)
 function getStatusBadgeHtml(status) {
   switch (status) {
     case "pending":
@@ -565,32 +721,50 @@ function getStatusBadgeHtml(status) {
   }
 }
 
-// 9. Nút đổi trạng thái đúng thứ tự:
-// pending -> in_progress -> completed (hoặc cancelled)
-// Chặn tuyệt đối chuyển ngược trạng thái
+// 8. Nút đổi trạng thái theo phân quyền:
+// - Nhân viên (role_id 1, 2, 3): pending -> in_progress -> completed (hoặc cancelled)
+// - Khách hàng (role_id 4): KHÔNG thấy nút "Bắt đầu làm" / "Hoàn thành", chỉ được Hủy lịch pending của chính mình
 function renderActionButtonsHtml(item) {
-  const id = item._id || item.groomingCode;
+  const id = escapeHTML(item._id || item.groomingCode);
+  const user = getCurrentUser();
+  const staff = isStaffRole(user);
 
   if (item.status === "pending") {
-    return `
-      <button type="button" class="btn-status-act btn-start-grooming" data-id="${id}" data-action="start">
-        <span>✂️ Bắt đầu làm</span>
-      </button>
-      <button type="button" class="btn-status-act btn-cancel-grooming" data-id="${id}" data-action="cancel">
-        <span>Hủy lịch</span>
-      </button>
-    `;
+    if (staff) {
+      return `
+        <button type="button" class="btn-status-act btn-start-grooming" data-id="${id}" data-action="start">
+          <span>✂️ Bắt đầu làm</span>
+        </button>
+        <button type="button" class="btn-status-act btn-cancel-grooming" data-id="${id}" data-action="cancel">
+          <span>Hủy lịch</span>
+        </button>
+      `;
+    }
+
+    if (isOwnSchedule(item, user)) {
+      return `
+        <button type="button" class="btn-status-act btn-cancel-grooming" data-id="${id}" data-action="cancel">
+          <span>Hủy lịch</span>
+        </button>
+      `;
+    }
+
+    return `<span class="state-locked-badge">⏳ Đang chờ nhân viên tiếp nhận</span>`;
   }
 
   if (item.status === "in_progress") {
-    return `
-      <button type="button" class="btn-status-act btn-complete-grooming" data-id="${id}" data-action="complete">
-        <span>✅ Hoàn thành</span>
-      </button>
-      <button type="button" class="btn-status-act btn-cancel-grooming" data-id="${id}" data-action="cancel">
-        <span>Hủy lịch</span>
-      </button>
-    `;
+    if (staff) {
+      return `
+        <button type="button" class="btn-status-act btn-complete-grooming" data-id="${id}" data-action="complete">
+          <span>✅ Hoàn thành</span>
+        </button>
+        <button type="button" class="btn-status-act btn-cancel-grooming" data-id="${id}" data-action="cancel">
+          <span>Hủy lịch</span>
+        </button>
+      `;
+    }
+
+    return `<span class="state-locked-badge">✂️ Bé đang được chăm sóc tại spa</span>`;
   }
 
   if (item.status === "completed") {
@@ -612,11 +786,11 @@ function renderActionButtonsHtml(item) {
   return "";
 }
 
-// 10. Gắn sự kiện cho các nút đổi trạng thái
+// 9. Gắn sự kiện cho các nút đổi trạng thái
 function attachActionButtonListeners() {
   const buttons = document.querySelectorAll(".btn-status-act");
   buttons.forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
+    btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-id");
       const action = btn.getAttribute("data-action");
 
@@ -633,11 +807,16 @@ function attachActionButtonListeners() {
   });
 }
 
-// 11. Xử lý chuyển trạng thái theo thứ tự
+// 10. Xử lý chuyển trạng thái theo thứ tự (chỉ dành cho nhân viên role_id 1, 2, 3)
 async function handleStatusTransition(id, newStatus, actionName) {
   const user = getCurrentUser();
   if (!user) {
     showToast("Vui lòng đăng nhập để thay đổi trạng thái!", "warning");
+    return;
+  }
+
+  if (!isStaffRole(user)) {
+    showToast("Chỉ nhân viên phòng khám mới được chuyển tiến trình dịch vụ!", "error");
     return;
   }
 
@@ -646,7 +825,10 @@ async function handleStatusTransition(id, newStatus, actionName) {
   }
 
   try {
-    const res = await apiChangeGroomingStatus(id, newStatus);
+    const res = await groomingFetch(`/grooming/${encodeURIComponent(id)}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: newStatus }),
+    });
     if (res && res.success) {
       showToast(`Đã chuyển trạng thái sang "${actionName}" thành công!`, "success");
       await loadGroomingSchedules();
@@ -659,7 +841,7 @@ async function handleStatusTransition(id, newStatus, actionName) {
   }
 }
 
-// 12. Xử lý hủy lịch (cancelled)
+// 11. Xử lý hủy lịch (cancelled)
 async function handleCancelGrooming(id) {
   const user = getCurrentUser();
   if (!user) {
@@ -667,12 +849,25 @@ async function handleCancelGrooming(id) {
     return;
   }
 
+  // Khách hàng chỉ được hủy lịch pending của chính mình
+  if (!isStaffRole(user)) {
+    const target = allGroomings.find(
+      (g) => String(g._id) === String(id) || String(g.groomingCode) === String(id)
+    );
+    if (!target || target.status !== "pending" || !isOwnSchedule(target, user)) {
+      showToast("Bạn chỉ có thể hủy lịch hẹn đang chờ (pending) của chính mình!", "error");
+      return;
+    }
+  }
+
   if (!confirm("Bạn có chắc chắn muốn HỦY lịch hẹn này? Khung giờ sẽ được giải phóng cho khách khác.")) {
     return;
   }
 
   try {
-    const res = await apiCancelGrooming(id);
+    const res = await groomingFetch(`/grooming/${encodeURIComponent(id)}/cancel`, {
+      method: "PATCH",
+    });
     if (res && res.success) {
       showToast("Đã hủy lịch hẹn thành công. Khung giờ đã được giải phóng!", "success");
       await loadGroomingSchedules();
@@ -685,7 +880,7 @@ async function handleCancelGrooming(id) {
   }
 }
 
-// 13. Cập nhật nút chọn nhanh ngày (Hôm nay, Ngày mai, Tất cả)
+// 12. Cập nhật nút chọn nhanh ngày (Hôm nay, Ngày mai, Tất cả)
 function updateQuickDateButtonsActive(dateVal) {
   const btnToday = document.getElementById("btnDateToday");
   const btnTomorrow = document.getElementById("btnDateTomorrow");
@@ -725,9 +920,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentFilterDate = todayStr;
   }
 
-  // Lắng nghe sự kiện đăng nhập / đăng xuất để tự động cập nhật danh sách khách
+  // Lắng nghe sự kiện đăng nhập / đăng xuất để tự động cập nhật danh sách khách và lịch hẹn
   window.addEventListener("pawncare:auth-changed", async () => {
     await loadCustomersAndPets();
+    await loadGroomingSchedules();
   });
 
   // 1. Tải danh sách khách hàng và thú cưng
@@ -810,7 +1006,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     pill.addEventListener("click", () => {
       statusPills.forEach((p) => p.classList.remove("active"));
       pill.classList.add("active");
-      currentFilterStatus = pill.getAttribute("data-status");
+      currentFilterStatus = pill.getAttribute("data-status") || "";
       renderScheduleList();
     });
   });
@@ -830,18 +1026,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnRefresh.addEventListener("click", async () => {
       await loadGroomingSchedules();
       showToast("Đã cập nhật lại lịch hẹn mới nhất!", "success");
-    });
-  }
-
-  // 10. Sidebar logout
-  const sidebarLogout = document.getElementById("sidebarLogoutLink");
-  if (sidebarLogout) {
-    sidebarLogout.addEventListener("click", (e) => {
-      e.preventDefault();
-      import("./auth.js").then(({ logoutUser }) => {
-        logoutUser();
-        window.location.href = "./index.html";
-      });
     });
   }
 });
